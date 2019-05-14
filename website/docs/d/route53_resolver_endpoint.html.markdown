@@ -8,7 +8,7 @@ description: |-
 
 # Data Source: aws_route53_resolver_endpoint
 
-`aws_route53_resolver_endpoint` provides details about a specific Route 53 Delegation Set.
+`aws_route53_resolver_endpoint` provides details about a specific Route53 Resolver Endpoint.
 
 This data source allows to find a list of IPaddresses associated with a specific Route53 Resolver Endpoint.
 
