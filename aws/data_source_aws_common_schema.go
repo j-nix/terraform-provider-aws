@@ -4,6 +4,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/aws/aws-sdk-go/service/route53resolver"
 )
 
 func buildAwsDataSourceFilters(set *schema.Set) []*ec2.Filter {
@@ -15,6 +16,22 @@ func buildAwsDataSourceFilters(set *schema.Set) []*ec2.Filter {
 			filterValues = append(filterValues, aws.String(e.(string)))
 		}
 		filters = append(filters, &ec2.Filter{
+			Name:   aws.String(m["name"].(string)),
+			Values: filterValues,
+		})
+	}
+	return filters
+}
+
+func buildAwsRoute53ResolverDataSourceFilters(set *schema.Set) []*route53resolver.Filter {
+	var filters []*route53resolver.Filter
+	for _, v := range set.List() {
+		m := v.(map[string]interface{})
+		var filterValues []*string
+		for _, e := range m["values"].([]interface{}) {
+			filterValues = append(filterValues, aws.String(e.(string)))
+		}
+		filters = append(filters, &route53resolver.Filter{
 			Name:   aws.String(m["name"].(string)),
 			Values: filterValues,
 		})

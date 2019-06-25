@@ -269,7 +269,7 @@ func Provider() terraform.ResourceProvider {
 			"aws_route_table":                               dataSourceAwsRouteTable(),
 			"aws_route_tables":                              dataSourceAwsRouteTables(),
 			"aws_route53_delegation_set":                    dataSourceAwsDelegationSet(),
-			"aws_route53_resolver":                          dataSourceAwsRoute53Resolver(),
+			"aws_route53_resolver":                          dataSourceAwsRoute53ResolverEndpoint(),
 			"aws_route53_resolver_rule":                     dataSourceAwsRoute53ResolverRule(),
 			"aws_route53_resolver_rules":                    dataSourceAwsRoute53ResolverRules(),
 			"aws_route53_zone":                              dataSourceAwsRoute53Zone(),
