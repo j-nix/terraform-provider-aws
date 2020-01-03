@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/route53resolver"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"log"
 )
 
@@ -96,7 +96,6 @@ func dataSourceAwsRoute53ResolverEndpointRead(d *schema.ResourceData, meta inter
 	d.Set("name", re.Name)
 	d.Set("security_group_ids", re.SecurityGroupIds)
 	d.SetId(aws.StringValue(re.Id))
-
 
 	return nil
 }
