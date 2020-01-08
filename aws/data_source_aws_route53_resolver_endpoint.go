@@ -1,12 +1,12 @@
 package aws
 
 import (
-	"errors"
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
+
 	"github.com/aws/aws-sdk-go/service/route53resolver"
+
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"log"
 )
 
 func dataSourceAwsRoute53ResolverEndpoint() *schema.Resource {
@@ -14,113 +14,165 @@ func dataSourceAwsRoute53ResolverEndpoint() *schema.Resource {
 		Read: dataSourceAwsRoute53ResolverEndpointRead,
 
 		Schema: map[string]*schema.Schema{
-			"filter": dataSourceFiltersSchema(),
-			"id": {
-				Type:     schema.TypeString,
+			"filter": {
+				Type:     schema.TypeSet,
 				Optional: true,
+				MinItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"values": {
+							Type:     schema.TypeList,
+							Required: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+						},
+					},
+				},
 			},
-			"arn": {
+
+			"direction": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"host_vpc_id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"ip_addresses": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
+
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"security_group_ids": {
-				Type:     schema.TypeList,
+
+			"arn": {
+				Type:     schema.TypeString,
 				Computed: true,
+			},
+
+			"id": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+
+			"status": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"vpc_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"ip_addresses": {
+				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
+				Computed: true,
+				Set:      schema.HashString,
 			},
 		},
 	}
 }
 
 func dataSourceAwsRoute53ResolverEndpointRead(d *schema.ResourceData, meta interface{}) error {
-	var resolverId string
 	conn := meta.(*AWSClient).route53resolverconn
-	input := route53resolver.ListResolverEndpointsInput{}
-	//conn.ListResolverEndpoints()
+	req := &route53resolver.ListResolverEndpointsInput{}
 
-	if v, ok := d.GetOk("filter"); ok {
-		input.Filters = buildAwsRoute53ResolverDataSourceFilters(v.(*schema.Set))
+	resolvers := make([]*route53resolver.ResolverEndpoint, 0)
+
+	rID, rIDOk := d.GetOk("id")
+	filters, filtersOk := d.GetOk("filter")
+
+	if filtersOk {
+		req.Filters = buildR53ResolverTagFilters(filters.(*schema.Set))
 	}
 
-	if id, ok := d.GetOk("id"); ok {
-		resolverId = fmt.Sprintf("%v", id)
+	for {
+		resp, err := conn.ListResolverEndpoints(req)
+
+		if err != nil {
+			return fmt.Errorf("Error Reading Route53 Resolver Endpoints: %s", req)
+		}
+
+		if len(resp.ResolverEndpoints) == 0 && filtersOk {
+			return fmt.Errorf("Your query returned no results. Please change your search criteria and try again.")
+		}
+
+		if len(resp.ResolverEndpoints) > 1 && !rIDOk {
+			return fmt.Errorf("Your query returned more than one resolver. Please change your search criteria and try again.")
+		}
+
+		if rIDOk {
+			for _, r := range resp.ResolverEndpoints {
+				if aws.StringValue(r.Id) == rID {
+					resolvers = append(resolvers, r)
+					break
+				}
+			}
+		} else {
+			resolvers = append(resolvers, resp.ResolverEndpoints[0])
+		}
+
+		if len(resolvers) == 0 {
+			return fmt.Errorf("The ID provided could not be found")
+		}
+
+		resolver := resolvers[0]
+
+		d.SetId(aws.StringValue(resolver.Id))
+		d.Set("arn", aws.StringValue(resolver.Arn))
+		d.Set("status", aws.StringValue(resolver.Status))
+		d.Set("name", aws.StringValue(resolver.Name))
+		d.Set("vpc_id", aws.StringValue(resolver.HostVPCId))
+		d.Set("direction", aws.StringValue(resolver.Direction))
+
+		if resp.NextToken == nil {
+			break
+		}
+
+		req.NextToken = resp.NextToken
 	}
 
-	log.Printf("[DEBUG] Reading Route53 Resolver Endpoints: %s", input)
-	output, err := conn.ListResolverEndpoints(&input)
-
-	if err != nil {
-		return fmt.Errorf("error reading Route53 Resolver Endpoints: %s", err)
+	params := &route53resolver.ListResolverEndpointIpAddressesInput{
+		ResolverEndpointId: aws.String(d.Id()),
 	}
 
-	if output == nil || len(output.ResolverEndpoints) == 0 {
-		return errors.New("error reading Route53 Resolver Endpoints: no results found")
+	ipAddresses := []interface{}{}
+
+	for {
+		ip, err := conn.ListResolverEndpointIpAddresses(params)
+
+		if err != nil {
+			return fmt.Errorf("error getting Route53 Resolver endpoint (%s) IP Addresses: %s", d.Id(), err)
+		}
+
+		for _, vIPAddresses := range ip.IpAddresses {
+			ipAddresses = append(ipAddresses, aws.StringValue(vIPAddresses.Ip))
+		}
+
+		d.Set("ip_addresses", ipAddresses)
+
+		if ip.NextToken == nil {
+			break
+		}
+
+		params.NextToken = ip.NextToken
 	}
-
-	if len(output.ResolverEndpoints) > 1 {
-		return errors.New("error reading Route53 Resolver Endpoints: multiple results found, try adjusting search criteria")
-	}
-
-	re := output.ResolverEndpoints[0]
-	if re == nil {
-		return errors.New("error reading Route53 Resolver Endpoint: empty result")
-	}
-
-	log.Printf("[DEBUG] Reading Route53 Resolver Endpoint IP Addresses: %s", resolverId)
-	ips, err := endpointIps(&resolverId, conn)
-
-	if err != nil {
-		return fmt.Errorf("error reading Route53 Resolver Endpoint IP Addresses: %s", err)
-	}
-
-	if ips == nil {
-		return errors.New("error reading Route53 Resolver Endpoint IP Addresses: no results found")
-	}
-
-	d.Set("arn", re.Arn)
-	d.Set("host_vpc_id", re.HostVPCId)
-	d.Set("ip_addresses", ips)
-	d.Set("name", re.Name)
-	d.Set("security_group_ids", re.SecurityGroupIds)
-	d.SetId(aws.StringValue(re.Id))
 
 	return nil
 }
 
-func endpointIps(id *string, conn *route53resolver.Route53Resolver) ([]string, error) {
-	req := &route53resolver.ListResolverEndpointIpAddressesInput{
-		ResolverEndpointId: id,
+func buildR53ResolverTagFilters(set *schema.Set) []*route53resolver.Filter {
+	var filters []*route53resolver.Filter
+
+	for _, v := range set.List() {
+		m := v.(map[string]interface{})
+		var filterValues []*string
+		for _, e := range m["values"].([]interface{}) {
+			filterValues = append(filterValues, aws.String(e.(string)))
+		}
+		filters = append(filters, &route53resolver.Filter{
+			Name:   aws.String(m["name"].(string)),
+			Values: filterValues,
+		})
 	}
 
-	log.Printf("[DEBUG] Reading IPAddresses: %s", req)
-	resp, err := conn.ListResolverEndpointIpAddresses(req)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil || len(resp.IpAddresses) == 0 {
-		return nil, fmt.Errorf("no matching IP address found: %s", req)
-	}
-
-	ipResp := resp.IpAddresses
-	log.Printf("[DEBUG] IP address response: %s", ipResp)
-
-	list := make([]string, len(ipResp))
-	for i, address := range ipResp {
-		list[i] = *address.Ip
-	}
-
-	return list, nil
+	return filters
 }
