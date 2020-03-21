@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/codepipeline"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsCodePipeline() *schema.Resource {
@@ -170,7 +170,7 @@ func resourceAwsCodePipelineCreate(d *schema.ResourceData, meta interface{}) err
 	conn := meta.(*AWSClient).codepipelineconn
 	params := &codepipeline.CreatePipelineInput{
 		Pipeline: expandAwsCodePipeline(d),
-		Tags:     keyvaluetags.New(d.Get("tags").(map[string]interface{})).IgnoreAws().CodepipelineTags(),
+		Tags:     tagsFromMapCodePipeline(d.Get("tags").(map[string]interface{})),
 	}
 
 	var resp *codepipeline.CreatePipelineOutput
@@ -195,8 +195,7 @@ func resourceAwsCodePipelineCreate(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error creating CodePipeline: invalid response from AWS")
 	}
 
-	d.SetId(aws.StringValue(resp.Pipeline.Name))
-
+	d.SetId(*resp.Pipeline.Name)
 	return resourceAwsCodePipelineRead(d, meta)
 }
 
@@ -430,16 +429,15 @@ func resourceAwsCodePipelineRead(d *schema.ResourceData, meta interface{}) error
 		Name: aws.String(d.Id()),
 	})
 
-	if isAWSErr(err, codepipeline.ErrCodePipelineNotFoundException, "") {
-		log.Printf("[WARN] Codepipeline (%s) not found, removing from state", d.Id())
-		d.SetId("")
-		return nil
-	}
-
 	if err != nil {
-		return fmt.Errorf("error reading Codepipeline: %s", err)
+		pipelineerr, ok := err.(awserr.Error)
+		if ok && pipelineerr.Code() == "PipelineNotFoundException" {
+			log.Printf("[INFO] Codepipeline %q not found", d.Id())
+			d.SetId("")
+			return nil
+		}
+		return fmt.Errorf("Error retreiving Pipeline: %q", err)
 	}
-
 	metadata := resp.Metadata
 	pipeline := resp.Pipeline
 
@@ -451,19 +449,12 @@ func resourceAwsCodePipelineRead(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 
-	arn := aws.StringValue(metadata.PipelineArn)
-	d.Set("arn", arn)
+	d.Set("arn", metadata.PipelineArn)
 	d.Set("name", pipeline.Name)
 	d.Set("role_arn", pipeline.RoleArn)
 
-	tags, err := keyvaluetags.CodepipelineListTags(conn, arn)
-
-	if err != nil {
-		return fmt.Errorf("error listing tags for Codepipeline (%s): %s", arn, err)
-	}
-
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
+	if err := saveTagsCodePipeline(conn, d); err != nil {
+		return err
 	}
 
 	return nil
@@ -484,13 +475,8 @@ func resourceAwsCodePipelineUpdate(d *schema.ResourceData, meta interface{}) err
 			d.Id(), err)
 	}
 
-	arn := d.Get("arn").(string)
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.CodepipelineUpdateTags(conn, arn, o, n); err != nil {
-			return fmt.Errorf("error updating Codepipeline (%s) tags: %s", arn, err)
-		}
+	if err := setTagsCodePipeline(conn, d); err != nil {
+		return fmt.Errorf("Error updating CodePipeline tags: %s", d.Id())
 	}
 
 	return resourceAwsCodePipelineRead(d, meta)
@@ -502,14 +488,6 @@ func resourceAwsCodePipelineDelete(d *schema.ResourceData, meta interface{}) err
 	_, err := conn.DeletePipeline(&codepipeline.DeletePipelineInput{
 		Name: aws.String(d.Id()),
 	})
-
-	if isAWSErr(err, codepipeline.ErrCodePipelineNotFoundException, "") {
-		return nil
-	}
-
-	if err != nil {
-		return fmt.Errorf("error deleting Codepipeline (%s): %s", d.Id(), err)
-	}
 
 	return err
 }

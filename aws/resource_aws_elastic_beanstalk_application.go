@@ -5,11 +5,11 @@ import (
 	"log"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/elasticbeanstalk"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsElasticBeanstalkApplication() *schema.Resource {
@@ -79,7 +79,7 @@ func resourceAwsElasticBeanstalkApplicationCreate(d *schema.ResourceData, meta i
 	req := &elasticbeanstalk.CreateApplicationInput{
 		ApplicationName: aws.String(name),
 		Description:     aws.String(description),
-		Tags:            keyvaluetags.New(d.Get("tags").(map[string]interface{})).IgnoreElasticbeanstalk().ElasticbeanstalkTags(),
+		Tags:            tagsFromMapBeanstalk(d.Get("tags").(map[string]interface{})),
 	}
 
 	app, err := beanstalkConn.CreateApplication(req)
@@ -97,27 +97,22 @@ func resourceAwsElasticBeanstalkApplicationCreate(d *schema.ResourceData, meta i
 }
 
 func resourceAwsElasticBeanstalkApplicationUpdate(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).elasticbeanstalkconn
+	beanstalkConn := meta.(*AWSClient).elasticbeanstalkconn
 
 	if d.HasChange("description") {
-		if err := resourceAwsElasticBeanstalkApplicationDescriptionUpdate(conn, d); err != nil {
+		if err := resourceAwsElasticBeanstalkApplicationDescriptionUpdate(beanstalkConn, d); err != nil {
 			return err
 		}
 	}
 
 	if d.HasChange("appversion_lifecycle") {
-		if err := resourceAwsElasticBeanstalkApplicationAppversionLifecycleUpdate(conn, d, nil); err != nil {
+		if err := resourceAwsElasticBeanstalkApplicationAppversionLifecycleUpdate(beanstalkConn, d, nil); err != nil {
 			return err
 		}
 	}
 
-	arn := d.Get("arn").(string)
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.ElasticbeanstalkUpdateTags(conn, arn, o, n); err != nil {
-			return fmt.Errorf("error updating Elastic Beanstalk Application (%s) tags: %s", arn, err)
-		}
+	if err := setTagsBeanstalk(beanstalkConn, d, d.Get("arn").(string)); err != nil {
+		return fmt.Errorf("error setting tags for %s: %s", d.Id(), err)
 	}
 
 	return resourceAwsElasticBeanstalkApplicationRead(d, meta)
@@ -241,8 +236,7 @@ func resourceAwsElasticBeanstalkApplicationRead(d *schema.ResourceData, meta int
 		return err
 	}
 
-	arn := aws.StringValue(app.ApplicationArn)
-	d.Set("arn", arn)
+	d.Set("arn", app.ApplicationArn)
 	d.Set("name", app.ApplicationName)
 	d.Set("description", app.Description)
 
@@ -250,14 +244,8 @@ func resourceAwsElasticBeanstalkApplicationRead(d *schema.ResourceData, meta int
 		d.Set("appversion_lifecycle", flattenResourceLifecycleConfig(app.ResourceLifecycleConfig))
 	}
 
-	tags, err := keyvaluetags.ElasticbeanstalkListTags(conn, arn)
-
-	if err != nil {
-		return fmt.Errorf("error listing tags for Elastic Beanstalk Application (%s): %s", arn, err)
-	}
-
-	if err := d.Set("tags", tags.IgnoreElasticbeanstalk().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
+	if err := saveTagsBeanstalk(conn, d, aws.StringValue(app.ApplicationArn)); err != nil {
+		return fmt.Errorf("error saving tags for %s: %s", d.Id(), err)
 	}
 
 	return nil

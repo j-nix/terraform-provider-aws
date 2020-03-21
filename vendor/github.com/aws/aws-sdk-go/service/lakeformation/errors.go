@@ -2,10 +2,6 @@
 
 package lakeformation
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeAlreadyExistsException for service response error code
@@ -44,12 +40,3 @@ const (
 	// The operation timed out.
 	ErrCodeOperationTimeoutException = "OperationTimeoutException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"AlreadyExistsException":          newErrorAlreadyExistsException,
-	"ConcurrentModificationException": newErrorConcurrentModificationException,
-	"EntityNotFoundException":         newErrorEntityNotFoundException,
-	"InternalServiceException":        newErrorInternalServiceException,
-	"InvalidInputException":           newErrorInvalidInputException,
-	"OperationTimeoutException":       newErrorOperationTimeoutException,
-}

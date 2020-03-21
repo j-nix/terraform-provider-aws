@@ -3,7 +3,6 @@ package lint
 import (
 	"context"
 	"fmt"
-	"os"
 	"runtime/debug"
 	"strings"
 
@@ -114,10 +113,6 @@ func (r *Runner) runLinterSafe(ctx context.Context, lintCtx *linter.Context,
 	specificLintCtx := *lintCtx
 	specificLintCtx.Log = r.Log.Child(lc.Name())
 
-	// Packages in lintCtx might be dirty due to the last analysis,
-	// which affects to the next analysis.
-	// To avoid this issue, we clear type information from the packages.
-	specificLintCtx.ClearTypesInPackages()
 	issues, err := lc.Linter.Run(ctx, &specificLintCtx)
 	if err != nil {
 		return nil, err
@@ -180,29 +175,24 @@ func (r Runner) printPerProcessorStat(stat map[string]processorStat) {
 	}
 }
 
-func (r Runner) Run(ctx context.Context, linters []*linter.Config, lintCtx *linter.Context) ([]result.Issue, error) {
+func (r Runner) Run(ctx context.Context, linters []*linter.Config, lintCtx *linter.Context) []result.Issue {
 	sw := timeutils.NewStopwatch("linters", r.Log)
 	defer sw.Print()
 
 	var issues []result.Issue
-	var runErr error
 	for _, lc := range linters {
 		lc := lc
 		sw.TrackStage(lc.Name(), func() {
 			linterIssues, err := r.runLinterSafe(ctx, lintCtx, lc)
 			if err != nil {
 				r.Log.Warnf("Can't run linter %s: %s", lc.Linter.Name(), err)
-				if os.Getenv("GOLANGCI_COM_RUN") == "" {
-					// Don't stop all linters on one linter failure for golangci.com.
-					runErr = err
-				}
 				return
 			}
 			issues = append(issues, linterIssues...)
 		})
 	}
 
-	return r.processLintResults(issues), runErr
+	return r.processLintResults(issues)
 }
 
 func (r *Runner) processIssues(issues []result.Issue, sw *timeutils.Stopwatch, statPerProcessor map[string]processorStat) []result.Issue {

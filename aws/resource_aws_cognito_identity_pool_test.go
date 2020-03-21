@@ -29,7 +29,8 @@ func TestAccAWSCognitoIdentityPool_basic(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccCheckAWSCognitoIdentityPoolExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "identity_pool_name", fmt.Sprintf("identity pool %s", name)),
-					testAccMatchResourceAttrRegionalARN(resourceName, "arn", "cognito-identity", regexp.MustCompile(`identitypool/.+`)),
+					resource.TestMatchResourceAttr(resourceName, "arn",
+						regexp.MustCompile("^arn:aws:cognito-identity:[^:]+:[0-9]{12}:identitypool/[^:]+:([0-9a-f]){8}-([0-9a-f]){4}-([0-9a-f]){4}-([0-9a-f]){4}-([0-9a-f]){12}$")),
 					resource.TestCheckResourceAttr(resourceName, "allow_unauthenticated_identities", "false"),
 				),
 			},
@@ -266,7 +267,7 @@ func TestAccAWSCognitoIdentityPool_addingNewProviderKeepsOldProvider(t *testing.
 	})
 }
 
-func TestAccAWSCognitoIdentityPool_tags(t *testing.T) {
+func TestAccAWSCognitoIdentityPoolWithTags(t *testing.T) {
 	name := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
 	resourceName := "aws_cognito_identity_pool.main"
 
@@ -276,11 +277,10 @@ func TestAccAWSCognitoIdentityPool_tags(t *testing.T) {
 		CheckDestroy: testAccCheckAWSCognitoIdentityPoolDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSCognitoIdentityPoolConfig_Tags1(name, "key1", "value1"),
+				Config: testAccAWSCognitoIdentityPoolConfigWithTags(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccCheckAWSCognitoIdentityPoolExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags.key1", "value1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.environment", "dev"),
 				),
 			},
 			{
@@ -289,20 +289,11 @@ func TestAccAWSCognitoIdentityPool_tags(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccAWSCognitoIdentityPoolConfig_Tags2(name, "key1", "value1updated", "key2", "value2"),
+				Config: testAccAWSCognitoIdentityPoolConfigWithTagsUpdated(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccCheckAWSCognitoIdentityPoolExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "tags.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "tags.key1", "value1updated"),
-					resource.TestCheckResourceAttr(resourceName, "tags.key2", "value2"),
-				),
-			},
-			{
-				Config: testAccAWSCognitoIdentityPoolConfig_Tags1(name, "key2", "value2"),
-				Check: resource.ComposeAggregateTestCheckFunc(
-					testAccCheckAWSCognitoIdentityPoolExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags.key2", "value2"),
+					resource.TestCheckResourceAttr(resourceName, "tags.environment", "dev"),
+					resource.TestCheckResourceAttr(resourceName, "tags.project", "Terraform"),
 				),
 			},
 		},
@@ -343,7 +334,7 @@ func testAccCheckAWSCognitoIdentityPoolDestroy(s *terraform.State) error {
 		})
 
 		if err != nil {
-			if wserr, ok := err.(awserr.Error); ok && wserr.Code() == cognitoidentity.ErrCodeResourceNotFoundException {
+			if wserr, ok := err.(awserr.Error); ok && wserr.Code() == "ResourceNotFoundException" {
 				return nil
 			}
 			return err
@@ -526,29 +517,29 @@ resource "aws_cognito_identity_pool" "main" {
 `, name)
 }
 
-func testAccAWSCognitoIdentityPoolConfig_Tags1(name, tagKey1, tagValue1 string) string {
+func testAccAWSCognitoIdentityPoolConfigWithTags(name string) string {
 	return fmt.Sprintf(`
 resource "aws_cognito_identity_pool" "main" {
-  identity_pool_name               = %[1]q
+  identity_pool_name               = "identity pool %s"
   allow_unauthenticated_identities = false
 
   tags = {
-    %[2]q = %[3]q
+	"environment" = "dev"
   }
 }
-`, name, tagKey1, tagValue1)
+`, name)
 }
 
-func testAccAWSCognitoIdentityPoolConfig_Tags2(name, tagKey1, tagValue1, tagKey2, tagValue2 string) string {
+func testAccAWSCognitoIdentityPoolConfigWithTagsUpdated(name string) string {
 	return fmt.Sprintf(`
 resource "aws_cognito_identity_pool" "main" {
-  identity_pool_name               = %[1]q
+  identity_pool_name               = "identity pool %s"
   allow_unauthenticated_identities = false
 
   tags = {
-    %[2]q = %[3]q
-    %[4]q = %[5]q
+    "environment" = "dev"
+    "project"     = "Terraform"
   }
 }
-`, name, tagKey1, tagValue1, tagKey2, tagValue2)
+`, name)
 }

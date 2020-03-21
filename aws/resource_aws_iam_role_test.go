@@ -20,7 +20,6 @@ func init() {
 		Name: "aws_iam_role",
 		Dependencies: []string{
 			"aws_batch_compute_environment",
-			"aws_cloudformation_stack_set_instance",
 			"aws_cognito_user_pool",
 			"aws_config_configuration_aggregator",
 			"aws_config_configuration_recorder",

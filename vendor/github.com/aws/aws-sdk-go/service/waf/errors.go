@@ -2,10 +2,6 @@
 
 package waf
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeBadRequestException for service response error code
@@ -214,24 +210,3 @@ const (
 	// "WAFTagOperationInternalErrorException".
 	ErrCodeTagOperationInternalErrorException = "WAFTagOperationInternalErrorException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"WAFBadRequestException":                newErrorBadRequestException,
-	"WAFDisallowedNameException":            newErrorDisallowedNameException,
-	"WAFInternalErrorException":             newErrorInternalErrorException,
-	"WAFInvalidAccountException":            newErrorInvalidAccountException,
-	"WAFInvalidOperationException":          newErrorInvalidOperationException,
-	"WAFInvalidParameterException":          newErrorInvalidParameterException,
-	"WAFInvalidPermissionPolicyException":   newErrorInvalidPermissionPolicyException,
-	"WAFInvalidRegexPatternException":       newErrorInvalidRegexPatternException,
-	"WAFLimitsExceededException":            newErrorLimitsExceededException,
-	"WAFNonEmptyEntityException":            newErrorNonEmptyEntityException,
-	"WAFNonexistentContainerException":      newErrorNonexistentContainerException,
-	"WAFNonexistentItemException":           newErrorNonexistentItemException,
-	"WAFReferencedItemException":            newErrorReferencedItemException,
-	"WAFServiceLinkedRoleErrorException":    newErrorServiceLinkedRoleErrorException,
-	"WAFStaleDataException":                 newErrorStaleDataException,
-	"WAFSubscriptionNotFoundException":      newErrorSubscriptionNotFoundException,
-	"WAFTagOperationException":              newErrorTagOperationException,
-	"WAFTagOperationInternalErrorException": newErrorTagOperationInternalErrorException,
-}

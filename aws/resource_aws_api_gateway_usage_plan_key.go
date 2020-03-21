@@ -3,7 +3,6 @@ package aws
 import (
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -16,20 +15,6 @@ func resourceAwsApiGatewayUsagePlanKey() *schema.Resource {
 		Create: resourceAwsApiGatewayUsagePlanKeyCreate,
 		Read:   resourceAwsApiGatewayUsagePlanKeyRead,
 		Delete: resourceAwsApiGatewayUsagePlanKeyDelete,
-		Importer: &schema.ResourceImporter{
-			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-				idParts := strings.Split(d.Id(), "/")
-				if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
-					return nil, fmt.Errorf("Unexpected format of ID (%q), expected USAGE-PLAN-ID/USAGE-PLAN-KEY-ID", d.Id())
-				}
-				usagePlanId := idParts[0]
-				usagePlanKeyId := idParts[1]
-				d.Set("usage_plan_id", usagePlanId)
-				d.Set("key_id", usagePlanKeyId)
-				d.SetId(usagePlanKeyId)
-				return []*schema.ResourceData{d}, nil
-			},
-		},
 
 		Schema: map[string]*schema.Schema{
 			"key_id": {
@@ -64,7 +49,7 @@ func resourceAwsApiGatewayUsagePlanKey() *schema.Resource {
 }
 
 func resourceAwsApiGatewayUsagePlanKeyCreate(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).apigatewayconn
+	conn := meta.(*AWSClient).apigateway
 	log.Print("[DEBUG] Creating API Gateway Usage Plan Key")
 
 	params := &apigateway.CreateUsagePlanKeyInput{
@@ -84,7 +69,7 @@ func resourceAwsApiGatewayUsagePlanKeyCreate(d *schema.ResourceData, meta interf
 }
 
 func resourceAwsApiGatewayUsagePlanKeyRead(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).apigatewayconn
+	conn := meta.(*AWSClient).apigateway
 	log.Printf("[DEBUG] Reading API Gateway Usage Plan Key: %s", d.Id())
 
 	up, err := conn.GetUsagePlanKey(&apigateway.GetUsagePlanKeyInput{
@@ -92,7 +77,7 @@ func resourceAwsApiGatewayUsagePlanKeyRead(d *schema.ResourceData, meta interfac
 		KeyId:       aws.String(d.Get("key_id").(string)),
 	})
 	if err != nil {
-		if awsErr, ok := err.(awserr.Error); ok && awsErr.Code() == apigateway.ErrCodeNotFoundException {
+		if awsErr, ok := err.(awserr.Error); ok && awsErr.Code() == "NotFoundException" {
 			log.Printf("[WARN] API Gateway Usage Plan Key (%s) not found, removing from state", d.Id())
 			d.SetId("")
 			return nil
@@ -102,20 +87,19 @@ func resourceAwsApiGatewayUsagePlanKeyRead(d *schema.ResourceData, meta interfac
 
 	d.Set("name", up.Name)
 	d.Set("value", up.Value)
-	d.Set("key_type", up.Type)
 
 	return nil
 }
 
 func resourceAwsApiGatewayUsagePlanKeyDelete(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).apigatewayconn
+	conn := meta.(*AWSClient).apigateway
 
 	log.Printf("[DEBUG] Deleting API Gateway Usage Plan Key: %s", d.Id())
 	_, err := conn.DeleteUsagePlanKey(&apigateway.DeleteUsagePlanKeyInput{
 		UsagePlanId: aws.String(d.Get("usage_plan_id").(string)),
 		KeyId:       aws.String(d.Get("key_id").(string)),
 	})
-	if isAWSErr(err, apigateway.ErrCodeNotFoundException, "") {
+	if isAWSErr(err, "NotFoundException", "") {
 		return nil
 	}
 	if err != nil {

@@ -212,9 +212,17 @@ func resourceAwsGlobalAcceleratorListenerUpdate(d *schema.ResourceData, meta int
 	}
 
 	// Creating a listener triggers the accelerator to change status to InPending
-	err = resourceAwsGlobalAcceleratorAcceleratorWaitForDeployedState(conn, d.Get("accelerator_arn").(string))
+	stateConf := &resource.StateChangeConf{
+		Pending: []string{globalaccelerator.AcceleratorStatusInProgress},
+		Target:  []string{globalaccelerator.AcceleratorStatusDeployed},
+		Refresh: resourceAwsGlobalAcceleratorAcceleratorStateRefreshFunc(conn, d.Get("accelerator_arn").(string)),
+		Timeout: 5 * time.Minute,
+	}
+
+	log.Printf("[DEBUG] Waiting for Global Accelerator listener (%s) availability", d.Id())
+	_, err = stateConf.WaitForState()
 	if err != nil {
-		return err
+		return fmt.Errorf("Error waiting for Global Accelerator listener (%s) availability: %s", d.Id(), err)
 	}
 
 	return resourceAwsGlobalAcceleratorListenerRead(d, meta)
@@ -236,10 +244,17 @@ func resourceAwsGlobalAcceleratorListenerDelete(d *schema.ResourceData, meta int
 	}
 
 	// Deleting a listener triggers the accelerator to change status to InPending
-	// }
-	err = resourceAwsGlobalAcceleratorAcceleratorWaitForDeployedState(conn, d.Get("accelerator_arn").(string))
+	stateConf := &resource.StateChangeConf{
+		Pending: []string{globalaccelerator.AcceleratorStatusInProgress},
+		Target:  []string{globalaccelerator.AcceleratorStatusDeployed},
+		Refresh: resourceAwsGlobalAcceleratorAcceleratorStateRefreshFunc(conn, d.Get("accelerator_arn").(string)),
+		Timeout: 5 * time.Minute,
+	}
+
+	log.Printf("[DEBUG] Waiting for Global Accelerator listener (%s) deletion", d.Id())
+	_, err = stateConf.WaitForState()
 	if err != nil {
-		return err
+		return fmt.Errorf("Error waiting for Global Accelerator listener (%s) deletion: %s", d.Id(), err)
 	}
 
 	return nil

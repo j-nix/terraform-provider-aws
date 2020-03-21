@@ -41,7 +41,7 @@ func resourceAwsSesReceiptFilter() *schema.Resource {
 }
 
 func resourceAwsSesReceiptFilterCreate(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).sesconn
+	conn := meta.(*AWSClient).sesConn
 
 	name := d.Get("name").(string)
 
@@ -66,7 +66,7 @@ func resourceAwsSesReceiptFilterCreate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceAwsSesReceiptFilterRead(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).sesconn
+	conn := meta.(*AWSClient).sesConn
 
 	listOpts := &ses.ListReceiptFiltersInput{}
 
@@ -94,7 +94,7 @@ func resourceAwsSesReceiptFilterRead(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceAwsSesReceiptFilterDelete(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).sesconn
+	conn := meta.(*AWSClient).sesConn
 
 	deleteOpts := &ses.DeleteReceiptFilterInput{
 		FilterName: aws.String(d.Id()),

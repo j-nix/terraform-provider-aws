@@ -7,8 +7,8 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/configservice"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsConfigAggregateAuthorization() *schema.Resource {
@@ -52,7 +52,7 @@ func resourceAwsConfigAggregateAuthorizationPut(d *schema.ResourceData, meta int
 	req := &configservice.PutAggregationAuthorizationInput{
 		AuthorizedAccountId: aws.String(accountId),
 		AuthorizedAwsRegion: aws.String(region),
-		Tags:                keyvaluetags.New(d.Get("tags").(map[string]interface{})).IgnoreAws().ConfigserviceTags(),
+		Tags:                tagsFromMapConfigService(d.Get("tags").(map[string]interface{})),
 	}
 
 	_, err := conn.PutAggregationAuthorization(req)
@@ -97,14 +97,13 @@ func resourceAwsConfigAggregateAuthorizationRead(d *schema.ResourceData, meta in
 
 	d.Set("arn", aggregationAuthorization.AggregationAuthorizationArn)
 
-	tags, err := keyvaluetags.ConfigserviceListTags(conn, d.Get("arn").(string))
-
-	if err != nil {
-		return fmt.Errorf("error listing tags for Config Aggregate Authorization (%s): %s", d.Get("arn").(string), err)
-	}
-
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
+	if err := saveTagsConfigService(conn, d, aws.StringValue(aggregationAuthorization.AggregationAuthorizationArn)); err != nil {
+		if isAWSErr(err, configservice.ErrCodeResourceNotFoundException, "") {
+			log.Printf("[WARN] Aggregate Authorization not found, removing from state: %s", d.Id())
+			d.SetId("")
+			return nil
+		}
+		return fmt.Errorf("Error setting tags for %s: %s", d.Id(), err)
 	}
 
 	return nil
@@ -113,14 +112,14 @@ func resourceAwsConfigAggregateAuthorizationRead(d *schema.ResourceData, meta in
 func resourceAwsConfigAggregateAuthorizationUpdate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).configconn
 
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.ConfigserviceUpdateTags(conn, d.Get("arn").(string), o, n); err != nil {
-			return fmt.Errorf("error updating Config Aggregate Authorization (%s) tags: %s", d.Get("arn").(string), err)
+	if err := setTagsConfigService(conn, d, d.Get("arn").(string)); err != nil {
+		if isAWSErr(err, configservice.ErrCodeResourceNotFoundException, "") {
+			log.Printf("[WARN] Aggregate Authorization not found, removing from state: %s", d.Id())
+			d.SetId("")
+			return nil
 		}
+		return fmt.Errorf("Error updating tags for %s: %s", d.Id(), err)
 	}
-
 	return resourceAwsConfigAggregateAuthorizationRead(d, meta)
 }
 

@@ -757,14 +757,11 @@ func TestAccAWSKinesisFirehoseDeliveryStream_ExtendedS3Updates(t *testing.T) {
 	preConfig := testAccFirehoseAWSLambdaConfigBasic(funcName, policyName, roleName) +
 		fmt.Sprintf(testAccKinesisFirehoseDeliveryStreamConfig_extendedS3basic,
 			ri, ri, ri, ri)
-	firstUpdateConfig := testAccFirehoseAWSLambdaConfigBasic(funcName, policyName, roleName) +
-		fmt.Sprintf(testAccKinesisFirehoseDeliveryStreamConfig_extendedS3Updates_Initial,
-			ri, ri, ri, ri)
-	removeProcessorsConfig := testAccFirehoseAWSLambdaConfigBasic(funcName, policyName, roleName) +
-		fmt.Sprintf(testAccKinesisFirehoseDeliveryStreamConfig_extendedS3Updates_RemoveProcessors,
+	postConfig := testAccFirehoseAWSLambdaConfigBasic(funcName, policyName, roleName) +
+		fmt.Sprintf(testAccKinesisFirehoseDeliveryStreamConfig_extendedS3Updates,
 			ri, ri, ri, ri)
 
-	firstUpdateExtendedS3DestinationConfig := &firehose.ExtendedS3DestinationDescription{
+	updatedExtendedS3DestinationConfig := &firehose.ExtendedS3DestinationDescription{
 		BufferingHints: &firehose.BufferingHints{
 			IntervalInSeconds: aws.Int64(400),
 			SizeInMBs:         aws.Int64(10),
@@ -782,18 +779,6 @@ func TestAccAWSKinesisFirehoseDeliveryStream_ExtendedS3Updates(t *testing.T) {
 					},
 				},
 			},
-		},
-		S3BackupMode: aws.String("Enabled"),
-	}
-
-	removeProcessorsExtendedS3DestinationConfig := &firehose.ExtendedS3DestinationDescription{
-		BufferingHints: &firehose.BufferingHints{
-			IntervalInSeconds: aws.Int64(400),
-			SizeInMBs:         aws.Int64(10),
-		},
-		ProcessingConfiguration: &firehose.ProcessingConfiguration{
-			Enabled:    aws.Bool(false),
-			Processors: []*firehose.Processor{},
 		},
 		S3BackupMode: aws.String("Enabled"),
 	}
@@ -816,17 +801,10 @@ func TestAccAWSKinesisFirehoseDeliveryStream_ExtendedS3Updates(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: firstUpdateConfig,
+				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckKinesisFirehoseDeliveryStreamExists(resourceName, &stream),
-					testAccCheckAWSKinesisFirehoseDeliveryStreamAttributes(&stream, nil, firstUpdateExtendedS3DestinationConfig, nil, nil, nil),
-				),
-			},
-			{
-				Config: removeProcessorsConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckKinesisFirehoseDeliveryStreamExists(resourceName, &stream),
-					testAccCheckAWSKinesisFirehoseDeliveryStreamAttributes(&stream, nil, removeProcessorsExtendedS3DestinationConfig, nil, nil, nil),
+					testAccCheckAWSKinesisFirehoseDeliveryStreamAttributes(&stream, nil, updatedExtendedS3DestinationConfig, nil, nil, nil),
 				),
 			},
 		},
@@ -1336,7 +1314,7 @@ resource "aws_lambda_function" "lambda_function_test" {
     function_name = "%s"
     role = "${aws_iam_role.iam_for_lambda.arn}"
     handler = "exports.example"
-    runtime = "nodejs12.x"
+    runtime = "nodejs8.10"
 }
 `, funcName)
 }
@@ -1678,7 +1656,7 @@ resource "aws_kinesis_firehose_delivery_stream" "test" {
     role_arn = "${aws_iam_role.firehose.arn}"
     bucket_arn = "${aws_s3_bucket.bucket.arn}"
     processing_configuration {
-      enabled = true
+      enabled = false
       processors {
         type = "Lambda"
         parameters {
@@ -2022,7 +2000,7 @@ resource "aws_kinesis_firehose_delivery_stream" "test" {
 }
 `
 
-var testAccKinesisFirehoseDeliveryStreamConfig_extendedS3Updates_Initial = testAccKinesisFirehoseDeliveryStreamBaseConfig + `
+var testAccKinesisFirehoseDeliveryStreamConfig_extendedS3Updates = testAccKinesisFirehoseDeliveryStreamBaseConfig + `
 resource "aws_kinesis_firehose_delivery_stream" "test" {
   depends_on = ["aws_iam_role_policy.firehose"]
   name = "terraform-kinesis-firehose-basictest-%d"
@@ -2031,7 +2009,7 @@ resource "aws_kinesis_firehose_delivery_stream" "test" {
     role_arn = "${aws_iam_role.firehose.arn}"
     bucket_arn = "${aws_s3_bucket.bucket.arn}"
     processing_configuration {
-      enabled = true
+      enabled = false
       processors {
         type = "Lambda"
         parameters {
@@ -2040,26 +2018,6 @@ resource "aws_kinesis_firehose_delivery_stream" "test" {
         }
       }
     }
-    buffer_size = 10
-    buffer_interval = 400
-    compression_format = "GZIP"
-    s3_backup_mode = "Enabled"
-    s3_backup_configuration {
-      role_arn = "${aws_iam_role.firehose.arn}"
-      bucket_arn = "${aws_s3_bucket.bucket.arn}"
-    }
-  }
-}
-`
-
-var testAccKinesisFirehoseDeliveryStreamConfig_extendedS3Updates_RemoveProcessors = testAccKinesisFirehoseDeliveryStreamBaseConfig + `
-resource "aws_kinesis_firehose_delivery_stream" "test" {
-  depends_on = ["aws_iam_role_policy.firehose"]
-  name = "terraform-kinesis-firehose-basictest-%d"
-  destination = "extended_s3"
-  extended_s3_configuration {
-    role_arn = "${aws_iam_role.firehose.arn}"
-    bucket_arn = "${aws_s3_bucket.bucket.arn}"
     buffer_size = 10
     buffer_interval = 400
     compression_format = "GZIP"

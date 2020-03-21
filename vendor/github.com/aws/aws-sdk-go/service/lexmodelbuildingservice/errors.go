@@ -2,10 +2,6 @@
 
 package lexmodelbuildingservice
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeBadRequestException for service response error code
@@ -63,13 +59,3 @@ const (
 	// "name": string, "version": string } }
 	ErrCodeResourceInUseException = "ResourceInUseException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"BadRequestException":         newErrorBadRequestException,
-	"ConflictException":           newErrorConflictException,
-	"InternalFailureException":    newErrorInternalFailureException,
-	"LimitExceededException":      newErrorLimitExceededException,
-	"NotFoundException":           newErrorNotFoundException,
-	"PreconditionFailedException": newErrorPreconditionFailedException,
-	"ResourceInUseException":      newErrorResourceInUseException,
-}

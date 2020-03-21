@@ -10,7 +10,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsVpcPeeringConnection() *schema.Resource {
@@ -162,7 +161,7 @@ func resourceAwsVPCPeeringRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error setting VPC Peering Connection requester information: %s", err)
 	}
 
-	err = d.Set("tags", keyvaluetags.Ec2KeyValueTags(pc.Tags).IgnoreAws().Map())
+	err = d.Set("tags", tagsToMap(pc.Tags))
 	if err != nil {
 		return fmt.Errorf("Error setting VPC Peering Connection tags: %s", err)
 	}
@@ -203,12 +202,10 @@ func resourceAwsVpcPeeringConnectionModifyOptions(d *schema.ResourceData, meta i
 func resourceAwsVPCPeeringUpdate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).ec2conn
 
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.Ec2UpdateTags(conn, d.Id(), o, n); err != nil {
-			return fmt.Errorf("error updating EC2 VPC Peering Connection (%s) tags: %s", d.Id(), err)
-		}
+	if err := setTags(conn, d); err != nil {
+		return err
+	} else {
+		d.SetPartial("tags")
 	}
 
 	pcRaw, statusCode, err := vpcPeeringConnectionRefreshState(conn, d.Id())()

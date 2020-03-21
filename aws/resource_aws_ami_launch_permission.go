@@ -17,20 +17,6 @@ func resourceAwsAmiLaunchPermission() *schema.Resource {
 		Create: resourceAwsAmiLaunchPermissionCreate,
 		Read:   resourceAwsAmiLaunchPermissionRead,
 		Delete: resourceAwsAmiLaunchPermissionDelete,
-		Importer: &schema.ResourceImporter{
-			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-				idParts := strings.Split(d.Id(), "/")
-				if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
-					return nil, fmt.Errorf("Unexpected format of ID (%q), expected ACCOUNT-ID/IMAGE-ID", d.Id())
-				}
-				accountId := idParts[0]
-				imageId := idParts[1]
-				d.Set("account_id", accountId)
-				d.Set("image_id", imageId)
-				d.SetId(fmt.Sprintf("%s-%s", imageId, accountId))
-				return []*schema.ResourceData{d}, nil
-			},
-		},
 
 		Schema: map[string]*schema.Schema{
 			"image_id": {
@@ -63,7 +49,7 @@ func resourceAwsAmiLaunchPermissionCreate(d *schema.ResourceData, meta interface
 
 	_, err := conn.ModifyImageAttribute(&ec2.ModifyImageAttributeInput{
 		ImageId:   aws.String(image_id),
-		Attribute: aws.String(ec2.ImageAttributeNameLaunchPermission),
+		Attribute: aws.String("launchPermission"),
 		LaunchPermission: &ec2.LaunchPermissionModifications{
 			Add: []*ec2.LaunchPermission{
 				{UserId: aws.String(account_id)},
@@ -90,7 +76,7 @@ func resourceAwsAmiLaunchPermissionDelete(d *schema.ResourceData, meta interface
 
 	_, err := conn.ModifyImageAttribute(&ec2.ModifyImageAttributeInput{
 		ImageId:   aws.String(image_id),
-		Attribute: aws.String(ec2.ImageAttributeNameLaunchPermission),
+		Attribute: aws.String("launchPermission"),
 		LaunchPermission: &ec2.LaunchPermissionModifications{
 			Remove: []*ec2.LaunchPermission{
 				{UserId: aws.String(account_id)},
@@ -107,7 +93,7 @@ func resourceAwsAmiLaunchPermissionDelete(d *schema.ResourceData, meta interface
 func hasLaunchPermission(conn *ec2.EC2, image_id string, account_id string) (bool, error) {
 	attrs, err := conn.DescribeImageAttribute(&ec2.DescribeImageAttributeInput{
 		ImageId:   aws.String(image_id),
-		Attribute: aws.String(ec2.ImageAttributeNameLaunchPermission),
+		Attribute: aws.String("launchPermission"),
 	})
 	if err != nil {
 		// When an AMI disappears out from under a launch permission resource, we will

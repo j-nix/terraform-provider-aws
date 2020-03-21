@@ -2,10 +2,6 @@
 
 package cognitoidentity
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeConcurrentModificationException for service response error code
@@ -79,17 +75,3 @@ const (
 	// Thrown when a request is throttled.
 	ErrCodeTooManyRequestsException = "TooManyRequestsException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"ConcurrentModificationException":           newErrorConcurrentModificationException,
-	"DeveloperUserAlreadyRegisteredException":   newErrorDeveloperUserAlreadyRegisteredException,
-	"ExternalServiceException":                  newErrorExternalServiceException,
-	"InternalErrorException":                    newErrorInternalErrorException,
-	"InvalidIdentityPoolConfigurationException": newErrorInvalidIdentityPoolConfigurationException,
-	"InvalidParameterException":                 newErrorInvalidParameterException,
-	"LimitExceededException":                    newErrorLimitExceededException,
-	"NotAuthorizedException":                    newErrorNotAuthorizedException,
-	"ResourceConflictException":                 newErrorResourceConflictException,
-	"ResourceNotFoundException":                 newErrorResourceNotFoundException,
-	"TooManyRequestsException":                  newErrorTooManyRequestsException,
-}

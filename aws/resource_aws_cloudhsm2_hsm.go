@@ -12,13 +12,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
-func resourceAwsCloudHsmV2Hsm() *schema.Resource {
+func resourceAwsCloudHsm2Hsm() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAwsCloudHsmV2HsmCreate,
-		Read:   resourceAwsCloudHsmV2HsmRead,
-		Delete: resourceAwsCloudHsmV2HsmDelete,
+		Create: resourceAwsCloudHsm2HsmCreate,
+		Read:   resourceAwsCloudHsm2HsmRead,
+		Delete: resourceAwsCloudHsm2HsmDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceAwsCloudHsmV2HsmImport,
+			State: resourceAwsCloudHsm2HsmImport,
 		},
 
 		Timeouts: &schema.ResourceTimeout{
@@ -73,7 +73,7 @@ func resourceAwsCloudHsmV2Hsm() *schema.Resource {
 	}
 }
 
-func resourceAwsCloudHsmV2HsmImport(
+func resourceAwsCloudHsm2HsmImport(
 	d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	d.Set("hsm_id", d.Id())
 	return []*schema.ResourceData{d}, nil
@@ -100,7 +100,7 @@ func describeHsm(conn *cloudhsmv2.CloudHSMV2, hsmId string) (*cloudhsmv2.Hsm, er
 	return hsm, nil
 }
 
-func resourceAwsCloudHsmV2HsmRefreshFunc(conn *cloudhsmv2.CloudHSMV2, id string) resource.StateRefreshFunc {
+func resourceAwsCloudHsm2HsmRefreshFunc(conn *cloudhsmv2.CloudHSMV2, id string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
 		hsm, err := describeHsm(conn, id)
 
@@ -116,12 +116,12 @@ func resourceAwsCloudHsmV2HsmRefreshFunc(conn *cloudhsmv2.CloudHSMV2, id string)
 	}
 }
 
-func resourceAwsCloudHsmV2HsmCreate(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).cloudhsmv2conn
+func resourceAwsCloudHsm2HsmCreate(d *schema.ResourceData, meta interface{}) error {
+	cloudhsm2 := meta.(*AWSClient).cloudhsmv2conn
 
 	clusterId := d.Get("cluster_id").(string)
 
-	cluster, err := describeCloudHsmV2Cluster(conn, clusterId)
+	cluster, err := describeCloudHsm2Cluster(cloudhsm2, clusterId)
 
 	if cluster == nil {
 		log.Printf("[WARN] Error on retrieving CloudHSMv2 Cluster: %s %s", clusterId, err)
@@ -154,7 +154,7 @@ func resourceAwsCloudHsmV2HsmCreate(d *schema.ResourceData, meta interface{}) er
 
 	err = resource.Retry(180*time.Second, func() *resource.RetryError {
 		var err error
-		output, err = conn.CreateHsm(input)
+		output, err = cloudhsm2.CreateHsm(input)
 		if err != nil {
 			if isAWSErr(err, cloudhsmv2.ErrCodeCloudHsmInternalFailureException, "request was rejected because of an AWS CloudHSM internal failure") {
 				log.Printf("[DEBUG] CloudHSMv2 HSM re-try creating %s", input)
@@ -165,7 +165,7 @@ func resourceAwsCloudHsmV2HsmCreate(d *schema.ResourceData, meta interface{}) er
 		return nil
 	})
 	if isResourceTimeoutError(err) {
-		output, err = conn.CreateHsm(input)
+		output, err = cloudhsm2.CreateHsm(input)
 	}
 
 	if err != nil {
@@ -174,14 +174,14 @@ func resourceAwsCloudHsmV2HsmCreate(d *schema.ResourceData, meta interface{}) er
 
 	d.SetId(aws.StringValue(output.Hsm.HsmId))
 
-	if err := waitForCloudhsmv2HsmActive(conn, d.Id(), d.Timeout(schema.TimeoutCreate)); err != nil {
+	if err := waitForCloudhsmv2HsmActive(cloudhsm2, d.Id(), d.Timeout(schema.TimeoutCreate)); err != nil {
 		return fmt.Errorf("error waiting for CloudHSMv2 HSM (%s) creation: %s", d.Id(), err)
 	}
 
-	return resourceAwsCloudHsmV2HsmRead(d, meta)
+	return resourceAwsCloudHsm2HsmRead(d, meta)
 }
 
-func resourceAwsCloudHsmV2HsmRead(d *schema.ResourceData, meta interface{}) error {
+func resourceAwsCloudHsm2HsmRead(d *schema.ResourceData, meta interface{}) error {
 
 	hsm, err := describeHsm(meta.(*AWSClient).cloudhsmv2conn, d.Id())
 
@@ -204,8 +204,8 @@ func resourceAwsCloudHsmV2HsmRead(d *schema.ResourceData, meta interface{}) erro
 	return nil
 }
 
-func resourceAwsCloudHsmV2HsmDelete(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).cloudhsmv2conn
+func resourceAwsCloudHsm2HsmDelete(d *schema.ResourceData, meta interface{}) error {
+	cloudhsm2 := meta.(*AWSClient).cloudhsmv2conn
 	clusterId := d.Get("cluster_id").(string)
 
 	log.Printf("[DEBUG] CloudHSMv2 HSM delete %s %s", clusterId, d.Id())
@@ -215,7 +215,7 @@ func resourceAwsCloudHsmV2HsmDelete(d *schema.ResourceData, meta interface{}) er
 	}
 	err := resource.Retry(180*time.Second, func() *resource.RetryError {
 		var err error
-		_, err = conn.DeleteHsm(input)
+		_, err = cloudhsm2.DeleteHsm(input)
 		if err != nil {
 			if isAWSErr(err, cloudhsmv2.ErrCodeCloudHsmInternalFailureException, "request was rejected because of an AWS CloudHSM internal failure") {
 				log.Printf("[DEBUG] CloudHSMv2 HSM re-try deleting %s", d.Id())
@@ -227,13 +227,13 @@ func resourceAwsCloudHsmV2HsmDelete(d *schema.ResourceData, meta interface{}) er
 	})
 
 	if isResourceTimeoutError(err) {
-		_, err = conn.DeleteHsm(input)
+		_, err = cloudhsm2.DeleteHsm(input)
 	}
 	if err != nil {
 		return fmt.Errorf("error deleting CloudHSM v2 HSM module (%s): %s", d.Id(), err)
 	}
 
-	if err := waitForCloudhsmv2HsmDeletion(conn, d.Id(), d.Timeout(schema.TimeoutDelete)); err != nil {
+	if err := waitForCloudhsmv2HsmDeletion(cloudhsm2, d.Id(), d.Timeout(schema.TimeoutDelete)); err != nil {
 		return fmt.Errorf("error waiting for CloudHSMv2 HSM (%s) deletion: %s", d.Id(), err)
 	}
 
@@ -244,7 +244,7 @@ func waitForCloudhsmv2HsmActive(conn *cloudhsmv2.CloudHSMV2, id string, timeout 
 	stateConf := &resource.StateChangeConf{
 		Pending:    []string{cloudhsmv2.HsmStateCreateInProgress, "destroyed"},
 		Target:     []string{cloudhsmv2.HsmStateActive},
-		Refresh:    resourceAwsCloudHsmV2HsmRefreshFunc(conn, id),
+		Refresh:    resourceAwsCloudHsm2HsmRefreshFunc(conn, id),
 		Timeout:    timeout,
 		MinTimeout: 30 * time.Second,
 		Delay:      30 * time.Second,
@@ -259,7 +259,7 @@ func waitForCloudhsmv2HsmDeletion(conn *cloudhsmv2.CloudHSMV2, id string, timeou
 	stateConf := &resource.StateChangeConf{
 		Pending:    []string{cloudhsmv2.HsmStateDeleteInProgress},
 		Target:     []string{"destroyed"},
-		Refresh:    resourceAwsCloudHsmV2HsmRefreshFunc(conn, id),
+		Refresh:    resourceAwsCloudHsm2HsmRefreshFunc(conn, id),
 		Timeout:    timeout,
 		MinTimeout: 30 * time.Second,
 		Delay:      30 * time.Second,

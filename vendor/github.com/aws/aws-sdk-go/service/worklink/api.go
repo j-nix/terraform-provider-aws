@@ -3,7 +3,6 @@
 package worklink
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -67,23 +66,23 @@ func (c *WorkLink) AssociateDomainRequest(input *AssociateDomainInput) (req *req
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation AssociateDomain for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * ResourceAlreadyExistsException
+//   * ErrCodeResourceAlreadyExistsException "ResourceAlreadyExistsException"
 //   The resource already exists.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/AssociateDomain
@@ -162,23 +161,23 @@ func (c *WorkLink) AssociateWebsiteAuthorizationProviderRequest(input *Associate
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation AssociateWebsiteAuthorizationProvider for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * ResourceAlreadyExistsException
+//   * ErrCodeResourceAlreadyExistsException "ResourceAlreadyExistsException"
 //   The resource already exists.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/AssociateWebsiteAuthorizationProvider
@@ -257,23 +256,23 @@ func (c *WorkLink) AssociateWebsiteCertificateAuthorityRequest(input *AssociateW
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation AssociateWebsiteCertificateAuthority for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * ResourceAlreadyExistsException
+//   * ErrCodeResourceAlreadyExistsException "ResourceAlreadyExistsException"
 //   The resource already exists.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/AssociateWebsiteCertificateAuthority
@@ -353,23 +352,23 @@ func (c *WorkLink) CreateFleetRequest(input *CreateFleetInput) (req *request.Req
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation CreateFleet for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * ResourceAlreadyExistsException
+//   * ErrCodeResourceAlreadyExistsException "ResourceAlreadyExistsException"
 //   The resource already exists.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/CreateFleet
@@ -448,20 +447,20 @@ func (c *WorkLink) DeleteFleetRequest(input *DeleteFleetInput) (req *request.Req
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation DeleteFleet for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/DeleteFleet
@@ -540,20 +539,20 @@ func (c *WorkLink) DescribeAuditStreamConfigurationRequest(input *DescribeAuditS
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation DescribeAuditStreamConfiguration for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/DescribeAuditStreamConfiguration
@@ -632,20 +631,20 @@ func (c *WorkLink) DescribeCompanyNetworkConfigurationRequest(input *DescribeCom
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation DescribeCompanyNetworkConfiguration for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/DescribeCompanyNetworkConfiguration
@@ -723,20 +722,20 @@ func (c *WorkLink) DescribeDeviceRequest(input *DescribeDeviceInput) (req *reque
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation DescribeDevice for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/DescribeDevice
@@ -814,20 +813,20 @@ func (c *WorkLink) DescribeDevicePolicyConfigurationRequest(input *DescribeDevic
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation DescribeDevicePolicyConfiguration for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/DescribeDevicePolicyConfiguration
@@ -905,20 +904,20 @@ func (c *WorkLink) DescribeDomainRequest(input *DescribeDomainInput) (req *reque
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation DescribeDomain for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/DescribeDomain
@@ -997,20 +996,20 @@ func (c *WorkLink) DescribeFleetMetadataRequest(input *DescribeFleetMetadataInpu
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation DescribeFleetMetadata for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/DescribeFleetMetadata
@@ -1088,20 +1087,20 @@ func (c *WorkLink) DescribeIdentityProviderConfigurationRequest(input *DescribeI
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation DescribeIdentityProviderConfiguration for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/DescribeIdentityProviderConfiguration
@@ -1179,20 +1178,20 @@ func (c *WorkLink) DescribeWebsiteCertificateAuthorityRequest(input *DescribeWeb
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation DescribeWebsiteCertificateAuthority for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/DescribeWebsiteCertificateAuthority
@@ -1272,20 +1271,20 @@ func (c *WorkLink) DisassociateDomainRequest(input *DisassociateDomainInput) (re
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation DisassociateDomain for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/DisassociateDomain
@@ -1366,23 +1365,23 @@ func (c *WorkLink) DisassociateWebsiteAuthorizationProviderRequest(input *Disass
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation DisassociateWebsiteAuthorizationProvider for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * ResourceAlreadyExistsException
+//   * ErrCodeResourceAlreadyExistsException "ResourceAlreadyExistsException"
 //   The resource already exists.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/DisassociateWebsiteAuthorizationProvider
@@ -1461,20 +1460,20 @@ func (c *WorkLink) DisassociateWebsiteCertificateAuthorityRequest(input *Disasso
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation DisassociateWebsiteCertificateAuthority for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/DisassociateWebsiteCertificateAuthority
@@ -1558,20 +1557,20 @@ func (c *WorkLink) ListDevicesRequest(input *ListDevicesInput) (req *request.Req
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation ListDevices for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/ListDevices
@@ -1707,17 +1706,17 @@ func (c *WorkLink) ListDomainsRequest(input *ListDomainsInput) (req *request.Req
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation ListDomains for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/ListDomains
@@ -1853,17 +1852,17 @@ func (c *WorkLink) ListFleetsRequest(input *ListFleetsInput) (req *request.Reque
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation ListFleets for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/ListFleets
@@ -2000,20 +1999,20 @@ func (c *WorkLink) ListWebsiteAuthorizationProvidersRequest(input *ListWebsiteAu
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation ListWebsiteAuthorizationProviders for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/ListWebsiteAuthorizationProviders
@@ -2150,17 +2149,17 @@ func (c *WorkLink) ListWebsiteCertificateAuthoritiesRequest(input *ListWebsiteCe
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation ListWebsiteCertificateAuthorities for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/ListWebsiteCertificateAuthorities
@@ -2291,20 +2290,20 @@ func (c *WorkLink) RestoreDomainAccessRequest(input *RestoreDomainAccessInput) (
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation RestoreDomainAccess for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/RestoreDomainAccess
@@ -2383,20 +2382,20 @@ func (c *WorkLink) RevokeDomainAccessRequest(input *RevokeDomainAccessInput) (re
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation RevokeDomainAccess for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/RevokeDomainAccess
@@ -2476,20 +2475,20 @@ func (c *WorkLink) SignOutUserRequest(input *SignOutUserInput) (req *request.Req
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation SignOutUser for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/SignOutUser
@@ -2568,20 +2567,20 @@ func (c *WorkLink) UpdateAuditStreamConfigurationRequest(input *UpdateAuditStrea
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation UpdateAuditStreamConfiguration for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/UpdateAuditStreamConfiguration
@@ -2660,20 +2659,20 @@ func (c *WorkLink) UpdateCompanyNetworkConfigurationRequest(input *UpdateCompany
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation UpdateCompanyNetworkConfiguration for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/UpdateCompanyNetworkConfiguration
@@ -2752,20 +2751,20 @@ func (c *WorkLink) UpdateDevicePolicyConfigurationRequest(input *UpdateDevicePol
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation UpdateDevicePolicyConfiguration for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/UpdateDevicePolicyConfiguration
@@ -2844,20 +2843,20 @@ func (c *WorkLink) UpdateDomainMetadataRequest(input *UpdateDomainMetadataInput)
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation UpdateDomainMetadata for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/UpdateDomainMetadata
@@ -2936,20 +2935,20 @@ func (c *WorkLink) UpdateFleetMetadataRequest(input *UpdateFleetMetadataInput) (
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation UpdateFleetMetadata for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/UpdateFleetMetadata
@@ -3028,20 +3027,20 @@ func (c *WorkLink) UpdateIdentityProviderConfigurationRequest(input *UpdateIdent
 // See the AWS API reference guide for Amazon WorkLink's
 // API operation UpdateIdentityProviderConfiguration for usage and error information.
 //
-// Returned Error Types:
-//   * UnauthorizedException
+// Returned Error Codes:
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
 //   You are not authorized to perform this action.
 //
-//   * InternalServerErrorException
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
 //   The service is temporarily unavailable.
 //
-//   * InvalidRequestException
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   The request is not valid.
 //
-//   * ResourceNotFoundException
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The requested resource was not found.
 //
-//   * TooManyRequestsException
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   The number of requests exceeds the limit.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/worklink-2018-09-25/UpdateIdentityProviderConfiguration
@@ -4645,118 +4644,6 @@ func (s *FleetSummary) SetLastUpdatedTime(v time.Time) *FleetSummary {
 	return s
 }
 
-// The service is temporarily unavailable.
-type InternalServerErrorException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	Message_ *string `locationName:"Message" type:"string"`
-}
-
-// String returns the string representation
-func (s InternalServerErrorException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s InternalServerErrorException) GoString() string {
-	return s.String()
-}
-
-func newErrorInternalServerErrorException(v protocol.ResponseMetadata) error {
-	return &InternalServerErrorException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s InternalServerErrorException) Code() string {
-	return "InternalServerErrorException"
-}
-
-// Message returns the exception's message.
-func (s InternalServerErrorException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s InternalServerErrorException) OrigErr() error {
-	return nil
-}
-
-func (s InternalServerErrorException) Error() string {
-	return fmt.Sprintf("%s: %s", s.Code(), s.Message())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s InternalServerErrorException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s InternalServerErrorException) RequestID() string {
-	return s.respMetadata.RequestID
-}
-
-// The request is not valid.
-type InvalidRequestException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	Message_ *string `locationName:"Message" type:"string"`
-}
-
-// String returns the string representation
-func (s InvalidRequestException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s InvalidRequestException) GoString() string {
-	return s.String()
-}
-
-func newErrorInvalidRequestException(v protocol.ResponseMetadata) error {
-	return &InvalidRequestException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s InvalidRequestException) Code() string {
-	return "InvalidRequestException"
-}
-
-// Message returns the exception's message.
-func (s InvalidRequestException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s InvalidRequestException) OrigErr() error {
-	return nil
-}
-
-func (s InvalidRequestException) Error() string {
-	return fmt.Sprintf("%s: %s", s.Code(), s.Message())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s InvalidRequestException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s InvalidRequestException) RequestID() string {
-	return s.respMetadata.RequestID
-}
-
 type ListDevicesInput struct {
 	_ struct{} `type:"structure"`
 
@@ -5235,118 +5122,6 @@ func (s *ListWebsiteCertificateAuthoritiesOutput) SetWebsiteCertificateAuthoriti
 	return s
 }
 
-// The resource already exists.
-type ResourceAlreadyExistsException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	Message_ *string `locationName:"Message" type:"string"`
-}
-
-// String returns the string representation
-func (s ResourceAlreadyExistsException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s ResourceAlreadyExistsException) GoString() string {
-	return s.String()
-}
-
-func newErrorResourceAlreadyExistsException(v protocol.ResponseMetadata) error {
-	return &ResourceAlreadyExistsException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s ResourceAlreadyExistsException) Code() string {
-	return "ResourceAlreadyExistsException"
-}
-
-// Message returns the exception's message.
-func (s ResourceAlreadyExistsException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s ResourceAlreadyExistsException) OrigErr() error {
-	return nil
-}
-
-func (s ResourceAlreadyExistsException) Error() string {
-	return fmt.Sprintf("%s: %s", s.Code(), s.Message())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s ResourceAlreadyExistsException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s ResourceAlreadyExistsException) RequestID() string {
-	return s.respMetadata.RequestID
-}
-
-// The requested resource was not found.
-type ResourceNotFoundException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	Message_ *string `locationName:"Message" type:"string"`
-}
-
-// String returns the string representation
-func (s ResourceNotFoundException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s ResourceNotFoundException) GoString() string {
-	return s.String()
-}
-
-func newErrorResourceNotFoundException(v protocol.ResponseMetadata) error {
-	return &ResourceNotFoundException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s ResourceNotFoundException) Code() string {
-	return "ResourceNotFoundException"
-}
-
-// Message returns the exception's message.
-func (s ResourceNotFoundException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s ResourceNotFoundException) OrigErr() error {
-	return nil
-}
-
-func (s ResourceNotFoundException) Error() string {
-	return fmt.Sprintf("%s: %s", s.Code(), s.Message())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s ResourceNotFoundException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s ResourceNotFoundException) RequestID() string {
-	return s.respMetadata.RequestID
-}
-
 type RestoreDomainAccessInput struct {
 	_ struct{} `type:"structure"`
 
@@ -5561,118 +5336,6 @@ func (s SignOutUserOutput) String() string {
 // GoString returns the string representation
 func (s SignOutUserOutput) GoString() string {
 	return s.String()
-}
-
-// The number of requests exceeds the limit.
-type TooManyRequestsException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	Message_ *string `locationName:"Message" type:"string"`
-}
-
-// String returns the string representation
-func (s TooManyRequestsException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s TooManyRequestsException) GoString() string {
-	return s.String()
-}
-
-func newErrorTooManyRequestsException(v protocol.ResponseMetadata) error {
-	return &TooManyRequestsException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s TooManyRequestsException) Code() string {
-	return "TooManyRequestsException"
-}
-
-// Message returns the exception's message.
-func (s TooManyRequestsException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s TooManyRequestsException) OrigErr() error {
-	return nil
-}
-
-func (s TooManyRequestsException) Error() string {
-	return fmt.Sprintf("%s: %s", s.Code(), s.Message())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s TooManyRequestsException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s TooManyRequestsException) RequestID() string {
-	return s.respMetadata.RequestID
-}
-
-// You are not authorized to perform this action.
-type UnauthorizedException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	Message_ *string `locationName:"Message" type:"string"`
-}
-
-// String returns the string representation
-func (s UnauthorizedException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s UnauthorizedException) GoString() string {
-	return s.String()
-}
-
-func newErrorUnauthorizedException(v protocol.ResponseMetadata) error {
-	return &UnauthorizedException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s UnauthorizedException) Code() string {
-	return "UnauthorizedException"
-}
-
-// Message returns the exception's message.
-func (s UnauthorizedException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s UnauthorizedException) OrigErr() error {
-	return nil
-}
-
-func (s UnauthorizedException) Error() string {
-	return fmt.Sprintf("%s: %s", s.Code(), s.Message())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s UnauthorizedException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s UnauthorizedException) RequestID() string {
-	return s.respMetadata.RequestID
 }
 
 type UpdateAuditStreamConfigurationInput struct {

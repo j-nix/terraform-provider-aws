@@ -22,7 +22,6 @@ func TestAccAWSEmrSecurityConfiguration_basic(t *testing.T) {
 				Config: testAccEmrSecurityConfigurationConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckEmrSecurityConfigurationExists(resourceName),
-					testAccCheckResourceAttrRfc3339(resourceName, "creation_date"),
 				),
 			},
 			{

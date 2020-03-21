@@ -98,10 +98,7 @@ func resourceAwsWafSqlInjectionMatchSetRead(d *schema.ResourceData, meta interfa
 	}
 
 	d.Set("name", resp.SqlInjectionMatchSet.Name)
-
-	if err := d.Set("sql_injection_match_tuples", flattenWafSqlInjectionMatchTuples(resp.SqlInjectionMatchSet.SqlInjectionMatchTuples)); err != nil {
-		return fmt.Errorf("error setting sql_injection_match_tuples: %s", err)
-	}
+	d.Set("sql_injection_match_tuples", resp.SqlInjectionMatchSet.SqlInjectionMatchTuples)
 
 	return nil
 }

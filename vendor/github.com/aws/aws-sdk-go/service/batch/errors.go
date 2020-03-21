@@ -2,10 +2,6 @@
 
 package batch
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeClientException for service response error code
@@ -22,8 +18,3 @@ const (
 	// These errors are usually caused by a server issue.
 	ErrCodeServerException = "ServerException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"ClientException": newErrorClientException,
-	"ServerException": newErrorServerException,
-}

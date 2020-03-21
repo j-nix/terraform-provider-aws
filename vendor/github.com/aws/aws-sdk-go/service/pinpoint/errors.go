@@ -2,10 +2,6 @@
 
 package pinpoint
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeBadRequestException for service response error code
@@ -38,25 +34,9 @@ const (
 	// Provides information about an API request or response.
 	ErrCodeNotFoundException = "NotFoundException"
 
-	// ErrCodePayloadTooLargeException for service response error code
-	// "PayloadTooLargeException".
-	//
-	// Provides information about an API request or response.
-	ErrCodePayloadTooLargeException = "PayloadTooLargeException"
-
 	// ErrCodeTooManyRequestsException for service response error code
 	// "TooManyRequestsException".
 	//
 	// Provides information about an API request or response.
 	ErrCodeTooManyRequestsException = "TooManyRequestsException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"BadRequestException":          newErrorBadRequestException,
-	"ForbiddenException":           newErrorForbiddenException,
-	"InternalServerErrorException": newErrorInternalServerErrorException,
-	"MethodNotAllowedException":    newErrorMethodNotAllowedException,
-	"NotFoundException":            newErrorNotFoundException,
-	"PayloadTooLargeException":     newErrorPayloadTooLargeException,
-	"TooManyRequestsException":     newErrorTooManyRequestsException,
-}

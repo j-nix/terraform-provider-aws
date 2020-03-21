@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -203,12 +202,8 @@ func resourceAwsRoute53HealthCheckUpdate(d *schema.ResourceData, meta interface{
 		return err
 	}
 
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.Route53UpdateTags(conn, d.Id(), route53.TagResourceTypeHealthcheck, o, n); err != nil {
-			return fmt.Errorf("error updating Route53 Health Check (%s) tags: %s", d.Id(), err)
-		}
+	if err := setTagsR53(conn, d, "healthcheck"); err != nil {
+		return err
 	}
 
 	return resourceAwsRoute53HealthCheckRead(d, meta)
@@ -313,8 +308,8 @@ func resourceAwsRoute53HealthCheckCreate(d *schema.ResourceData, meta interface{
 
 	d.SetId(*resp.HealthCheck.Id)
 
-	if err := keyvaluetags.Route53UpdateTags(conn, d.Id(), route53.TagResourceTypeHealthcheck, map[string]interface{}{}, d.Get("tags").(map[string]interface{})); err != nil {
-		return fmt.Errorf("error setting Route53 Health Check (%s) tags: %s", d.Id(), err)
+	if err := setTagsR53(conn, d, "healthcheck"); err != nil {
+		return err
 	}
 
 	return resourceAwsRoute53HealthCheckRead(d, meta)
@@ -364,14 +359,24 @@ func resourceAwsRoute53HealthCheckRead(d *schema.ResourceData, meta interface{})
 		d.Set("cloudwatch_alarm_region", updated.AlarmIdentifier.Region)
 	}
 
-	tags, err := keyvaluetags.Route53ListTags(conn, d.Id(), route53.TagResourceTypeHealthcheck)
-
-	if err != nil {
-		return fmt.Errorf("error listing tags for Route53 Health Check (%s): %s", d.Id(), err)
+	// read the tags
+	req := &route53.ListTagsForResourceInput{
+		ResourceId:   aws.String(d.Id()),
+		ResourceType: aws.String("healthcheck"),
 	}
 
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
+	resp, err := conn.ListTagsForResource(req)
+	if err != nil {
+		return err
+	}
+
+	var tags []*route53.Tag
+	if resp.ResourceTagSet != nil {
+		tags = resp.ResourceTagSet.Tags
+	}
+
+	if err := d.Set("tags", tagsToMapR53(tags)); err != nil {
+		return err
 	}
 
 	return nil

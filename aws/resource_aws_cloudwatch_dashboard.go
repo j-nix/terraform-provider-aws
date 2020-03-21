@@ -44,7 +44,6 @@ func resourceAwsCloudWatchDashboard() *schema.Resource {
 			"dashboard_name": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ForceNew:     true,
 				ValidateFunc: validateCloudWatchDashboardName,
 			},
 		},

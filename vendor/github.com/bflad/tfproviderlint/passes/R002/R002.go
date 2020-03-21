@@ -8,7 +8,7 @@ import (
 	"golang.org/x/tools/go/analysis"
 
 	"github.com/bflad/tfproviderlint/passes/commentignore"
-	"github.com/bflad/tfproviderlint/passes/helper/schema/resourcedatasetcallexpr"
+	"github.com/bflad/tfproviderlint/passes/resourcedataset"
 )
 
 const Doc = `check for ResourceData.Set() calls using * dereferences
@@ -23,7 +23,7 @@ var Analyzer = &analysis.Analyzer{
 	Name: analyzerName,
 	Doc:  Doc,
 	Requires: []*analysis.Analyzer{
-		resourcedatasetcallexpr.Analyzer,
+		resourcedataset.Analyzer,
 		commentignore.Analyzer,
 	},
 	Run: run,
@@ -31,7 +31,7 @@ var Analyzer = &analysis.Analyzer{
 
 func run(pass *analysis.Pass) (interface{}, error) {
 	ignorer := pass.ResultOf[commentignore.Analyzer].(*commentignore.Ignorer)
-	sets := pass.ResultOf[resourcedatasetcallexpr.Analyzer].([]*ast.CallExpr)
+	sets := pass.ResultOf[resourcedataset.Analyzer].([]*ast.CallExpr)
 	for _, set := range sets {
 		if ignorer.ShouldIgnore(analyzerName, set) {
 			continue

@@ -2,10 +2,6 @@
 
 package mediaconnect
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeAddFlowOutputs420Exception for service response error code
@@ -80,15 +76,3 @@ const (
 	// exception.
 	ErrCodeTooManyRequestsException = "TooManyRequestsException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"AddFlowOutputs420Exception":        newErrorAddFlowOutputs420Exception,
-	"BadRequestException":               newErrorBadRequestException,
-	"CreateFlow420Exception":            newErrorCreateFlow420Exception,
-	"ForbiddenException":                newErrorForbiddenException,
-	"GrantFlowEntitlements420Exception": newErrorGrantFlowEntitlements420Exception,
-	"InternalServerErrorException":      newErrorInternalServerErrorException,
-	"NotFoundException":                 newErrorNotFoundException,
-	"ServiceUnavailableException":       newErrorServiceUnavailableException,
-	"TooManyRequestsException":          newErrorTooManyRequestsException,
-}

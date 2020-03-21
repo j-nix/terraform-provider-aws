@@ -196,7 +196,7 @@ func (p *hunkChangesParser) parse(h *diffpkg.Hunk) []Change {
 			continue
 		}
 
-		// no deletions, only additions
+		// no deletions, only addings
 		p.handleAddedOnlyLines(addedLines)
 	}
 

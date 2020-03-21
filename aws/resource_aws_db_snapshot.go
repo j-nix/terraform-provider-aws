@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/rds"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsDbSnapshot() *schema.Resource {
@@ -110,7 +109,7 @@ func resourceAwsDbSnapshot() *schema.Resource {
 
 func resourceAwsDbSnapshotCreate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).rdsconn
-	tags := keyvaluetags.New(d.Get("tags").(map[string]interface{})).IgnoreAws().RdsTags()
+	tags := tagsFromMapRDS(d.Get("tags").(map[string]interface{}))
 	dBInstanceIdentifier := d.Get("db_instance_identifier").(string)
 
 	params := &rds.CreateDBSnapshotInput{
@@ -179,15 +178,8 @@ func resourceAwsDbSnapshotRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("snapshot_type", snapshot.SnapshotType)
 	d.Set("status", snapshot.Status)
 	d.Set("vpc_id", snapshot.VpcId)
-
-	tags, err := keyvaluetags.RdsListTags(conn, d.Get("db_snapshot_arn").(string))
-
-	if err != nil {
-		return fmt.Errorf("error listing tags for RDS DB Snapshot (%s): %s", d.Get("db_snapshot_arn").(string), err)
-	}
-
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
+	if err := saveTagsRDS(conn, d, aws.StringValue(snapshot.DBSnapshotArn)); err != nil {
+		log.Printf("[WARN] Failed to save tags for RDS Snapshot (%s): %s", d.Id(), err)
 	}
 
 	return nil
@@ -213,15 +205,41 @@ func resourceAwsDbSnapshotDelete(d *schema.ResourceData, meta interface{}) error
 
 func resourceAwsDbSnapshotUpdate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).rdsconn
-
+	arn := d.Get("db_snapshot_arn").(string)
 	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
+		oldTagsRaw, newTagsRaw := d.GetChange("tags")
+		oldTagsMap := oldTagsRaw.(map[string]interface{})
+		newTagsMap := newTagsRaw.(map[string]interface{})
+		createTags, removeTags := diffTagsRDS(tagsFromMapRDS(oldTagsMap), tagsFromMapRDS(newTagsMap))
 
-		if err := keyvaluetags.RdsUpdateTags(conn, d.Get("db_snapshot_arn").(string), o, n); err != nil {
-			return fmt.Errorf("error updating RDS DB Snapshot (%s) tags: %s", d.Get("db_snapshot_arn").(string), err)
+		if len(removeTags) > 0 {
+			removeTagKeys := make([]*string, len(removeTags))
+			for i, removeTag := range removeTags {
+				removeTagKeys[i] = removeTag.Key
+			}
+
+			input := &rds.RemoveTagsFromResourceInput{
+				ResourceName: aws.String(arn),
+				TagKeys:      removeTagKeys,
+			}
+
+			log.Printf("[DEBUG] Untagging DB Snapshot: %s", input)
+			if _, err := conn.RemoveTagsFromResource(input); err != nil {
+				return fmt.Errorf("error untagging DB Snapshot (%s): %s", d.Id(), err)
+			}
 		}
 
-		d.SetPartial("tags")
+		if len(createTags) > 0 {
+			input := &rds.AddTagsToResourceInput{
+				ResourceName: aws.String(arn),
+				Tags:         createTags,
+			}
+
+			log.Printf("[DEBUG] Tagging DB Snapshot: %s", input)
+			if _, err := conn.AddTagsToResource(input); err != nil {
+				return fmt.Errorf("error tagging DB Snapshot (%s): %s", d.Id(), err)
+			}
+		}
 	}
 
 	return nil

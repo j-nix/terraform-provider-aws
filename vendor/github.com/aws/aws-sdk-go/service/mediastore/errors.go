@@ -2,10 +2,6 @@
 
 package mediastore
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeContainerInUseException for service response error code
@@ -45,12 +41,3 @@ const (
 	// The policy that you specified in the request does not exist.
 	ErrCodePolicyNotFoundException = "PolicyNotFoundException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"ContainerInUseException":     newErrorContainerInUseException,
-	"ContainerNotFoundException":  newErrorContainerNotFoundException,
-	"CorsPolicyNotFoundException": newErrorCorsPolicyNotFoundException,
-	"InternalServerError":         newErrorInternalServerError,
-	"LimitExceededException":      newErrorLimitExceededException,
-	"PolicyNotFoundException":     newErrorPolicyNotFoundException,
-}

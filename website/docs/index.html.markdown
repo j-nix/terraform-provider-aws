@@ -1,6 +1,7 @@
 ---
 layout: "aws"
 page_title: "Provider: AWS"
+sidebar_current: "docs-aws-index"
 description: |-
   The Amazon Web Services (AWS) provider is used to interact with the many resources supported by AWS. The provider needs to be configured with the proper credentials before it can be used.
 ---
@@ -39,7 +40,7 @@ explained below:
 - Shared credentials file
 - EC2 Role
 
-### Static credentials
+### Static credentials ###
 
 !> **Warning:** Hard-coding credentials into any Terraform configuration is not
 recommended, and risks secret leakage should this file ever be committed to a
@@ -166,7 +167,7 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
   it can also be sourced from the `AWS_SECRET_ACCESS_KEY` environment variable, or
   via a shared credentials file if `profile` is specified.
 
-* `region` - (Optional) This is the AWS region. It must be provided, but
+* `region` - (Required) This is the AWS region. It must be provided, but
   it can also be sourced from the `AWS_DEFAULT_REGION` environment variables, or
   via a shared credentials file if `profile` is specified.
 

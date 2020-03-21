@@ -69,18 +69,6 @@ func resourceAwsTransferServer() *schema.Resource {
 				},
 			},
 
-			"host_key": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Sensitive:    true,
-				ValidateFunc: validation.StringLenBetween(0, 4096),
-			},
-
-			"host_key_fingerprint": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-
 			"invocation_role": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -158,10 +146,6 @@ func resourceAwsTransferServerCreate(d *schema.ResourceData, meta interface{}) e
 		createOpts.EndpointDetails = expandTransferServerEndpointDetails(attr.([]interface{}))
 	}
 
-	if attr, ok := d.GetOk("host_key"); ok {
-		createOpts.HostKey = aws.String(attr.(string))
-	}
-
 	log.Printf("[DEBUG] Create Transfer Server Option: %#v", createOpts)
 
 	resp, err := conn.CreateServer(createOpts)
@@ -193,7 +177,7 @@ func resourceAwsTransferServerRead(d *schema.ResourceData, meta interface{}) err
 		return err
 	}
 
-	endpoint := meta.(*AWSClient).RegionalHostname(fmt.Sprintf("%s.server.transfer", d.Id()))
+	endpoint := fmt.Sprintf("%s.server.transfer.%s.amazonaws.com", d.Id(), meta.(*AWSClient).region)
 
 	d.Set("arn", resp.Server.Arn)
 	d.Set("endpoint", endpoint)
@@ -207,7 +191,6 @@ func resourceAwsTransferServerRead(d *schema.ResourceData, meta interface{}) err
 	d.Set("endpoint_details", flattenTransferServerEndpointDetails(resp.Server.EndpointDetails))
 	d.Set("identity_provider_type", resp.Server.IdentityProviderType)
 	d.Set("logging_role", resp.Server.LoggingRole)
-	d.Set("host_key_fingerprint", resp.Server.HostKeyFingerprint)
 
 	if err := d.Set("tags", keyvaluetags.TransferKeyValueTags(resp.Server.Tags).IgnoreAws().Map()); err != nil {
 		return fmt.Errorf("Error setting tags: %s", err)
@@ -251,13 +234,6 @@ func resourceAwsTransferServerUpdate(d *schema.ResourceData, meta interface{}) e
 		updateFlag = true
 		if attr, ok := d.GetOk("endpoint_details"); ok {
 			updateOpts.EndpointDetails = expandTransferServerEndpointDetails(attr.([]interface{}))
-		}
-	}
-
-	if d.HasChange("host_key") {
-		updateFlag = true
-		if attr, ok := d.GetOk("host_key"); ok {
-			updateOpts.HostKey = aws.String(attr.(string))
 		}
 	}
 

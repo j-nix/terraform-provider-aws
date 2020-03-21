@@ -37,7 +37,7 @@ func resourceAwsCognitoResourceServer() *schema.Resource {
 			"scope": {
 				Type:     schema.TypeSet,
 				Optional: true,
-				MaxItems: 100,
+				MaxItems: 25,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"scope_description": {

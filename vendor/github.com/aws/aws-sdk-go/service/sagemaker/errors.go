@@ -2,10 +2,6 @@
 
 package sagemaker
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeConflictException for service response error code
@@ -34,10 +30,3 @@ const (
 	// Resource being access is not found.
 	ErrCodeResourceNotFound = "ResourceNotFound"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"ConflictException":     newErrorConflictException,
-	"ResourceInUse":         newErrorResourceInUse,
-	"ResourceLimitExceeded": newErrorResourceLimitExceeded,
-	"ResourceNotFound":      newErrorResourceNotFound,
-}

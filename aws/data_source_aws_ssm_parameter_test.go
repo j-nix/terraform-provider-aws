@@ -5,13 +5,12 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
 func TestAccAWSSsmParameterDataSource_basic(t *testing.T) {
 	resourceName := "data.aws_ssm_parameter.test"
-	name := acctest.RandomWithPrefix("tf-acc-test")
+	name := "test.parameter"
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
@@ -48,7 +47,7 @@ func TestAccAWSSsmParameterDataSource_basic(t *testing.T) {
 
 func TestAccAWSSsmParameterDataSource_fullPath(t *testing.T) {
 	resourceName := "data.aws_ssm_parameter.test"
-	name := acctest.RandomWithPrefix("/tf-acc-test/tf-acc-test")
+	name := "/path/parameter"
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {

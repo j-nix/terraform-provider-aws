@@ -7,7 +7,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshift"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func dataSourceAwsRedshiftCluster() *schema.Resource {
@@ -249,11 +248,7 @@ func dataSourceAwsRedshiftClusterRead(d *schema.ResourceData, meta interface{}) 
 	d.Set("port", rsc.Endpoint.Port)
 	d.Set("preferred_maintenance_window", rsc.PreferredMaintenanceWindow)
 	d.Set("publicly_accessible", rsc.PubliclyAccessible)
-
-	if err := d.Set("tags", keyvaluetags.RedshiftKeyValueTags(rsc.Tags).IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
-	}
-
+	d.Set("tags", tagsToMapRedshift(rsc.Tags))
 	d.Set("vpc_id", rsc.VpcId)
 
 	var vpcg []string

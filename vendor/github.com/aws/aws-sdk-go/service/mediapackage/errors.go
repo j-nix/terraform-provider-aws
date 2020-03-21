@@ -2,10 +2,6 @@
 
 package mediapackage
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeForbiddenException for service response error code
@@ -32,12 +28,3 @@ const (
 	// "UnprocessableEntityException".
 	ErrCodeUnprocessableEntityException = "UnprocessableEntityException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"ForbiddenException":           newErrorForbiddenException,
-	"InternalServerErrorException": newErrorInternalServerErrorException,
-	"NotFoundException":            newErrorNotFoundException,
-	"ServiceUnavailableException":  newErrorServiceUnavailableException,
-	"TooManyRequestsException":     newErrorTooManyRequestsException,
-	"UnprocessableEntityException": newErrorUnprocessableEntityException,
-}

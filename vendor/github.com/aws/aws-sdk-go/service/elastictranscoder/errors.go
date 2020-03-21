@@ -2,10 +2,6 @@
 
 package elastictranscoder
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeAccessDeniedException for service response error code
@@ -53,13 +49,3 @@ const (
 	// One or more required parameter values were not provided in the request.
 	ErrCodeValidationException = "ValidationException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"AccessDeniedException":        newErrorAccessDeniedException,
-	"IncompatibleVersionException": newErrorIncompatibleVersionException,
-	"InternalServiceException":     newErrorInternalServiceException,
-	"LimitExceededException":       newErrorLimitExceededException,
-	"ResourceInUseException":       newErrorResourceInUseException,
-	"ResourceNotFoundException":    newErrorResourceNotFoundException,
-	"ValidationException":          newErrorValidationException,
-}

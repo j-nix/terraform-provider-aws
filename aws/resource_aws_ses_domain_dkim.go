@@ -34,7 +34,7 @@ func resourceAwsSesDomainDkim() *schema.Resource {
 }
 
 func resourceAwsSesDomainDkimCreate(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).sesconn
+	conn := meta.(*AWSClient).sesConn
 
 	domainName := d.Get("domain").(string)
 
@@ -53,7 +53,7 @@ func resourceAwsSesDomainDkimCreate(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceAwsSesDomainDkimRead(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).sesconn
+	conn := meta.(*AWSClient).sesConn
 
 	domainName := d.Id()
 	d.Set("domain", domainName)

@@ -2,10 +2,6 @@
 
 package secretsmanager
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeDecryptionFailure for service response error code
@@ -89,17 +85,3 @@ const (
 	// We can't find the resource that you asked for.
 	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"DecryptionFailure":                newErrorDecryptionFailure,
-	"EncryptionFailure":                newErrorEncryptionFailure,
-	"InternalServiceError":             newErrorInternalServiceError,
-	"InvalidNextTokenException":        newErrorInvalidNextTokenException,
-	"InvalidParameterException":        newErrorInvalidParameterException,
-	"InvalidRequestException":          newErrorInvalidRequestException,
-	"LimitExceededException":           newErrorLimitExceededException,
-	"MalformedPolicyDocumentException": newErrorMalformedPolicyDocumentException,
-	"PreconditionNotMetException":      newErrorPreconditionNotMetException,
-	"ResourceExistsException":          newErrorResourceExistsException,
-	"ResourceNotFoundException":        newErrorResourceNotFoundException,
-}

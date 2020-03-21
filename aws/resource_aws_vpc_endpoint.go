@@ -12,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsVpcEndpoint() *schema.Resource {
@@ -154,7 +153,6 @@ func resourceAwsVpcEndpointCreate(d *schema.ResourceData, meta interface{}) erro
 		VpcEndpointType:   aws.String(d.Get("vpc_endpoint_type").(string)),
 		ServiceName:       aws.String(d.Get("service_name").(string)),
 		PrivateDnsEnabled: aws.Bool(d.Get("private_dns_enabled").(bool)),
-		TagSpecifications: ec2TagSpecificationsFromMap(d.Get("tags").(map[string]interface{}), "vpc-endpoint"),
 	}
 
 	if v, ok := d.GetOk("policy"); ok {
@@ -185,6 +183,10 @@ func resourceAwsVpcEndpointCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if err := vpcEndpointWaitUntilAvailable(conn, d.Id(), d.Timeout(schema.TimeoutCreate)); err != nil {
+		return err
+	}
+
+	if err := setTags(conn, d); err != nil {
 		return err
 	}
 
@@ -269,15 +271,15 @@ func resourceAwsVpcEndpointRead(d *schema.ResourceData, meta interface{}) error 
 	if err != nil {
 		return fmt.Errorf("error setting subnet_ids: %s", err)
 	}
+	err = d.Set("tags", tagsToMap(vpce.Tags))
+	if err != nil {
+		return fmt.Errorf("error setting tags: %s", err)
+	}
 	// VPC endpoints don't have types in GovCloud, so set type to default if empty
 	if vpceType := aws.StringValue(vpce.VpcEndpointType); vpceType == "" {
 		d.Set("vpc_endpoint_type", ec2.VpcEndpointTypeGateway)
 	} else {
 		d.Set("vpc_endpoint_type", vpceType)
-	}
-
-	if err := d.Set("tags", keyvaluetags.Ec2KeyValueTags(vpce.Tags).IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
 	}
 
 	return nil
@@ -326,11 +328,8 @@ func resourceAwsVpcEndpointUpdate(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-		if err := keyvaluetags.Ec2UpdateTags(conn, d.Id(), o, n); err != nil {
-			return fmt.Errorf("error updating tags: %s", err)
-		}
+	if err := setTags(conn, d); err != nil {
+		return err
 	}
 
 	return resourceAwsVpcEndpointRead(d, meta)

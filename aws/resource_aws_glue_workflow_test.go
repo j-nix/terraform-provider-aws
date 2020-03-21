@@ -26,10 +26,11 @@ func testSweepGlueWorkflow(region string) error {
 	}
 	conn := client.(*AWSClient).glueconn
 
-	listOutput, err := conn.ListWorkflows(&glue.ListWorkflowsInput{})
+	listWorkflowInput := &glue.ListWorkflowsInput{}
+
+	listOutput, err := conn.ListWorkflows(listWorkflowInput)
 	if err != nil {
-		// Some endpoints that do not support Glue Workflows return InternalFailure
-		if testSweepSkipSweepError(err) || isAWSErr(err, "InternalFailure", "") {
+		if testSweepSkipSweepError(err) {
 			log.Printf("[WARN] Skipping Glue Workflow sweep for %s: %s", region, err)
 			return nil
 		}
@@ -51,7 +52,7 @@ func TestAccAWSGlueWorkflow_Basic(t *testing.T) {
 	resourceName := "aws_glue_workflow.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t); testAccPreCheckAWSGlueWorkflow(t) },
+		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckAWSGlueWorkflowDestroy,
 		Steps: []resource.TestStep{
@@ -78,7 +79,7 @@ func TestAccAWSGlueWorkflow_DefaultRunProperties(t *testing.T) {
 	resourceName := "aws_glue_workflow.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t); testAccPreCheckAWSGlueWorkflow(t) },
+		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckAWSGlueWorkflowDestroy,
 		Steps: []resource.TestStep{
@@ -107,7 +108,7 @@ func TestAccAWSGlueWorkflow_Description(t *testing.T) {
 	resourceName := "aws_glue_workflow.test"
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t); testAccPreCheckAWSGlueWorkflow(t) },
+		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckAWSGlueWorkflowDestroy,
 		Steps: []resource.TestStep{
@@ -132,21 +133,6 @@ func TestAccAWSGlueWorkflow_Description(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testAccPreCheckAWSGlueWorkflow(t *testing.T) {
-	conn := testAccProvider.Meta().(*AWSClient).glueconn
-
-	_, err := conn.ListWorkflows(&glue.ListWorkflowsInput{})
-
-	// Some endpoints that do not support Glue Workflows return InternalFailure
-	if testAccPreCheckSkipError(err) || isAWSErr(err, "InternalFailure", "") {
-		t.Skipf("skipping acceptance testing: %s", err)
-	}
-
-	if err != nil {
-		t.Fatalf("unexpected PreCheck error: %s", err)
-	}
 }
 
 func testAccCheckAWSGlueWorkflowExists(resourceName string, workflow *glue.Workflow) resource.TestCheckFunc {

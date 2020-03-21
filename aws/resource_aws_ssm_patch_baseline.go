@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/ssm"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 var ssmPatchComplianceLevels = []string{
@@ -158,7 +157,7 @@ func resourceAwsSsmPatchBaselineCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	if v, ok := d.GetOk("tags"); ok {
-		params.Tags = keyvaluetags.New(v.(map[string]interface{})).IgnoreAws().SsmTags()
+		params.Tags = tagsFromMapSSM(v.(map[string]interface{}))
 	}
 
 	if v, ok := d.GetOk("description"); ok {
@@ -236,10 +235,8 @@ func resourceAwsSsmPatchBaselineUpdate(d *schema.ResourceData, meta interface{})
 	}
 
 	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.SsmUpdateTags(ssmconn, d.Id(), ssm.ResourceTypeForTaggingPatchBaseline, o, n); err != nil {
-			return fmt.Errorf("error updating SSM Patch Baseline (%s) tags: %s", d.Id(), err)
+		if err := setTagsSSM(ssmconn, d, d.Id(), ssm.ResourceTypeForTaggingPatchBaseline); err != nil {
+			return fmt.Errorf("error setting tags for SSM Patch Baseline (%s): %s", d.Id(), err)
 		}
 	}
 
@@ -277,14 +274,8 @@ func resourceAwsSsmPatchBaselineRead(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error setting approval rules error: %#v", err)
 	}
 
-	tags, err := keyvaluetags.SsmListTags(ssmconn, d.Id(), ssm.ResourceTypeForTaggingPatchBaseline)
-
-	if err != nil {
-		return fmt.Errorf("error listing tags for SSM Patch Baseline (%s): %s", d.Id(), err)
-	}
-
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
+	if err := saveTagsSSM(ssmconn, d, d.Id(), ssm.ResourceTypeForTaggingPatchBaseline); err != nil {
+		return fmt.Errorf("error saving tags for SSM Patch Baseline (%s): %s", d.Id(), err)
 	}
 
 	return nil

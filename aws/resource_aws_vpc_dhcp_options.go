@@ -11,7 +11,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsVpcDhcpOptions() *schema.Resource {
@@ -137,13 +136,7 @@ func resourceAwsVpcDhcpOptionsCreate(d *schema.ResourceData, meta interface{}) e
 			d.Id(), err)
 	}
 
-	if v, ok := d.GetOk("tags"); ok {
-		if err := keyvaluetags.Ec2UpdateTags(conn, d.Id(), nil, v.(map[string]interface{})); err != nil {
-			return fmt.Errorf("error updating tags: %s", err)
-		}
-	}
-
-	return resourceAwsVpcDhcpOptionsRead(d, meta)
+	return resourceAwsVpcDhcpOptionsUpdate(d, meta)
 }
 
 func resourceAwsVpcDhcpOptionsRead(d *schema.ResourceData, meta interface{}) error {
@@ -169,9 +162,7 @@ func resourceAwsVpcDhcpOptionsRead(d *schema.ResourceData, meta interface{}) err
 	}
 
 	opts := resp.DhcpOptions[0]
-	if err := d.Set("tags", keyvaluetags.Ec2KeyValueTags(opts.Tags).IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
-	}
+	d.Set("tags", tagsToMap(opts.Tags))
 	d.Set("owner_id", opts.OwnerId)
 
 	for _, cfg := range opts.DhcpConfigurations {
@@ -195,11 +186,8 @@ func resourceAwsVpcDhcpOptionsRead(d *schema.ResourceData, meta interface{}) err
 func resourceAwsVpcDhcpOptionsUpdate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).ec2conn
 
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-		if err := keyvaluetags.Ec2UpdateTags(conn, d.Id(), o, n); err != nil {
-			return fmt.Errorf("error updating tags: %s", err)
-		}
+	if err := setTags(conn, d); err != nil {
+		return err
 	}
 
 	return resourceAwsVpcDhcpOptionsRead(d, meta)
@@ -274,7 +262,7 @@ func findVPCsByDHCPOptionsID(conn *ec2.EC2, id string) ([]*ec2.Vpc, error) {
 
 	resp, err := conn.DescribeVpcs(req)
 	if err != nil {
-		if isAWSErr(err, "InvalidVpcID.NotFound", "") {
+		if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "InvalidVpcID.NotFound" {
 			return nil, nil
 		}
 		return nil, err

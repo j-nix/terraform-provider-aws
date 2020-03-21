@@ -60,7 +60,6 @@ func TestAccAWSBatchJobQueue_basic(t *testing.T) {
 	var jq batch.JobQueueDetail
 	ri := acctest.RandInt()
 	config := fmt.Sprintf(testAccBatchJobQueueBasic, ri)
-	resourceName := "aws_batch_job_queue.test_queue"
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t); testAccPreCheckAWSBatch(t) },
 		Providers:    testAccProviders,
@@ -69,14 +68,9 @@ func TestAccAWSBatchJobQueue_basic(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckBatchJobQueueExists(resourceName, &jq),
+					testAccCheckBatchJobQueueExists("aws_batch_job_queue.test_queue", &jq),
 					testAccCheckBatchJobQueueAttributes(&jq),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
@@ -109,7 +103,6 @@ func TestAccAWSBatchJobQueue_update(t *testing.T) {
 	ri := acctest.RandInt()
 	config := fmt.Sprintf(testAccBatchJobQueueBasic, ri)
 	updateConfig := fmt.Sprintf(testAccBatchJobQueueUpdate, ri)
-	resourceName := "aws_batch_job_queue.test_queue"
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t); testAccPreCheckAWSBatch(t) },
 		Providers:    testAccProviders,
@@ -118,21 +111,16 @@ func TestAccAWSBatchJobQueue_update(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckBatchJobQueueExists(resourceName, &jq),
+					testAccCheckBatchJobQueueExists("aws_batch_job_queue.test_queue", &jq),
 					testAccCheckBatchJobQueueAttributes(&jq),
 				),
 			},
 			{
 				Config: updateConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckBatchJobQueueExists(resourceName, &jq),
+					testAccCheckBatchJobQueueExists("aws_batch_job_queue.test_queue", &jq),
 					testAccCheckBatchJobQueueAttributes(&jq),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})

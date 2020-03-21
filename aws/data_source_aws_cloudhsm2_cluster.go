@@ -9,9 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
-func dataSourceCloudHsmV2Cluster() *schema.Resource {
+func dataSourceCloudHsm2Cluster() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudHsmV2ClusterRead,
+		Read: dataSourceCloudHsm2ClusterRead,
 
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
@@ -37,6 +37,7 @@ func dataSourceCloudHsmV2Cluster() *schema.Resource {
 
 			"cluster_certificates": {
 				Type:     schema.TypeList,
+				MaxItems: 1,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -73,7 +74,7 @@ func dataSourceCloudHsmV2Cluster() *schema.Resource {
 	}
 }
 
-func dataSourceCloudHsmV2ClusterRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudHsm2ClusterRead(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).cloudhsmv2conn
 
 	clusterId := d.Get("cluster_id").(string)
@@ -113,7 +114,7 @@ func dataSourceCloudHsmV2ClusterRead(d *schema.ResourceData, meta interface{}) e
 	d.Set("vpc_id", cluster.VpcId)
 	d.Set("security_group_id", cluster.SecurityGroup)
 	d.Set("cluster_state", cluster.State)
-	if err := d.Set("cluster_certificates", readCloudHsmV2ClusterCertificates(cluster)); err != nil {
+	if err := d.Set("cluster_certificates", readCloudHsm2ClusterCertificates(cluster)); err != nil {
 		return fmt.Errorf("error setting cluster_certificates: %s", err)
 	}
 

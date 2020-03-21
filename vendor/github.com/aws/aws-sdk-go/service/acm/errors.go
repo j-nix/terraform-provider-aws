@@ -2,10 +2,6 @@
 
 package acm
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeInvalidArgsException for service response error code
@@ -84,18 +80,3 @@ const (
 	// The request contains too many tags. Try the request again with fewer tags.
 	ErrCodeTooManyTagsException = "TooManyTagsException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"InvalidArgsException":                    newErrorInvalidArgsException,
-	"InvalidArnException":                     newErrorInvalidArnException,
-	"InvalidDomainValidationOptionsException": newErrorInvalidDomainValidationOptionsException,
-	"InvalidParameterException":               newErrorInvalidParameterException,
-	"InvalidStateException":                   newErrorInvalidStateException,
-	"InvalidTagException":                     newErrorInvalidTagException,
-	"LimitExceededException":                  newErrorLimitExceededException,
-	"RequestInProgressException":              newErrorRequestInProgressException,
-	"ResourceInUseException":                  newErrorResourceInUseException,
-	"ResourceNotFoundException":               newErrorResourceNotFoundException,
-	"TagPolicyException":                      newErrorTagPolicyException,
-	"TooManyTagsException":                    newErrorTooManyTagsException,
-}

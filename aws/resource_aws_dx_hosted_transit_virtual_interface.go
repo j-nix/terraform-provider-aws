@@ -3,7 +3,6 @@ package aws
 import (
 	"fmt"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -37,10 +36,6 @@ func resourceAwsDxHostedTransitVirtualInterface() *schema.Resource {
 				Optional: true,
 				Computed: true,
 				ForceNew: true,
-			},
-			"amazon_side_asn": {
-				Type:     schema.TypeString,
-				Computed: true,
 			},
 			"arn": {
 				Type:     schema.TypeString,
@@ -164,7 +159,6 @@ func resourceAwsDxHostedTransitVirtualInterfaceRead(d *schema.ResourceData, meta
 
 	d.Set("address_family", vif.AddressFamily)
 	d.Set("amazon_address", vif.AmazonAddress)
-	d.Set("amazon_side_asn", strconv.FormatInt(aws.Int64Value(vif.AmazonSideAsn), 10))
 	arn := arn.ARN{
 		Partition: meta.(*AWSClient).partition,
 		Region:    meta.(*AWSClient).region,

@@ -22,6 +22,10 @@ func dataSourceAwsCloudFormationStack() *schema.Resource {
 			"template_body": {
 				Type:     schema.TypeString,
 				Computed: true,
+				StateFunc: func(v interface{}) string {
+					template, _ := normalizeCloudFormationTemplate(v)
+					return template
+				},
 			},
 			"capabilities": {
 				Type:     schema.TypeSet,

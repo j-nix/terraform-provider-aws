@@ -287,7 +287,7 @@ resource "aws_lambda_function" "test" {
   role          = aws_iam_role.test.arn
   handler       = "lambdapinpoint.handler"
   publish       = true
-  runtime       = "nodejs12.x"
+  runtime       = "nodejs8.10"
 
   depends_on = [aws_iam_role_policy_attachment.test]
 }

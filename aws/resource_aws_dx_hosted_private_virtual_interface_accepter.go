@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/arn"
 	"github.com/aws/aws-sdk-go/service/directconnect"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsDxHostedPrivateVirtualInterfaceAccepter() *schema.Resource {
@@ -121,16 +120,8 @@ func resourceAwsDxHostedPrivateVirtualInterfaceAccepterRead(d *schema.ResourceDa
 	d.Set("dx_gateway_id", vif.DirectConnectGatewayId)
 	d.Set("virtual_interface_id", vif.VirtualInterfaceId)
 	d.Set("vpn_gateway_id", vif.VirtualGatewayId)
-
-	arn := d.Get("arn").(string)
-	tags, err := keyvaluetags.DirectconnectListTags(conn, arn)
-
-	if err != nil {
-		return fmt.Errorf("error listing tags for Direct Connect hosted private virtual interface (%s): %s", arn, err)
-	}
-
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
+	if err := getTagsDX(conn, d, d.Get("arn").(string)); err != nil {
+		return fmt.Errorf("error getting Direct Connect hosted private virtual interface (%s) tags: %s", d.Id(), err)
 	}
 
 	return nil

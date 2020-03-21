@@ -83,7 +83,7 @@ func resourceAwsKmsExternalKey() *schema.Resource {
 			"valid_to": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.IsRFC3339Time,
+				ValidateFunc: validation.ValidateRFC3339TimeString,
 			},
 		},
 	}

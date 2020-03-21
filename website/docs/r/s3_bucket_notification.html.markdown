@@ -141,8 +141,6 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
     filter_prefix       = "AWSLogs/"
     filter_suffix       = ".log"
   }
-
-  depends_on = [aws_lambda_permission.allow_bucket]
 }
 ```
 
@@ -219,11 +217,6 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
     filter_prefix       = "OtherLogs/"
     filter_suffix       = ".log"
   }
-
-  depends_on = [
-    aws_lambda_permission.allow_bucket1,
-    aws_lambda_permission.allow_bucket2
-  ]
 }
 ```
 

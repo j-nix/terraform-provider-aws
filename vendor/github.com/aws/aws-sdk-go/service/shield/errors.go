@@ -2,10 +2,6 @@
 
 package shield
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeAccessDeniedException for service response error code
@@ -19,7 +15,7 @@ const (
 	// "AccessDeniedForDependencyException".
 	//
 	// In order to grant the necessary access to the DDoS Response Team, the user
-	// submitting the request must have the iam:PassRole permission. This error
+	// submitting AssociateDRTRole must have the iam:PassRole permission. This error
 	// indicates the user did not have the appropriate permissions. For more information,
 	// see Granting a User Permissions to Pass a Role to an AWS Service (https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_passrole.html).
 	ErrCodeAccessDeniedForDependencyException = "AccessDeniedForDependencyException"
@@ -102,19 +98,3 @@ const (
 	// Exception indicating the specified resource does not exist.
 	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"AccessDeniedException":              newErrorAccessDeniedException,
-	"AccessDeniedForDependencyException": newErrorAccessDeniedForDependencyException,
-	"InternalErrorException":             newErrorInternalErrorException,
-	"InvalidOperationException":          newErrorInvalidOperationException,
-	"InvalidPaginationTokenException":    newErrorInvalidPaginationTokenException,
-	"InvalidParameterException":          newErrorInvalidParameterException,
-	"InvalidResourceException":           newErrorInvalidResourceException,
-	"LimitsExceededException":            newErrorLimitsExceededException,
-	"LockedSubscriptionException":        newErrorLockedSubscriptionException,
-	"NoAssociatedRoleException":          newErrorNoAssociatedRoleException,
-	"OptimisticLockException":            newErrorOptimisticLockException,
-	"ResourceAlreadyExistsException":     newErrorResourceAlreadyExistsException,
-	"ResourceNotFoundException":          newErrorResourceNotFoundException,
-}

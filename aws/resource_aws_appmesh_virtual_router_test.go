@@ -3,6 +3,7 @@ package aws
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"testing"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -83,9 +84,9 @@ func testSweepAppmeshVirtualRouters(region string) error {
 
 func testAccAwsAppmeshVirtualRouter_basic(t *testing.T) {
 	var vr appmesh.VirtualRouterData
-	resourceName := "aws_appmesh_virtual_router.test"
-	meshName := acctest.RandomWithPrefix("tf-acc-test")
-	vrName := acctest.RandomWithPrefix("tf-acc-test")
+	resourceName := "aws_appmesh_virtual_router.foo"
+	meshName := fmt.Sprintf("tf-test-mesh-%d", acctest.RandInt())
+	vrName := fmt.Sprintf("tf-test-router-%d", acctest.RandInt())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -115,8 +116,8 @@ func testAccAwsAppmeshVirtualRouter_basic(t *testing.T) {
 						resourceName, "created_date"),
 					resource.TestCheckResourceAttrSet(
 						resourceName, "last_updated_date"),
-					testAccCheckResourceAttrRegionalARN(
-						resourceName, "arn", "appmesh", fmt.Sprintf("mesh/%s/virtualRouter/%s", meshName, vrName)),
+					resource.TestMatchResourceAttr(
+						resourceName, "arn", regexp.MustCompile(fmt.Sprintf("^arn:[^:]+:appmesh:[^:]+:\\d{12}:mesh/%s/virtualRouter/%s", meshName, vrName))),
 				),
 			},
 			{
@@ -152,9 +153,9 @@ func testAccAwsAppmeshVirtualRouter_basic(t *testing.T) {
 
 func testAccAwsAppmeshVirtualRouter_tags(t *testing.T) {
 	var vr appmesh.VirtualRouterData
-	resourceName := "aws_appmesh_virtual_router.test"
-	meshName := acctest.RandomWithPrefix("tf-acc-test")
-	vrName := acctest.RandomWithPrefix("tf-acc-test")
+	resourceName := "aws_appmesh_virtual_router.foo"
+	meshName := fmt.Sprintf("tf-test-mesh-%d", acctest.RandInt())
+	vrName := fmt.Sprintf("tf-test-router-%d", acctest.RandInt())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -258,13 +259,13 @@ func testAccCheckAppmeshVirtualRouterExists(name string, v *appmesh.VirtualRoute
 
 func testAccAppmeshVirtualRouterConfig_basic(meshName, vrName string) string {
 	return fmt.Sprintf(`
-resource "aws_appmesh_mesh" "test" {
-  name = %[1]q
+resource "aws_appmesh_mesh" "foo" {
+  name = "%s"
 }
 
-resource "aws_appmesh_virtual_router" "test" {
-  name      = %[2]q
-  mesh_name = "${aws_appmesh_mesh.test.id}"
+resource "aws_appmesh_virtual_router" "foo" {
+  name      = "%s"
+  mesh_name = "${aws_appmesh_mesh.foo.id}"
 
   spec {
     listener {
@@ -280,13 +281,13 @@ resource "aws_appmesh_virtual_router" "test" {
 
 func testAccAppmeshVirtualRouterConfig_updated(meshName, vrName string) string {
 	return fmt.Sprintf(`
-resource "aws_appmesh_mesh" "test" {
-  name = %[1]q
+resource "aws_appmesh_mesh" "foo" {
+  name = "%s"
 }
 
-resource "aws_appmesh_virtual_router" "test" {
-  name      = %[2]q
-  mesh_name = "${aws_appmesh_mesh.test.id}"
+resource "aws_appmesh_virtual_router" "foo" {
+  name      = "%s"
+  mesh_name = "${aws_appmesh_mesh.foo.id}"
 
   spec {
     listener {
@@ -302,13 +303,13 @@ resource "aws_appmesh_virtual_router" "test" {
 
 func testAccAppmeshVirtualRouterConfig_tags(meshName, vrName, tagKey1, tagValue1, tagKey2, tagValue2 string) string {
 	return fmt.Sprintf(`
-resource "aws_appmesh_mesh" "test" {
-  name = %[1]q
+resource "aws_appmesh_mesh" "foo" {
+  name = "%[1]s"
 }
 
-resource "aws_appmesh_virtual_router" "test" {
-  name      = %[2]q
-  mesh_name = "${aws_appmesh_mesh.test.id}"
+resource "aws_appmesh_virtual_router" "foo" {
+  name      = "%[2]s"
+  mesh_name = "${aws_appmesh_mesh.foo.id}"
 
   spec {
     listener {

@@ -110,28 +110,6 @@ func TestAccAwsBackupVault_withTags(t *testing.T) {
 	})
 }
 
-func TestAccAwsBackupVault_disappears(t *testing.T) {
-	var vault backup.DescribeBackupVaultOutput
-
-	rInt := acctest.RandInt()
-	resourceName := "aws_backup_vault.test"
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t); testAccPreCheckAWSBackup(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckAwsBackupVaultDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccBackupVaultConfig(rInt),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAwsBackupVaultExists(resourceName, &vault),
-					testAccCheckAwsBackupVaultDisappears(&vault),
-				),
-				ExpectNonEmptyPlan: true,
-			},
-		},
-	})
-}
-
 func testAccCheckAwsBackupVaultDestroy(s *terraform.State) error {
 	conn := testAccProvider.Meta().(*AWSClient).backupconn
 	for _, rs := range s.RootModule().Resources {
@@ -174,18 +152,6 @@ func testAccCheckAwsBackupVaultExists(name string, vault *backup.DescribeBackupV
 		*vault = *resp
 
 		return nil
-	}
-}
-
-func testAccCheckAwsBackupVaultDisappears(vault *backup.DescribeBackupVaultOutput) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		conn := testAccProvider.Meta().(*AWSClient).backupconn
-		params := &backup.DeleteBackupVaultInput{
-			BackupVaultName: vault.BackupVaultName,
-		}
-		_, err := conn.DeleteBackupVault(params)
-
-		return err
 	}
 }
 

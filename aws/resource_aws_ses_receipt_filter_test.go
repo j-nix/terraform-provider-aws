@@ -39,7 +39,7 @@ func TestAccAWSSESReceiptFilter_basic(t *testing.T) {
 }
 
 func testAccCheckSESReceiptFilterDestroy(s *terraform.State) error {
-	conn := testAccProvider.Meta().(*AWSClient).sesconn
+	conn := testAccProvider.Meta().(*AWSClient).sesConn
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "aws_ses_receipt_filter" {
@@ -73,7 +73,7 @@ func testAccCheckAwsSESReceiptFilterExists(n string) resource.TestCheckFunc {
 			return fmt.Errorf("SES receipt filter ID not set")
 		}
 
-		conn := testAccProvider.Meta().(*AWSClient).sesconn
+		conn := testAccProvider.Meta().(*AWSClient).sesConn
 
 		response, err := conn.ListReceiptFilters(&ses.ListReceiptFiltersInput{})
 		if err != nil {

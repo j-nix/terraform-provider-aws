@@ -84,16 +84,16 @@ func resourceAwsOrganizationsPolicyAttachmentRead(d *schema.ResourceData, meta i
 		return err
 	}
 
-	input := &organizations.ListTargetsForPolicyInput{
-		PolicyId: aws.String(policyID),
+	input := &organizations.ListPoliciesForTargetInput{
+		Filter:   aws.String(organizations.PolicyTypeServiceControlPolicy),
+		TargetId: aws.String(targetID),
 	}
 
 	log.Printf("[DEBUG] Listing Organizations Policies for Target: %s", input)
-	var output *organizations.PolicyTargetSummary
-
-	err = conn.ListTargetsForPolicyPages(input, func(page *organizations.ListTargetsForPolicyOutput, lastPage bool) bool {
-		for _, policySummary := range page.Targets {
-			if aws.StringValue(policySummary.TargetId) == targetID {
+	var output *organizations.PolicySummary
+	err = conn.ListPoliciesForTargetPages(input, func(page *organizations.ListPoliciesForTargetOutput, lastPage bool) bool {
+		for _, policySummary := range page.Policies {
+			if aws.StringValue(policySummary.Id) == policyID {
 				output = policySummary
 				return true
 			}

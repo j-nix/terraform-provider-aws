@@ -73,7 +73,8 @@ func resourceAwsCloudWatchLogResourcePolicyRead(d *schema.ResourceData, meta int
 		return nil
 	}
 
-	d.Set("policy_document", resourcePolicy.PolicyDocument)
+	d.SetId(policyName)
+	d.Set("policy_document", *resourcePolicy.PolicyDocument)
 
 	return nil
 }

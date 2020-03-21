@@ -3,7 +3,7 @@ package golinters
 import (
 	"sync"
 
-	"github.com/bombsimon/wsl/v2"
+	"github.com/bombsimon/wsl"
 	"golang.org/x/tools/go/analysis"
 
 	"github.com/golangci/golangci-lint/pkg/golinters/goanalysis"
@@ -37,14 +37,13 @@ func NewWSL() *goanalysis.Linter {
 				files        = []string{}
 				linterCfg    = lintCtx.Cfg.LintersSettings.WSL
 				processorCfg = wsl.Configuration{
-					StrictAppend:                     linterCfg.StrictAppend,
-					AllowAssignAndCallCuddle:         linterCfg.AllowAssignAndCallCuddle,
-					AllowMultiLineAssignCuddle:       linterCfg.AllowMultiLineAssignCuddle,
-					AllowCuddleDeclaration:           linterCfg.AllowCuddleDeclaration,
-					AllowTrailingComment:             linterCfg.AllowTrailingComment,
-					CaseForceTrailingWhitespaceLimit: linterCfg.CaseForceTrailingWhitespaceLimit,
-					AllowCuddleWithCalls:             []string{"Lock", "RLock"},
-					AllowCuddleWithRHS:               []string{"Unlock", "RUnlock"},
+					StrictAppend:                linterCfg.StrictAppend,
+					AllowAssignAndCallCuddle:    linterCfg.AllowAssignAndCallCuddle,
+					AllowMultiLineAssignCuddle:  linterCfg.AllowMultiLineAssignCuddle,
+					AllowCaseTrailingWhitespace: linterCfg.AllowCaseTrailingWhitespace,
+					AllowCuddleDeclaration:      linterCfg.AllowCuddleDeclaration,
+					AllowCuddleWithCalls:        []string{"Lock", "RLock"},
+					AllowCuddleWithRHS:          []string{"Unlock", "RUnlock"},
 				}
 			)
 

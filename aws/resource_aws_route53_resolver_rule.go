@@ -3,16 +3,17 @@ package aws
 import (
 	"bytes"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 	"log"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/route53resolver"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/route53resolver"
 )
 
 const (
@@ -75,7 +76,7 @@ func resourceAwsRoute53ResolverRule() *schema.Resource {
 						"ip": {
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.IsIPAddress,
+							ValidateFunc: validation.SingleIP(),
 						},
 						"port": {
 							Type:         schema.TypeInt,

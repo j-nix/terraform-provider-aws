@@ -12,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsDocDBCluster() *schema.Resource {
@@ -232,7 +231,6 @@ func resourceAwsDocDBCluster() *schema.Resource {
 					Type: schema.TypeString,
 					ValidateFunc: validation.StringInSlice([]string{
 						"audit",
-						"profiler",
 					}, false),
 				},
 			},
@@ -253,7 +251,7 @@ func resourceAwsDocDBClusterImport(
 
 func resourceAwsDocDBClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).docdbconn
-	tags := keyvaluetags.New(d.Get("tags").(map[string]interface{})).IgnoreAws().DocdbTags()
+	tags := tagsFromMapDocDB(d.Get("tags").(map[string]interface{}))
 
 	// Some API calls (e.g. RestoreDBClusterFromSnapshot do not support all
 	// parameters to correctly apply all settings in one pass. For missing
@@ -560,14 +558,9 @@ func resourceAwsDocDBClusterRead(d *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("error setting vpc_security_group_ids: %s", err)
 	}
 
-	tags, err := keyvaluetags.DocdbListTags(conn, d.Get("arn").(string))
-
-	if err != nil {
-		return fmt.Errorf("error listing tags for DocumentDB Cluster (%s): %s", d.Get("arn").(string), err)
-	}
-
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
+	// Fetch and save tags
+	if err := saveTagsDocDB(conn, d, aws.StringValue(dbc.DBClusterArn)); err != nil {
+		log.Printf("[WARN] Failed to save tags for DocDB Cluster (%s): %s", aws.StringValue(dbc.DBClusterIdentifier), err)
 	}
 
 	return nil
@@ -663,10 +656,8 @@ func resourceAwsDocDBClusterUpdate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.DocdbUpdateTags(conn, d.Get("arn").(string), o, n); err != nil {
-			return fmt.Errorf("error updating DocumentDB Cluster (%s) tags: %s", d.Get("arn").(string), err)
+		if err := setTagsDocDB(conn, d); err != nil {
+			return err
 		}
 
 		d.SetPartial("tags")

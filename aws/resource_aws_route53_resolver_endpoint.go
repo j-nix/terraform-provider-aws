@@ -55,7 +55,7 @@ func resourceAwsRoute53ResolverEndpoint() *schema.Resource {
 							Type:         schema.TypeString,
 							Optional:     true,
 							Computed:     true,
-							ValidateFunc: validation.IsIPAddress,
+							ValidateFunc: validation.SingleIP(),
 						},
 						"ip_id": {
 							Type:     schema.TypeString,

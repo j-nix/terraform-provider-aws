@@ -29,6 +29,7 @@ func resourceAwsApiGatewayAccount() *schema.Resource {
 			"throttle_settings": {
 				Type:     schema.TypeList,
 				Computed: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"burst_limit": {
@@ -47,7 +48,7 @@ func resourceAwsApiGatewayAccount() *schema.Resource {
 }
 
 func resourceAwsApiGatewayAccountRead(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).apigatewayconn
+	conn := meta.(*AWSClient).apigateway
 
 	log.Printf("[INFO] Reading API Gateway Account %s", d.Id())
 	account, err := conn.GetAccount(&apigateway.GetAccountInput{})
@@ -69,7 +70,7 @@ func resourceAwsApiGatewayAccountRead(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceAwsApiGatewayAccountUpdate(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).apigatewayconn
+	conn := meta.(*AWSClient).apigateway
 
 	input := apigateway.UpdateAccountInput{}
 	operations := make([]*apigateway.PatchOperation, 0)
@@ -92,7 +93,7 @@ func resourceAwsApiGatewayAccountUpdate(d *schema.ResourceData, meta interface{}
 	log.Printf("[INFO] Updating API Gateway Account: %s", input)
 
 	// Retry due to eventual consistency of IAM
-	expectedErrMsg := "The role ARN does not have required permissions"
+	expectedErrMsg := "The role ARN does not have required permissions set to API Gateway"
 	otherErrMsg := "API Gateway could not successfully write to CloudWatch Logs using the ARN specified"
 	var out *apigateway.Account
 	var err error

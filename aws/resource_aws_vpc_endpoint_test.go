@@ -84,7 +84,7 @@ func testSweepEc2VpcEndpoints(region string) error {
 func TestAccAWSVpcEndpoint_gatewayBasic(t *testing.T) {
 	var endpoint ec2.VpcEndpoint
 	resourceName := "aws_vpc_endpoint.test"
-	rName := acctest.RandomWithPrefix("tf-testacc-vpce")
+	rName := fmt.Sprintf("tf-testacc-vpce-%s", acctest.RandStringFromCharSet(16, acctest.CharSetAlphaNum))
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -107,11 +107,6 @@ func TestAccAWSVpcEndpoint_gatewayBasic(t *testing.T) {
 					testAccCheckResourceAttrAccountID(resourceName, "owner_id"),
 				),
 			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
@@ -121,7 +116,7 @@ func TestAccAWSVpcEndpoint_gatewayWithRouteTableAndPolicyAndTags(t *testing.T) {
 	var routeTable ec2.RouteTable
 	resourceName := "aws_vpc_endpoint.test"
 	resourceNameRt := "aws_route_table.test"
-	rName := acctest.RandomWithPrefix("tf-testacc-vpce")
+	rName := fmt.Sprintf("tf-testacc-vpce-%s", acctest.RandStringFromCharSet(16, acctest.CharSetAlphaNum))
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -210,7 +205,7 @@ func TestAccAWSVpcEndpoint_gatewayPolicy(t *testing.T) {
 }
 `
 	resourceName := "aws_vpc_endpoint.test"
-	rName := acctest.RandomWithPrefix("tf-testacc-vpce")
+	rName := fmt.Sprintf("tf-testacc-vpce-%s", acctest.RandStringFromCharSet(16, acctest.CharSetAlphaNum))
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -241,7 +236,7 @@ func TestAccAWSVpcEndpoint_gatewayPolicy(t *testing.T) {
 func TestAccAWSVpcEndpoint_interfaceBasic(t *testing.T) {
 	var endpoint ec2.VpcEndpoint
 	resourceName := "aws_vpc_endpoint.test"
-	rName := acctest.RandomWithPrefix("tf-testacc-vpce")
+	rName := fmt.Sprintf("tf-testacc-vpce-%s", acctest.RandStringFromCharSet(16, acctest.CharSetAlphaNum))
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -265,11 +260,6 @@ func TestAccAWSVpcEndpoint_interfaceBasic(t *testing.T) {
 					testAccCheckResourceAttrAccountID(resourceName, "owner_id"),
 				),
 			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
@@ -277,7 +267,7 @@ func TestAccAWSVpcEndpoint_interfaceBasic(t *testing.T) {
 func TestAccAWSVpcEndpoint_interfaceWithSubnetAndSecurityGroup(t *testing.T) {
 	var endpoint ec2.VpcEndpoint
 	resourceName := "aws_vpc_endpoint.test"
-	rName := acctest.RandomWithPrefix("tf-testacc-vpce")
+	rName := fmt.Sprintf("tf-testacc-vpce-%s", acctest.RandStringFromCharSet(16, acctest.CharSetAlphaNum))
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -331,7 +321,7 @@ func TestAccAWSVpcEndpoint_interfaceWithSubnetAndSecurityGroup(t *testing.T) {
 func TestAccAWSVpcEndpoint_interfaceNonAWSService(t *testing.T) {
 	var endpoint ec2.VpcEndpoint
 	resourceName := "aws_vpc_endpoint.test"
-	rName := acctest.RandomWithPrefix("tf-acc-vpce")
+	rName := fmt.Sprintf("tf-testacc-vpce-%s", acctest.RandStringFromCharSet(16, acctest.CharSetAlphaNum))
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -357,12 +347,6 @@ func TestAccAWSVpcEndpoint_interfaceNonAWSService(t *testing.T) {
 					testAccCheckResourceAttrAccountID(resourceName, "owner_id"),
 				),
 			},
-			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"auto_accept"},
-			},
 		},
 	})
 }
@@ -370,7 +354,19 @@ func TestAccAWSVpcEndpoint_interfaceNonAWSService(t *testing.T) {
 func TestAccAWSVpcEndpoint_removed(t *testing.T) {
 	var endpoint ec2.VpcEndpoint
 	resourceName := "aws_vpc_endpoint.test"
-	rName := acctest.RandomWithPrefix("tf-testacc-vpce")
+	rName := fmt.Sprintf("tf-testacc-vpce-%s", acctest.RandStringFromCharSet(16, acctest.CharSetAlphaNum))
+
+	// reach out and DELETE the VPC Endpoint outside of Terraform
+	testDestroy := func(*terraform.State) error {
+		conn := testAccProvider.Meta().(*AWSClient).ec2conn
+		input := &ec2.DeleteVpcEndpointsInput{
+			VpcEndpointIds: []*string{endpoint.VpcEndpointId},
+		}
+
+		_, err := conn.DeleteVpcEndpoints(input)
+
+		return err
+	}
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -381,25 +377,12 @@ func TestAccAWSVpcEndpoint_removed(t *testing.T) {
 				Config: testAccVpcEndpointConfig_gatewayWithoutRouteTableOrPolicyOrTags(rName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVpcEndpointExists(resourceName, &endpoint),
-					testAccCheckVpcEndpointDisappears(&endpoint),
+					testDestroy,
 				),
 				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
-}
-
-func testAccCheckVpcEndpointDisappears(endpoint *ec2.VpcEndpoint) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		conn := testAccProvider.Meta().(*AWSClient).ec2conn
-		input := &ec2.DeleteVpcEndpointsInput{
-			VpcEndpointIds: []*string{endpoint.VpcEndpointId},
-		}
-
-		_, err := conn.DeleteVpcEndpoints(input)
-
-		return err
-	}
 }
 
 func testAccCheckVpcEndpointDestroy(s *terraform.State) error {

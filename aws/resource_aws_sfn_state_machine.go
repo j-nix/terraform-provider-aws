@@ -178,12 +178,20 @@ func resourceAwsSfnStateMachineDelete(d *schema.ResourceData, meta interface{}) 
 	input := &sfn.DeleteStateMachineInput{
 		StateMachineArn: aws.String(d.Id()),
 	}
+	err := resource.Retry(5*time.Minute, func() *resource.RetryError {
+		_, err := conn.DeleteStateMachine(input)
 
-	_, err := conn.DeleteStateMachine(input)
+		if err == nil {
+			return nil
+		}
 
+		return resource.NonRetryableError(err)
+	})
+	if isResourceTimeoutError(err) {
+		_, err = conn.DeleteStateMachine(input)
+	}
 	if err != nil {
 		return fmt.Errorf("Error deleting SFN state machine: %s", err)
 	}
-
 	return nil
 }

@@ -9,9 +9,9 @@ import (
 
 	"golang.org/x/tools/go/analysis"
 
-	"github.com/bflad/tfproviderlint/helper/terraformtype/helper/schema"
+	"github.com/bflad/tfproviderlint/helper/terraformtype"
 	"github.com/bflad/tfproviderlint/passes/commentignore"
-	"github.com/bflad/tfproviderlint/passes/helper/schema/schemamapcompositelit"
+	"github.com/bflad/tfproviderlint/passes/schemamap"
 )
 
 const Doc = `check for Schema that Elem does not contain extraneous fields
@@ -26,7 +26,7 @@ var Analyzer = &analysis.Analyzer{
 	Name: analyzerName,
 	Doc:  Doc,
 	Requires: []*analysis.Analyzer{
-		schemamapcompositelit.Analyzer,
+		schemamap.Analyzer,
 		commentignore.Analyzer,
 	},
 	Run: run,
@@ -34,41 +34,53 @@ var Analyzer = &analysis.Analyzer{
 
 func run(pass *analysis.Pass) (interface{}, error) {
 	ignorer := pass.ResultOf[commentignore.Analyzer].(*commentignore.Ignorer)
-	schemamapcompositelits := pass.ResultOf[schemamapcompositelit.Analyzer].([]*ast.CompositeLit)
+	schemamaps := pass.ResultOf[schemamap.Analyzer].([]*ast.CompositeLit)
 
-	for _, smap := range schemamapcompositelits {
-		for _, schemaCompositeLit := range schema.GetSchemaMapSchemas(smap) {
-			schemaInfo := schema.NewSchemaInfo(schemaCompositeLit, pass.TypesInfo)
-
-			if ignorer.ShouldIgnore(analyzerName, schemaInfo.AstCompositeLit) {
+	for _, smap := range schemamaps {
+		for _, schema := range schemamap.GetSchemaAttributes(smap) {
+			if ignorer.ShouldIgnore(analyzerName, schema) {
 				continue
 			}
 
-			elemKvExpr := schemaInfo.Fields[schema.SchemaFieldElem]
-
-			if elemKvExpr == nil {
-				continue
-			}
-
-			// search within Elem
-			switch elemValue := elemKvExpr.Value.(type) {
-			default:
-				continue
-			case *ast.UnaryExpr:
-				if elemValue.Op != token.AND || !schema.IsTypeSchema(pass.TypesInfo.TypeOf(elemValue.X)) {
-					continue
-				}
-
-				switch tElemSchema := elemValue.X.(type) {
+			for _, elt := range schema.Elts {
+				// filter to Elem
+				switch tElt := elt.(type) {
 				default:
 					continue
-				case *ast.CompositeLit:
-					elemSchema := schema.NewSchemaInfo(tElemSchema, pass.TypesInfo)
+				case *ast.KeyValueExpr:
+					name := tElt.Key.(*ast.Ident).Name
 
-					for _, field := range []string{schema.SchemaFieldComputed, schema.SchemaFieldOptional, schema.SchemaFieldRequired} {
-						if kvExpr := elemSchema.Fields[field]; kvExpr != nil {
-							pass.Reportf(kvExpr.Pos(), "%s: schema within Elem should not configure Computed, Optional, or Required", analyzerName)
-							break
+					if name != "Elem" {
+						continue
+					}
+
+					// search within Elem
+					switch elemValue := tElt.Value.(type) {
+					default:
+						continue
+					case *ast.UnaryExpr:
+						if elemValue.Op != token.AND || !terraformtype.IsTypeHelperSchema(pass.TypesInfo.TypeOf(elemValue.X)) {
+							continue
+						}
+
+						switch tElemSchema := elemValue.X.(type) {
+						default:
+							continue
+						case *ast.CompositeLit:
+							for _, elemSchemaElt := range tElemSchema.Elts {
+								switch v := elemSchemaElt.(type) {
+								default:
+									continue
+								case *ast.KeyValueExpr:
+									name := v.Key.(*ast.Ident).Name
+
+									switch name {
+									case "Computed", "Optional", "Required":
+										pass.Reportf(elemSchemaElt.Pos(), "%s: schema within Elem should not configure Computed, Optional, or Required", analyzerName)
+										break
+									}
+								}
+							}
 						}
 					}
 				}

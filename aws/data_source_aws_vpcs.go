@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func dataSourceAwsVpcs() *schema.Resource {
@@ -32,15 +31,18 @@ func dataSourceAwsVpcs() *schema.Resource {
 func dataSourceAwsVpcsRead(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).ec2conn
 
+	filters, filtersOk := d.GetOk("filter")
+	tags, tagsOk := d.GetOk("tags")
+
 	req := &ec2.DescribeVpcsInput{}
 
-	if tags, tagsOk := d.GetOk("tags"); tagsOk {
-		req.Filters = append(req.Filters, buildEC2TagFilterList(
-			keyvaluetags.New(tags.(map[string]interface{})).Ec2Tags(),
-		)...)
+	if tagsOk {
+		req.Filters = buildEC2TagFilterList(
+			tagsFromMap(tags.(map[string]interface{})),
+		)
 	}
 
-	if filters, filtersOk := d.GetOk("filter"); filtersOk {
+	if filtersOk {
 		req.Filters = append(req.Filters, buildEC2CustomFilterList(
 			filters.(*schema.Set),
 		)...)

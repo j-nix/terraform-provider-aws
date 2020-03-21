@@ -67,10 +67,6 @@ func resourceAwsOrganizationsOrganization() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"status": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 					},
 				},
 			},
@@ -92,10 +88,6 @@ func resourceAwsOrganizationsOrganization() *schema.Resource {
 							Computed: true,
 						},
 						"name": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"status": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -145,7 +137,6 @@ func resourceAwsOrganizationsOrganization() *schema.Resource {
 					Type: schema.TypeString,
 					ValidateFunc: validation.StringInSlice([]string{
 						organizations.PolicyTypeServiceControlPolicy,
-						organizations.PolicyTypeTagPolicy,
 					}, false),
 				},
 			},
@@ -421,11 +412,10 @@ func flattenOrganizationsAccounts(accounts []*organizations.Account) []map[strin
 	var result []map[string]interface{}
 	for _, account := range accounts {
 		result = append(result, map[string]interface{}{
-			"arn":    aws.StringValue(account.Arn),
-			"email":  aws.StringValue(account.Email),
-			"id":     aws.StringValue(account.Id),
-			"name":   aws.StringValue(account.Name),
-			"status": aws.StringValue(account.Status),
+			"arn":   aws.StringValue(account.Arn),
+			"email": aws.StringValue(account.Email),
+			"id":    aws.StringValue(account.Id),
+			"name":  aws.StringValue(account.Name),
 		})
 	}
 	return result

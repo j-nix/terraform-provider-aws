@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/rds"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsDbEventSubscription() *schema.Resource {
@@ -93,7 +92,7 @@ func resourceAwsDbEventSubscriptionCreate(d *schema.ResourceData, meta interface
 		name = resource.UniqueId()
 	}
 
-	tags := keyvaluetags.New(d.Get("tags").(map[string]interface{})).IgnoreAws().RdsTags()
+	tags := tagsFromMapRDS(d.Get("tags").(map[string]interface{}))
 
 	sourceIdsSet := d.Get("source_ids").(*schema.Set)
 	sourceIds := make([]*string, sourceIdsSet.Len())
@@ -125,6 +124,10 @@ func resourceAwsDbEventSubscriptionCreate(d *schema.ResourceData, meta interface
 	}
 
 	d.SetId(aws.StringValue(output.EventSubscription.CustSubscriptionId))
+
+	if err := setTagsRDS(conn, d, aws.StringValue(output.EventSubscription.EventSubscriptionArn)); err != nil {
+		return fmt.Errorf("Error creating RDS Event Subscription (%s) tags: %s", d.Id(), err)
+	}
 
 	log.Println(
 		"[INFO] Waiting for RDS Event Subscription to be ready")
@@ -191,13 +194,20 @@ func resourceAwsDbEventSubscriptionRead(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	tags, err := keyvaluetags.RdsListTags(conn, d.Get("arn").(string))
+	// list tags for resource
+	resp, err := conn.ListTagsForResource(&rds.ListTagsForResourceInput{
+		ResourceName: sub.EventSubscriptionArn,
+	})
 
 	if err != nil {
-		return fmt.Errorf("error listing tags for RDS Event Subscription (%s): %s", d.Get("arn").(string), err)
+		log.Printf("[DEBUG] Error retrieving tags for ARN: %s", aws.StringValue(sub.EventSubscriptionArn))
 	}
 
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
+	var dt []*rds.Tag
+	if len(resp.TagList) > 0 {
+		dt = resp.TagList
+	}
+	if err := d.Set("tags", tagsToMapRDS(dt)); err != nil {
 		return fmt.Errorf("error setting tags: %s", err)
 	}
 
@@ -299,13 +309,9 @@ func resourceAwsDbEventSubscriptionUpdate(d *schema.ResourceData, meta interface
 		d.SetPartial("source_type")
 	}
 
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.RdsUpdateTags(conn, d.Get("arn").(string), o, n); err != nil {
-			return fmt.Errorf("error updating RDS Event Subscription (%s) tags: %s", d.Get("arn").(string), err)
-		}
-
+	if err := setTagsRDS(conn, d, d.Get("arn").(string)); err != nil {
+		return err
+	} else {
 		d.SetPartial("tags")
 	}
 

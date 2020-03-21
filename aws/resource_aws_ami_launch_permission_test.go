@@ -26,12 +26,6 @@ func TestAccAWSAMILaunchPermission_Basic(t *testing.T) {
 					testAccCheckAWSAMILaunchPermissionExists(resourceName),
 				),
 			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: testAccAWSAMILaunchPermissionImportStateIdFunc(resourceName),
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
@@ -189,10 +183,10 @@ func testAccCheckAWSAMILaunchPermissionAddPublic(resourceName string) resource.T
 
 		input := &ec2.ModifyImageAttributeInput{
 			ImageId:   aws.String(imageID),
-			Attribute: aws.String(ec2.ImageAttributeNameLaunchPermission),
+			Attribute: aws.String("launchPermission"),
 			LaunchPermission: &ec2.LaunchPermissionModifications{
 				Add: []*ec2.LaunchPermission{
-					{Group: aws.String(ec2.PermissionGroupAll)},
+					{Group: aws.String("all")},
 				},
 			},
 		}
@@ -220,7 +214,7 @@ func testAccCheckAWSAMILaunchPermissionDisappears(resourceName string) resource.
 
 		input := &ec2.ModifyImageAttributeInput{
 			ImageId:   aws.String(imageID),
-			Attribute: aws.String(ec2.ImageAttributeNameLaunchPermission),
+			Attribute: aws.String("launchPermission"),
 			LaunchPermission: &ec2.LaunchPermissionModifications{
 				Remove: []*ec2.LaunchPermission{
 					{UserId: aws.String(accountID)},
@@ -289,15 +283,4 @@ resource "aws_ami_launch_permission" "test" {
   image_id   = "${aws_ami_copy.test.id}"
 }
 `, rName, rName)
-}
-
-func testAccAWSAMILaunchPermissionImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
-	return func(s *terraform.State) (string, error) {
-		rs, ok := s.RootModule().Resources[resourceName]
-		if !ok {
-			return "", fmt.Errorf("Not found: %s", resourceName)
-		}
-
-		return fmt.Sprintf("%s/%s", rs.Primary.Attributes["account_id"], rs.Primary.Attributes["image_id"]), nil
-	}
 }

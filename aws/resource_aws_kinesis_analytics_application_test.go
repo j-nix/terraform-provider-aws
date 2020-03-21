@@ -785,7 +785,7 @@ resource "aws_lambda_function" "test" {
   function_name = "testAcc-%d"
   handler       = "exports.example"
   role          = "${aws_iam_role.lambda.arn}"
-  runtime       = "nodejs12.x"
+  runtime       = "nodejs8.10"
 }
 
 resource "aws_kinesis_firehose_delivery_stream" "test" {
@@ -1053,7 +1053,7 @@ resource "aws_lambda_function" "test" {
   function_name = "tf-acc-test-%d"
   handler       = "exports.example"
   role          = "${aws_iam_role.lambda_function.arn}"
-  runtime       = "nodejs12.x"
+  runtime       = "nodejs8.10"
 }
 
 resource "aws_kinesis_analytics_application" "test" {

@@ -42,7 +42,7 @@ func resourceAwsSesDomainIdentity() *schema.Resource {
 }
 
 func resourceAwsSesDomainIdentityCreate(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).sesconn
+	conn := meta.(*AWSClient).sesConn
 
 	domainName := d.Get("domain").(string)
 	domainName = strings.TrimSuffix(domainName, ".")
@@ -62,7 +62,7 @@ func resourceAwsSesDomainIdentityCreate(d *schema.ResourceData, meta interface{}
 }
 
 func resourceAwsSesDomainIdentityRead(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).sesconn
+	conn := meta.(*AWSClient).sesConn
 
 	domainName := d.Id()
 	d.Set("domain", domainName)
@@ -99,7 +99,7 @@ func resourceAwsSesDomainIdentityRead(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceAwsSesDomainIdentityDelete(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).sesconn
+	conn := meta.(*AWSClient).sesConn
 
 	domainName := d.Get("domain").(string)
 

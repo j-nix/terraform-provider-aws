@@ -2,10 +2,6 @@
 
 package managedblockchain
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeAccessDeniedException for service response error code
@@ -69,15 +65,3 @@ const (
 	// increase or delete unused resources if possible.
 	ErrCodeThrottlingException = "ThrottlingException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"AccessDeniedException":          newErrorAccessDeniedException,
-	"IllegalActionException":         newErrorIllegalActionException,
-	"InternalServiceErrorException":  newErrorInternalServiceErrorException,
-	"InvalidRequestException":        newErrorInvalidRequestException,
-	"ResourceAlreadyExistsException": newErrorResourceAlreadyExistsException,
-	"ResourceLimitExceededException": newErrorResourceLimitExceededException,
-	"ResourceNotFoundException":      newErrorResourceNotFoundException,
-	"ResourceNotReadyException":      newErrorResourceNotReadyException,
-	"ThrottlingException":            newErrorThrottlingException,
-}

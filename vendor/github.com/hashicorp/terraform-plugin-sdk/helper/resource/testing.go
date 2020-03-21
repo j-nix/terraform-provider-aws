@@ -20,7 +20,8 @@ import (
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/logutils"
-	"github.com/hashicorp/terraform-plugin-sdk/acctest"
+	"github.com/mitchellh/colorstring"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/internal/addrs"
 	"github.com/hashicorp/terraform-plugin-sdk/internal/command/format"
@@ -31,7 +32,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/internal/states"
 	"github.com/hashicorp/terraform-plugin-sdk/internal/tfdiags"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/mitchellh/colorstring"
 )
 
 // flagSweep is a flag available when running tests on the command line. It
@@ -108,9 +108,6 @@ func TestMain(m *testing.M) {
 			os.Exit(1)
 		}
 	} else {
-		if acctest.TestHelper != nil {
-			defer acctest.TestHelper.Close()
-		}
 		os.Exit(m.Run())
 	}
 }
@@ -194,13 +191,8 @@ func filterSweepers(f string, source map[string]*Sweeper) map[string]*Sweeper {
 // Since filterSweepers performs fuzzy matching, this function is used
 // to perform exact sweeper and dependency lookup.
 func filterSweeperWithDependencies(name string, source map[string]*Sweeper) map[string]*Sweeper {
+	currentSweeper := source[name]
 	result := make(map[string]*Sweeper)
-
-	currentSweeper, ok := source[name]
-	if !ok {
-		log.Printf("[WARN] Sweeper has dependency (%s), but that sweeper was not found", name)
-		return result
-	}
 
 	result[name] = currentSweeper
 
@@ -232,7 +224,7 @@ func runSweeperWithRegion(region string, s *Sweeper, sweepers map[string]*Sweepe
 				return err
 			}
 		} else {
-			log.Printf("[WARN] Sweeper (%s) has dependency (%s), but that sweeper was not found", s.Name, dep)
+			log.Printf("[DEBUG] Sweeper (%s) has dependency (%s), but that sweeper was not found", s.Name, dep)
 		}
 	}
 
@@ -328,11 +320,6 @@ type TestCase struct {
 	// IDRefreshIgnore is a list of configuration keys that will be ignored.
 	IDRefreshName   string
 	IDRefreshIgnore []string
-
-	// DisableBinaryDriver forces this test case to run using the legacy test
-	// driver, even if the binary test driver has been enabled.
-	// This property will be removed in version 2.0.0 of the SDK.
-	DisableBinaryDriver bool
 }
 
 // TestStep is a single apply sequence of a test, done within the
@@ -570,12 +557,6 @@ func Test(t TestT, c TestCase) {
 			t.Fatal(err)
 		}
 		providers[name] = p
-	}
-
-	if acctest.TestHelper != nil && c.DisableBinaryDriver == false {
-		// inject providers for ImportStateVerify
-		RunNewTest(t.(*testing.T), c, providers)
-		return
 	}
 
 	providerResolver, err := testProviderResolver(c)

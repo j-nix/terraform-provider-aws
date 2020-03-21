@@ -57,9 +57,8 @@ func testSweepCloudWatchEventTargets(region string) error {
 
 				for _, target := range listTargetsByRuleOutput.Targets {
 					removeTargetsInput := &events.RemoveTargetsInput{
-						Ids:   []*string{target.Id},
-						Rule:  rule.Name,
-						Force: aws.Bool(true),
+						Ids:  []*string{target.Id},
+						Rule: rule.Name,
 					}
 					targetID := aws.StringValue(target.Id)
 
@@ -1088,7 +1087,7 @@ resource "aws_lambda_function" "lambda" {
   source_code_hash = "${filebase64sha256("test-fixtures/lambdatest.zip")}"
   role             = "${aws_iam_role.iam_for_lambda.arn}"
   handler          = "exports.example"
-  runtime          = "nodejs12.x"
+  runtime          = "nodejs8.10"
 }
 
 resource "aws_cloudwatch_event_rule" "schedule" {

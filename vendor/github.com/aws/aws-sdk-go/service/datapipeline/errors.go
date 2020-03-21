@@ -2,10 +2,6 @@
 
 package datapipeline
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeInternalServiceError for service response error code
@@ -41,11 +37,3 @@ const (
 	// The specified task was not found.
 	ErrCodeTaskNotFoundException = "TaskNotFoundException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"InternalServiceError":      newErrorInternalServiceError,
-	"InvalidRequestException":   newErrorInvalidRequestException,
-	"PipelineDeletedException":  newErrorPipelineDeletedException,
-	"PipelineNotFoundException": newErrorPipelineNotFoundException,
-	"TaskNotFoundException":     newErrorTaskNotFoundException,
-}

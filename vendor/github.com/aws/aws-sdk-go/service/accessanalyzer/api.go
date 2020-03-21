@@ -57,7 +57,7 @@ func (c *AccessAnalyzer) CreateAnalyzerRequest(input *CreateAnalyzerInput) (req 
 
 // CreateAnalyzer API operation for Access Analyzer.
 //
-// Creates an analyzer for your account.
+// Creates an analyzer with a zone of trust set to your account.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -66,23 +66,23 @@ func (c *AccessAnalyzer) CreateAnalyzerRequest(input *CreateAnalyzerInput) (req 
 // See the AWS API reference guide for Access Analyzer's
 // API operation CreateAnalyzer for usage and error information.
 //
-// Returned Error Types:
-//   * ConflictException
+// Returned Error Codes:
+//   * ErrCodeConflictException "ConflictException"
 //   A conflict exception error.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ServiceQuotaExceededException
+//   * ErrCodeServiceQuotaExceededException "ServiceQuotaExceededException"
 //   Service quote met error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/CreateAnalyzer
@@ -152,8 +152,7 @@ func (c *AccessAnalyzer) CreateArchiveRuleRequest(input *CreateArchiveRuleInput)
 
 // CreateArchiveRule API operation for Access Analyzer.
 //
-// Creates an archive rule for the specified analyzer. Archive rules automatically
-// archive findings that meet the criteria you define when you create the rule.
+// Creates an archive rule for the specified analyzer.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -162,26 +161,26 @@ func (c *AccessAnalyzer) CreateArchiveRuleRequest(input *CreateArchiveRuleInput)
 // See the AWS API reference guide for Access Analyzer's
 // API operation CreateArchiveRule for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ConflictException
+//   * ErrCodeConflictException "ConflictException"
 //   A conflict exception error.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ServiceQuotaExceededException
+//   * ErrCodeServiceQuotaExceededException "ServiceQuotaExceededException"
 //   Service quote met error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/CreateArchiveRule
@@ -262,20 +261,20 @@ func (c *AccessAnalyzer) DeleteAnalyzerRequest(input *DeleteAnalyzerInput) (req 
 // See the AWS API reference guide for Access Analyzer's
 // API operation DeleteAnalyzer for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/DeleteAnalyzer
@@ -354,20 +353,20 @@ func (c *AccessAnalyzer) DeleteArchiveRuleRequest(input *DeleteArchiveRuleInput)
 // See the AWS API reference guide for Access Analyzer's
 // API operation DeleteArchiveRule for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/DeleteArchiveRule
@@ -436,7 +435,7 @@ func (c *AccessAnalyzer) GetAnalyzedResourceRequest(input *GetAnalyzedResourceIn
 
 // GetAnalyzedResource API operation for Access Analyzer.
 //
-// Retrieves information about a resource that was analyzed.
+// Retrieves information about an analyzed resource.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -445,20 +444,20 @@ func (c *AccessAnalyzer) GetAnalyzedResourceRequest(input *GetAnalyzedResourceIn
 // See the AWS API reference guide for Access Analyzer's
 // API operation GetAnalyzedResource for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/GetAnalyzedResource
@@ -536,20 +535,20 @@ func (c *AccessAnalyzer) GetAnalyzerRequest(input *GetAnalyzerInput) (req *reque
 // See the AWS API reference guide for Access Analyzer's
 // API operation GetAnalyzer for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/GetAnalyzer
@@ -627,20 +626,20 @@ func (c *AccessAnalyzer) GetArchiveRuleRequest(input *GetArchiveRuleInput) (req 
 // See the AWS API reference guide for Access Analyzer's
 // API operation GetArchiveRule for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/GetArchiveRule
@@ -718,20 +717,20 @@ func (c *AccessAnalyzer) GetFindingRequest(input *GetFindingInput) (req *request
 // See the AWS API reference guide for Access Analyzer's
 // API operation GetFinding for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/GetFinding
@@ -806,8 +805,7 @@ func (c *AccessAnalyzer) ListAnalyzedResourcesRequest(input *ListAnalyzedResourc
 
 // ListAnalyzedResources API operation for Access Analyzer.
 //
-// Retrieves a list of resources of the specified type that have been analyzed
-// by the specified analyzer..
+// Retrieves a list of resources that have been analyzed.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -816,20 +814,20 @@ func (c *AccessAnalyzer) ListAnalyzedResourcesRequest(input *ListAnalyzedResourc
 // See the AWS API reference guide for Access Analyzer's
 // API operation ListAnalyzedResources for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/ListAnalyzedResources
@@ -965,17 +963,17 @@ func (c *AccessAnalyzer) ListAnalyzersRequest(input *ListAnalyzersInput) (req *r
 // See the AWS API reference guide for Access Analyzer's
 // API operation ListAnalyzers for usage and error information.
 //
-// Returned Error Types:
-//   * ValidationException
+// Returned Error Codes:
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/ListAnalyzers
@@ -1111,17 +1109,17 @@ func (c *AccessAnalyzer) ListArchiveRulesRequest(input *ListArchiveRulesInput) (
 // See the AWS API reference guide for Access Analyzer's
 // API operation ListArchiveRules for usage and error information.
 //
-// Returned Error Types:
-//   * ValidationException
+// Returned Error Codes:
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/ListArchiveRules
@@ -1257,20 +1255,20 @@ func (c *AccessAnalyzer) ListFindingsRequest(input *ListFindingsInput) (req *req
 // See the AWS API reference guide for Access Analyzer's
 // API operation ListFindings for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/ListFindings
@@ -1400,20 +1398,20 @@ func (c *AccessAnalyzer) ListTagsForResourceRequest(input *ListTagsForResourceIn
 // See the AWS API reference guide for Access Analyzer's
 // API operation ListTagsForResource for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/ListTagsForResource
@@ -1483,7 +1481,7 @@ func (c *AccessAnalyzer) StartResourceScanRequest(input *StartResourceScanInput)
 
 // StartResourceScan API operation for Access Analyzer.
 //
-// Immediately starts a scan of the policies applied to the specified resource.
+// Starts a scan of the policies applied to the specified resource.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1492,20 +1490,20 @@ func (c *AccessAnalyzer) StartResourceScanRequest(input *StartResourceScanInput)
 // See the AWS API reference guide for Access Analyzer's
 // API operation StartResourceScan for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/StartResourceScan
@@ -1584,20 +1582,20 @@ func (c *AccessAnalyzer) TagResourceRequest(input *TagResourceInput) (req *reque
 // See the AWS API reference guide for Access Analyzer's
 // API operation TagResource for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/TagResource
@@ -1676,20 +1674,20 @@ func (c *AccessAnalyzer) UntagResourceRequest(input *UntagResourceInput) (req *r
 // See the AWS API reference guide for Access Analyzer's
 // API operation UntagResource for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/UntagResource
@@ -1759,7 +1757,7 @@ func (c *AccessAnalyzer) UpdateArchiveRuleRequest(input *UpdateArchiveRuleInput)
 
 // UpdateArchiveRule API operation for Access Analyzer.
 //
-// Updates the criteria and values for the specified archive rule.
+// Updates the specified archive rule.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1768,20 +1766,20 @@ func (c *AccessAnalyzer) UpdateArchiveRuleRequest(input *UpdateArchiveRuleInput)
 // See the AWS API reference guide for Access Analyzer's
 // API operation UpdateArchiveRule for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/UpdateArchiveRule
@@ -1851,7 +1849,7 @@ func (c *AccessAnalyzer) UpdateFindingsRequest(input *UpdateFindingsInput) (req 
 
 // UpdateFindings API operation for Access Analyzer.
 //
-// Updates the status for the specified findings.
+// Updates findings with the new values provided in the request.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1860,20 +1858,20 @@ func (c *AccessAnalyzer) UpdateFindingsRequest(input *UpdateFindingsInput) (req 
 // See the AWS API reference guide for Access Analyzer's
 // API operation UpdateFindings for usage and error information.
 //
-// Returned Error Types:
-//   * ResourceNotFoundException
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
 //   The specified resource could not be found.
 //
-//   * ValidationException
+//   * ErrCodeValidationException "ValidationException"
 //   Validation exception error.
 //
-//   * InternalServerException
+//   * ErrCodeInternalServerException "InternalServerException"
 //   Internal server error.
 //
-//   * ThrottlingException
+//   * ErrCodeThrottlingException "ThrottlingException"
 //   Throttling limit exceeded error.
 //
-//   * AccessDeniedException
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
 //   You do not have sufficient access to perform this action.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/accessanalyzer-2019-11-01/UpdateFindings
@@ -1898,62 +1896,6 @@ func (c *AccessAnalyzer) UpdateFindingsWithContext(ctx aws.Context, input *Updat
 	return out, req.Send()
 }
 
-// You do not have sufficient access to perform this action.
-type AccessDeniedException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	Message_ *string `locationName:"message" type:"string"`
-}
-
-// String returns the string representation
-func (s AccessDeniedException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s AccessDeniedException) GoString() string {
-	return s.String()
-}
-
-func newErrorAccessDeniedException(v protocol.ResponseMetadata) error {
-	return &AccessDeniedException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s AccessDeniedException) Code() string {
-	return "AccessDeniedException"
-}
-
-// Message returns the exception's message.
-func (s AccessDeniedException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s AccessDeniedException) OrigErr() error {
-	return nil
-}
-
-func (s AccessDeniedException) Error() string {
-	return fmt.Sprintf("%s: %s", s.Code(), s.Message())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s AccessDeniedException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s AccessDeniedException) RequestID() string {
-	return s.respMetadata.RequestID
-}
-
 // Contains details about the analyzed resource.
 type AnalyzedResource struct {
 	_ struct{} `type:"structure"`
@@ -1965,12 +1907,12 @@ type AnalyzedResource struct {
 	// The time at which the resource was analyzed.
 	//
 	// AnalyzedAt is a required field
-	AnalyzedAt *time.Time `locationName:"analyzedAt" type:"timestamp" timestampFormat:"iso8601" required:"true"`
+	AnalyzedAt *time.Time `locationName:"analyzedAt" type:"timestamp" required:"true"`
 
 	// The time at which the finding was created.
 	//
 	// CreatedAt is a required field
-	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp" timestampFormat:"iso8601" required:"true"`
+	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp" required:"true"`
 
 	// An error message.
 	Error *string `locationName:"error" type:"string"`
@@ -2000,7 +1942,7 @@ type AnalyzedResource struct {
 	// The time at which the finding was updated.
 	//
 	// UpdatedAt is a required field
-	UpdatedAt *time.Time `locationName:"updatedAt" type:"timestamp" timestampFormat:"iso8601" required:"true"`
+	UpdatedAt *time.Time `locationName:"updatedAt" type:"timestamp" required:"true"`
 }
 
 // String returns the string representation
@@ -2122,13 +2064,13 @@ type AnalyzerSummary struct {
 	// A timestamp for the time at which the analyzer was created.
 	//
 	// CreatedAt is a required field
-	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp" timestampFormat:"iso8601" required:"true"`
+	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp" required:"true"`
 
 	// The resource that was most recently analyzed by the analyzer.
 	LastResourceAnalyzed *string `locationName:"lastResourceAnalyzed" type:"string"`
 
 	// The time at which the most recently analyzed resource was analyzed.
-	LastResourceAnalyzedAt *time.Time `locationName:"lastResourceAnalyzedAt" type:"timestamp" timestampFormat:"iso8601"`
+	LastResourceAnalyzedAt *time.Time `locationName:"lastResourceAnalyzedAt" type:"timestamp"`
 
 	// The name of the analyzer.
 	//
@@ -2204,7 +2146,7 @@ type ArchiveRuleSummary struct {
 	// The time at which the archive rule was created.
 	//
 	// CreatedAt is a required field
-	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp" timestampFormat:"iso8601" required:"true"`
+	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp" required:"true"`
 
 	// A filter used to define the archive rule.
 	//
@@ -2219,7 +2161,7 @@ type ArchiveRuleSummary struct {
 	// The time at which the archive rule was last updated.
 	//
 	// UpdatedAt is a required field
-	UpdatedAt *time.Time `locationName:"updatedAt" type:"timestamp" timestampFormat:"iso8601" required:"true"`
+	UpdatedAt *time.Time `locationName:"updatedAt" type:"timestamp" required:"true"`
 }
 
 // String returns the string representation
@@ -2256,72 +2198,6 @@ func (s *ArchiveRuleSummary) SetUpdatedAt(v time.Time) *ArchiveRuleSummary {
 	return s
 }
 
-// A conflict exception error.
-type ConflictException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	Message_ *string `locationName:"message" type:"string"`
-
-	// The ID of the resource.
-	//
-	// ResourceId is a required field
-	ResourceId *string `locationName:"resourceId" type:"string" required:"true"`
-
-	// The resource type.
-	//
-	// ResourceType is a required field
-	ResourceType *string `locationName:"resourceType" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s ConflictException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s ConflictException) GoString() string {
-	return s.String()
-}
-
-func newErrorConflictException(v protocol.ResponseMetadata) error {
-	return &ConflictException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s ConflictException) Code() string {
-	return "ConflictException"
-}
-
-// Message returns the exception's message.
-func (s ConflictException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s ConflictException) OrigErr() error {
-	return nil
-}
-
-func (s ConflictException) Error() string {
-	return fmt.Sprintf("%s: %s\n%s", s.Code(), s.Message(), s.String())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s ConflictException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s ConflictException) RequestID() string {
-	return s.respMetadata.RequestID
-}
-
 // Creates an analyzer.
 type CreateAnalyzerInput struct {
 	_ struct{} `type:"structure"`
@@ -2331,8 +2207,7 @@ type CreateAnalyzerInput struct {
 	// AnalyzerName is a required field
 	AnalyzerName *string `locationName:"analyzerName" min:"1" type:"string" required:"true"`
 
-	// Specifies the archive rules to add for the analyzer. Archive rules automatically
-	// archive findings that meet the criteria you define for the rule.
+	// Specifies the archive rules to add for the analyzer.
 	ArchiveRules []*InlineArchiveRule `locationName:"archiveRules" type:"list"`
 
 	// A client token.
@@ -2341,8 +2216,8 @@ type CreateAnalyzerInput struct {
 	// The tags to apply to the analyzer.
 	Tags map[string]*string `locationName:"tags" type:"map"`
 
-	// The type of analyzer to create. Only ACCOUNT analyzers are supported. You
-	// can create only one analyzer per account per Region.
+	// The zone of trust for the analyzer. You can create only one analyzer per
+	// account per Region.
 	//
 	// Type is a required field
 	Type *string `locationName:"type" type:"string" required:"true" enum:"Type"`
@@ -2547,7 +2422,7 @@ func (s CreateArchiveRuleOutput) GoString() string {
 	return s.String()
 }
 
-// The criteria to use in the filter that defines the archive rule.
+// The criteria to use in the filter that defines the rule.
 type Criterion struct {
 	_ struct{} `type:"structure"`
 
@@ -2686,7 +2561,7 @@ func (s DeleteAnalyzerOutput) GoString() string {
 type DeleteArchiveRuleInput struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the analyzer that associated with the archive rule to delete.
+	// The name of the analyzer that was deleted.
 	//
 	// AnalyzerName is a required field
 	AnalyzerName *string `location:"uri" locationName:"analyzerName" min:"1" type:"string" required:"true"`
@@ -2775,7 +2650,7 @@ type Finding struct {
 	// The time at which the resource was analyzed.
 	//
 	// AnalyzedAt is a required field
-	AnalyzedAt *time.Time `locationName:"analyzedAt" type:"timestamp" timestampFormat:"iso8601" required:"true"`
+	AnalyzedAt *time.Time `locationName:"analyzedAt" type:"timestamp" required:"true"`
 
 	// The condition in the analyzed policy statement that resulted in a finding.
 	//
@@ -2785,7 +2660,7 @@ type Finding struct {
 	// The time at which the finding was generated.
 	//
 	// CreatedAt is a required field
-	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp" timestampFormat:"iso8601" required:"true"`
+	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp" required:"true"`
 
 	// An error.
 	Error *string `locationName:"error" type:"string"`
@@ -2818,7 +2693,7 @@ type Finding struct {
 	// The time at which the finding was updated.
 	//
 	// UpdatedAt is a required field
-	UpdatedAt *time.Time `locationName:"updatedAt" type:"timestamp" timestampFormat:"iso8601" required:"true"`
+	UpdatedAt *time.Time `locationName:"updatedAt" type:"timestamp" required:"true"`
 }
 
 // String returns the string representation
@@ -2915,7 +2790,7 @@ type FindingSummary struct {
 	// analyzed.
 	//
 	// AnalyzedAt is a required field
-	AnalyzedAt *time.Time `locationName:"analyzedAt" type:"timestamp" timestampFormat:"iso8601" required:"true"`
+	AnalyzedAt *time.Time `locationName:"analyzedAt" type:"timestamp" required:"true"`
 
 	// The condition in the analyzed policy statement that resulted in a finding.
 	//
@@ -2925,7 +2800,7 @@ type FindingSummary struct {
 	// The time at which the finding was created.
 	//
 	// CreatedAt is a required field
-	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp" timestampFormat:"iso8601" required:"true"`
+	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp" required:"true"`
 
 	// The error that resulted in an Error finding.
 	Error *string `locationName:"error" type:"string"`
@@ -2958,7 +2833,7 @@ type FindingSummary struct {
 	// The time at which the finding was most recently updated.
 	//
 	// UpdatedAt is a required field
-	UpdatedAt *time.Time `locationName:"updatedAt" type:"timestamp" timestampFormat:"iso8601" required:"true"`
+	UpdatedAt *time.Time `locationName:"updatedAt" type:"timestamp" required:"true"`
 }
 
 // String returns the string representation
@@ -3330,7 +3205,7 @@ func (s *GetFindingInput) SetId(v string) *GetFindingInput {
 	return s
 }
 
-// The response to the request.
+// The resposne to the request.
 type GetFindingOutput struct {
 	_ struct{} `type:"structure"`
 
@@ -3354,12 +3229,11 @@ func (s *GetFindingOutput) SetFinding(v *Finding) *GetFindingOutput {
 	return s
 }
 
-// An criterion statement in an archive rule. Each archive rule may have multiple
-// criteria.
+// An inline archive rule.
 type InlineArchiveRule struct {
 	_ struct{} `type:"structure"`
 
-	// The condition and values for a criterion.
+	// The criteria for the rule.
 	//
 	// Filter is a required field
 	Filter map[string]*Criterion `locationName:"filter" type:"map" required:"true"`
@@ -3419,65 +3293,6 @@ func (s *InlineArchiveRule) SetFilter(v map[string]*Criterion) *InlineArchiveRul
 func (s *InlineArchiveRule) SetRuleName(v string) *InlineArchiveRule {
 	s.RuleName = &v
 	return s
-}
-
-// Internal server error.
-type InternalServerException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	Message_ *string `locationName:"message" type:"string"`
-
-	// The seconds to wait to retry.
-	RetryAfterSeconds *int64 `location:"header" locationName:"Retry-After" type:"integer"`
-}
-
-// String returns the string representation
-func (s InternalServerException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s InternalServerException) GoString() string {
-	return s.String()
-}
-
-func newErrorInternalServerException(v protocol.ResponseMetadata) error {
-	return &InternalServerException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s InternalServerException) Code() string {
-	return "InternalServerException"
-}
-
-// Message returns the exception's message.
-func (s InternalServerException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s InternalServerException) OrigErr() error {
-	return nil
-}
-
-func (s InternalServerException) Error() string {
-	return fmt.Sprintf("%s: %s\n%s", s.Code(), s.Message(), s.String())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s InternalServerException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s InternalServerException) RequestID() string {
-	return s.respMetadata.RequestID
 }
 
 // Retrieves a list of resources that have been analyzed.
@@ -3591,7 +3406,8 @@ type ListAnalyzersInput struct {
 	// A token used for pagination of results returned.
 	NextToken *string `location:"querystring" locationName:"nextToken" type:"string"`
 
-	// The type of analyzer.
+	// The type of analyzer, which corresponds to the zone of trust selected when
+	// the analyzer was created.
 	Type *string `location:"querystring" locationName:"type" type:"string" enum:"Type"`
 }
 
@@ -3838,7 +3654,7 @@ func (s *ListFindingsInput) SetSort(v *SortCriteria) *ListFindingsInput {
 	return s
 }
 
-// The response to the request.
+// The resposne to the request.
 type ListFindingsOutput struct {
 	_ struct{} `type:"structure"`
 
@@ -3940,139 +3756,7 @@ func (s *ListTagsForResourceOutput) SetTags(v map[string]*string) *ListTagsForRe
 	return s
 }
 
-// The specified resource could not be found.
-type ResourceNotFoundException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	Message_ *string `locationName:"message" type:"string"`
-
-	// The ID of the resource.
-	//
-	// ResourceId is a required field
-	ResourceId *string `locationName:"resourceId" type:"string" required:"true"`
-
-	// The type of the resource.
-	//
-	// ResourceType is a required field
-	ResourceType *string `locationName:"resourceType" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s ResourceNotFoundException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s ResourceNotFoundException) GoString() string {
-	return s.String()
-}
-
-func newErrorResourceNotFoundException(v protocol.ResponseMetadata) error {
-	return &ResourceNotFoundException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s ResourceNotFoundException) Code() string {
-	return "ResourceNotFoundException"
-}
-
-// Message returns the exception's message.
-func (s ResourceNotFoundException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s ResourceNotFoundException) OrigErr() error {
-	return nil
-}
-
-func (s ResourceNotFoundException) Error() string {
-	return fmt.Sprintf("%s: %s\n%s", s.Code(), s.Message(), s.String())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s ResourceNotFoundException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s ResourceNotFoundException) RequestID() string {
-	return s.respMetadata.RequestID
-}
-
-// Service quote met error.
-type ServiceQuotaExceededException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	Message_ *string `locationName:"message" type:"string"`
-
-	// The resource ID.
-	//
-	// ResourceId is a required field
-	ResourceId *string `locationName:"resourceId" type:"string" required:"true"`
-
-	// The resource type.
-	//
-	// ResourceType is a required field
-	ResourceType *string `locationName:"resourceType" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s ServiceQuotaExceededException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s ServiceQuotaExceededException) GoString() string {
-	return s.String()
-}
-
-func newErrorServiceQuotaExceededException(v protocol.ResponseMetadata) error {
-	return &ServiceQuotaExceededException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s ServiceQuotaExceededException) Code() string {
-	return "ServiceQuotaExceededException"
-}
-
-// Message returns the exception's message.
-func (s ServiceQuotaExceededException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s ServiceQuotaExceededException) OrigErr() error {
-	return nil
-}
-
-func (s ServiceQuotaExceededException) Error() string {
-	return fmt.Sprintf("%s: %s\n%s", s.Code(), s.Message(), s.String())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s ServiceQuotaExceededException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s ServiceQuotaExceededException) RequestID() string {
-	return s.respMetadata.RequestID
-}
-
-// The criteria used to sort.
+// The sort criteria.
 type SortCriteria struct {
 	_ struct{} `type:"structure"`
 
@@ -4244,65 +3928,6 @@ func (s TagResourceOutput) GoString() string {
 	return s.String()
 }
 
-// Throttling limit exceeded error.
-type ThrottlingException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	Message_ *string `locationName:"message" type:"string"`
-
-	// The seconds to wait to retry.
-	RetryAfterSeconds *int64 `location:"header" locationName:"Retry-After" type:"integer"`
-}
-
-// String returns the string representation
-func (s ThrottlingException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s ThrottlingException) GoString() string {
-	return s.String()
-}
-
-func newErrorThrottlingException(v protocol.ResponseMetadata) error {
-	return &ThrottlingException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s ThrottlingException) Code() string {
-	return "ThrottlingException"
-}
-
-// Message returns the exception's message.
-func (s ThrottlingException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s ThrottlingException) OrigErr() error {
-	return nil
-}
-
-func (s ThrottlingException) Error() string {
-	return fmt.Sprintf("%s: %s\n%s", s.Code(), s.Message(), s.String())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s ThrottlingException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s ThrottlingException) RequestID() string {
-	return s.respMetadata.RequestID
-}
-
 // Removes a tag from the specified resource.
 type UntagResourceInput struct {
 	_ struct{} `type:"structure"`
@@ -4359,7 +3984,7 @@ func (s *UntagResourceInput) SetTagKeys(v []*string) *UntagResourceInput {
 	return s
 }
 
-// The response to the request.
+// The response tot he request.
 type UntagResourceOutput struct {
 	_ struct{} `type:"structure"`
 }
@@ -4575,70 +4200,6 @@ func (s UpdateFindingsOutput) String() string {
 // GoString returns the string representation
 func (s UpdateFindingsOutput) GoString() string {
 	return s.String()
-}
-
-// Validation exception error.
-type ValidationException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	// A list of fields that didn't validate.
-	FieldList []*ValidationExceptionField `locationName:"fieldList" type:"list"`
-
-	Message_ *string `locationName:"message" type:"string"`
-
-	// The reason for the exception.
-	//
-	// Reason is a required field
-	Reason *string `locationName:"reason" type:"string" required:"true" enum:"ValidationExceptionReason"`
-}
-
-// String returns the string representation
-func (s ValidationException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s ValidationException) GoString() string {
-	return s.String()
-}
-
-func newErrorValidationException(v protocol.ResponseMetadata) error {
-	return &ValidationException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s ValidationException) Code() string {
-	return "ValidationException"
-}
-
-// Message returns the exception's message.
-func (s ValidationException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s ValidationException) OrigErr() error {
-	return nil
-}
-
-func (s ValidationException) Error() string {
-	return fmt.Sprintf("%s: %s\n%s", s.Code(), s.Message(), s.String())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s ValidationException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s ValidationException) RequestID() string {
-	return s.respMetadata.RequestID
 }
 
 // Contains information about a validation exception.

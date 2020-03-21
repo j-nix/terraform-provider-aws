@@ -10,7 +10,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsInternetGateway() *schema.Resource {
@@ -74,10 +73,9 @@ func resourceAwsInternetGatewayCreate(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("Error refreshing internet gateway state: %s", err)
 	}
 
-	if v := d.Get("tags").(map[string]interface{}); len(v) > 0 {
-		if err := keyvaluetags.Ec2UpdateTags(conn, d.Id(), nil, v); err != nil {
-			return fmt.Errorf("error adding EC2 Internet Gateway (%s) tags: %s", d.Id(), err)
-		}
+	err = setTags(conn, d)
+	if err != nil {
+		return err
 	}
 
 	// Attach the new gateway to the correct vpc
@@ -110,10 +108,7 @@ func resourceAwsInternetGatewayRead(d *schema.ResourceData, meta interface{}) er
 		d.Set("vpc_id", ig.Attachments[0].VpcId)
 	}
 
-	if err := d.Set("tags", keyvaluetags.Ec2KeyValueTags(ig.Tags).IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
-	}
-
+	d.Set("tags", tagsToMap(ig.Tags))
 	d.Set("owner_id", ig.OwnerId)
 
 	return nil
@@ -134,13 +129,11 @@ func resourceAwsInternetGatewayUpdate(d *schema.ResourceData, meta interface{}) 
 
 	conn := meta.(*AWSClient).ec2conn
 
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.Ec2UpdateTags(conn, d.Id(), o, n); err != nil {
-			return fmt.Errorf("error updating EC2 Internet Gateway (%s) tags: %s", d.Id(), err)
-		}
+	if err := setTags(conn, d); err != nil {
+		return err
 	}
+
+	d.SetPartial("tags")
 
 	return resourceAwsInternetGatewayRead(d, meta)
 }

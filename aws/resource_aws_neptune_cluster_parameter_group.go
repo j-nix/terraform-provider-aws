@@ -6,10 +6,10 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/neptune"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 const neptuneClusterParameterGroupMaxParamsBulkEdit = 20
@@ -89,7 +89,7 @@ func resourceAwsNeptuneClusterParameterGroup() *schema.Resource {
 
 func resourceAwsNeptuneClusterParameterGroupCreate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).neptuneconn
-	tags := keyvaluetags.New(d.Get("tags").(map[string]interface{})).IgnoreAws().NeptuneTags()
+	tags := tagsFromMapNeptune(d.Get("tags").(map[string]interface{}))
 
 	var groupName string
 	if v, ok := d.GetOk("name"); ok {
@@ -166,14 +166,15 @@ func resourceAwsNeptuneClusterParameterGroupRead(d *schema.ResourceData, meta in
 		return fmt.Errorf("error setting neptune parameter: %s", err)
 	}
 
-	tags, err := keyvaluetags.NeptuneListTags(conn, d.Get("arn").(string))
-
+	resp, err := conn.ListTagsForResource(&neptune.ListTagsForResourceInput{
+		ResourceName: aws.String(arn),
+	})
 	if err != nil {
-		return fmt.Errorf("error listing tags for Neptune Cluster Parameter Group (%s): %s", d.Get("arn").(string), err)
+		log.Printf("[DEBUG] Error retrieving tags for ARN: %s", arn)
 	}
 
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
+	if err := d.Set("tags", tagsToMapNeptune(resp.TagList)); err != nil {
+		return fmt.Errorf("error setting neptune tags: %s", err)
 	}
 
 	return nil
@@ -227,13 +228,10 @@ func resourceAwsNeptuneClusterParameterGroupUpdate(d *schema.ResourceData, meta 
 		}
 	}
 
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.NeptuneUpdateTags(conn, d.Get("arn").(string), o, n); err != nil {
-			return fmt.Errorf("error updating Neptune Cluster Parameter Group (%s) tags: %s", d.Get("arn").(string), err)
-		}
-
+	arn := d.Get("arn").(string)
+	if err := setTagsNeptune(conn, d, arn); err != nil {
+		return err
+	} else {
 		d.SetPartial("tags")
 	}
 

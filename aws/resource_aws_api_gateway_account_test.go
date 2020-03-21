@@ -88,7 +88,7 @@ func testAccCheckAWSAPIGatewayAccountExists(n string, res *apigateway.Account) r
 			return fmt.Errorf("No API Gateway Account ID is set")
 		}
 
-		conn := testAccProvider.Meta().(*AWSClient).apigatewayconn
+		conn := testAccProvider.Meta().(*AWSClient).apigateway
 
 		req := &apigateway.GetAccountInput{}
 		describe, err := conn.GetAccount(req)

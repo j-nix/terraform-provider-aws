@@ -2,10 +2,6 @@
 
 package directconnect
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeClientException for service response error code
@@ -32,10 +28,3 @@ const (
 	// You have reached the limit on the number of tags that can be assigned.
 	ErrCodeTooManyTagsException = "TooManyTagsException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"DirectConnectClientException": newErrorClientException,
-	"DuplicateTagKeysException":    newErrorDuplicateTagKeysException,
-	"DirectConnectServerException": newErrorServerException,
-	"TooManyTagsException":         newErrorTooManyTagsException,
-}

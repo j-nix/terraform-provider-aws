@@ -3,7 +3,6 @@ package aws
 import (
 	"fmt"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -39,10 +38,6 @@ func resourceAwsDxHostedPrivateVirtualInterface() *schema.Resource {
 				ForceNew: true,
 			},
 			"arn": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"amazon_side_asn": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -166,8 +161,6 @@ func resourceAwsDxHostedPrivateVirtualInterfaceRead(d *schema.ResourceData, meta
 	}
 
 	d.Set("address_family", vif.AddressFamily)
-	d.Set("amazon_address", vif.AmazonAddress)
-	d.Set("amazon_side_asn", strconv.FormatInt(aws.Int64Value(vif.AmazonSideAsn), 10))
 	arn := arn.ARN{
 		Partition: meta.(*AWSClient).partition,
 		Region:    meta.(*AWSClient).region,
@@ -175,6 +168,7 @@ func resourceAwsDxHostedPrivateVirtualInterfaceRead(d *schema.ResourceData, meta
 		AccountID: meta.(*AWSClient).accountid,
 		Resource:  fmt.Sprintf("dxvif/%s", d.Id()),
 	}.String()
+	d.Set("amazon_address", vif.AmazonAddress)
 	d.Set("arn", arn)
 	d.Set("aws_device", vif.AwsDeviceV2)
 	d.Set("bgp_asn", vif.Asn)

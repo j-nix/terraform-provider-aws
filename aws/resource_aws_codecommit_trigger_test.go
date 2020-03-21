@@ -7,25 +7,22 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/codecommit"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 func TestAccAWSCodeCommitTrigger_basic(t *testing.T) {
-	rName := acctest.RandomWithPrefix("tf-acc-test")
-	resourceName := "aws_codecommit_trigger.test"
-
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCodeCommitTriggerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCodeCommitTrigger_basic(rName),
+				Config: testAccCodeCommitTrigger_basic,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCodeCommitTriggerExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "trigger.#", "1"),
+					testAccCheckCodeCommitTriggerExists("aws_codecommit_trigger.test"),
+					resource.TestCheckResourceAttr(
+						"aws_codecommit_trigger.test", "trigger.#", "1"),
 				),
 			},
 		},
@@ -84,24 +81,24 @@ func testAccCheckCodeCommitTriggerExists(name string) resource.TestCheckFunc {
 	}
 }
 
-func testAccCodeCommitTrigger_basic(rName string) string {
-	return fmt.Sprintf(`
+const testAccCodeCommitTrigger_basic = `
+provider "aws" {
+  region = "us-east-1"
+}
 resource "aws_sns_topic" "test" {
-  name = %[1]q
+  name = "tf-test-topic"
 }
-
 resource "aws_codecommit_repository" "test" {
-  repository_name = %[1]q
+  repository_name = "tf_test_repository"
+  description = "This is a test description"
 }
-
 resource "aws_codecommit_trigger" "test" {
-  repository_name = aws_codecommit_repository.test.id
-
-  trigger {
-    name            = %[1]q
-    events          = ["all"]
-    destination_arn = aws_sns_topic.test.arn
+   depends_on = ["aws_codecommit_repository.test"]
+   repository_name = "tf_test_repository"
+    trigger {
+    name = "tf-test-trigger"
+    events = ["all"]
+    destination_arn = "${aws_sns_topic.test.arn}"
   }
  }
-`, rName)
-}
+`

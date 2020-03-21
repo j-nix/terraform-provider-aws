@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsCloudFrontDistribution() *schema.Resource {
@@ -520,7 +519,6 @@ func resourceAwsCloudFrontDistribution() *schema.Resource {
 							Type:     schema.TypeList,
 							Required: true,
 							MinItems: 2,
-							MaxItems: 2,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"origin_id": {
@@ -647,11 +645,6 @@ func resourceAwsCloudFrontDistribution() *schema.Resource {
 									"restriction_type": {
 										Type:     schema.TypeString,
 										Required: true,
-										ValidateFunc: validation.StringInSlice([]string{
-											cloudfront.GeoRestrictionTypeNone,
-											cloudfront.GeoRestrictionTypeBlacklist,
-											cloudfront.GeoRestrictionTypeWhitelist,
-										}, false),
 									},
 								},
 							},
@@ -755,7 +748,7 @@ func resourceAwsCloudFrontDistributionCreate(d *schema.ResourceData, meta interf
 	params := &cloudfront.CreateDistributionWithTagsInput{
 		DistributionConfigWithTags: &cloudfront.DistributionConfigWithTags{
 			DistributionConfig: expandDistributionConfig(d),
-			Tags:               &cloudfront.Tags{Items: keyvaluetags.New(d.Get("tags").(map[string]interface{})).IgnoreAws().CloudfrontTags()},
+			Tags:               tagsFromMapCloudFront(d.Get("tags").(map[string]interface{})),
 		},
 	}
 
@@ -833,12 +826,18 @@ func resourceAwsCloudFrontDistributionRead(d *schema.ResourceData, meta interfac
 	d.Set("etag", resp.ETag)
 	d.Set("arn", resp.Distribution.ARN)
 
-	tags, err := keyvaluetags.CloudfrontListTags(conn, d.Get("arn").(string))
+	tagResp, err := conn.ListTagsForResource(&cloudfront.ListTagsForResourceInput{
+		Resource: aws.String(d.Get("arn").(string)),
+	})
+
 	if err != nil {
-		return fmt.Errorf("error listing tags for CloudFront Distribution (%s): %s", d.Id(), err)
+		return fmt.Errorf(
+			"Error retrieving EC2 tags for CloudFront Distribution %q (ARN: %q): %s",
+			d.Id(), d.Get("arn").(string), err)
 	}
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
+
+	if err := d.Set("tags", tagsToMapCloudFront(tagResp.Tags)); err != nil {
+		return err
 	}
 
 	return nil
@@ -885,11 +884,8 @@ func resourceAwsCloudFrontDistributionUpdate(d *schema.ResourceData, meta interf
 		}
 	}
 
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-		if err := keyvaluetags.CloudfrontUpdateTags(conn, d.Get("arn").(string), o, n); err != nil {
-			return fmt.Errorf("error updating tags for CloudFront Distribution (%s): %s", d.Id(), err)
-		}
+	if err := setTagsCloudFront(conn, d, d.Get("arn").(string)); err != nil {
+		return err
 	}
 
 	return resourceAwsCloudFrontDistributionRead(d, meta)

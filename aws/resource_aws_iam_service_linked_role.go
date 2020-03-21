@@ -3,7 +3,6 @@ package aws
 import (
 	"fmt"
 	"log"
-	"regexp"
 	"strings"
 	"time"
 
@@ -12,7 +11,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
 func resourceAwsIamServiceLinkedRole() *schema.Resource {
@@ -27,10 +25,17 @@ func resourceAwsIamServiceLinkedRole() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"aws_service_name": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringMatch(regexp.MustCompile(`\.`), "must be a full service hostname e.g. elasticbeanstalk.amazonaws.com"),
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+				ValidateFunc: func(v interface{}, k string) (ws []string, es []error) {
+					value := v.(string)
+					if !strings.HasSuffix(value, ".amazonaws.com") {
+						es = append(es, fmt.Errorf(
+							"%q must be a service URL e.g. elasticbeanstalk.amazonaws.com", k))
+					}
+					return
+				},
 			},
 
 			"name": {
@@ -132,7 +137,7 @@ func resourceAwsIamServiceLinkedRoleRead(d *schema.ResourceData, meta interface{
 
 	d.Set("arn", role.Arn)
 	d.Set("aws_service_name", serviceName)
-	d.Set("create_date", aws.TimeValue(role.CreateDate).Format(time.RFC3339))
+	d.Set("create_date", role.CreateDate)
 	d.Set("custom_suffix", customSuffix)
 	d.Set("description", role.Description)
 	d.Set("name", role.RoleName)

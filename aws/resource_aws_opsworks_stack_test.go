@@ -130,9 +130,10 @@ func TestAccAWSOpsworksStack_noVpcCreateTags(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"tags"},
 			},
 			{
 				Config: testAccAwsOpsworksStackConfigNoVpcUpdateTags(stackName),
@@ -303,7 +304,7 @@ EOT
 
 resource "aws_iam_instance_profile" "opsworks_instance" {
   name  = "%s_profile"
-  role  = "${aws_iam_role.opsworks_instance.name}"
+  roles = ["${aws_iam_role.opsworks_instance.name}"]
 }
 `, rName, rInt, rInt, rInt, rName)
 }
@@ -389,7 +390,7 @@ EOT
 
 resource "aws_iam_instance_profile" "opsworks_instance" {
   name  = "%s_profile"
-  role  = "${aws_iam_role.opsworks_instance.name}"
+  roles = ["${aws_iam_role.opsworks_instance.name}"]
 }
 `, rName, rInt, rInt, rInt, rName)
 }
@@ -801,7 +802,7 @@ EOT
 
 resource "aws_iam_instance_profile" "opsworks_instance" {
   name  = "%s_opsworks_instance"
-  role  = "${aws_iam_role.opsworks_instance.name}"
+  roles = ["${aws_iam_role.opsworks_instance.name}"]
 }
 `, name, name, name, name, name)
 }
@@ -890,7 +891,7 @@ EOT
 
 resource "aws_iam_instance_profile" "opsworks_instance" {
   name  = "%s_opsworks_instance"
-  role  = "${aws_iam_role.opsworks_instance.name}"
+  roles = ["${aws_iam_role.opsworks_instance.name}"]
 }
 `, name, name, name, name, name)
 }
@@ -979,7 +980,7 @@ EOT
 
 resource "aws_iam_instance_profile" "opsworks_instance" {
   name  = "%s_opsworks_instance"
-  role  = "${aws_iam_role.opsworks_instance.name}"
+  roles = ["${aws_iam_role.opsworks_instance.name}"]
 }
 `, name, name, name, name, name)
 }
@@ -1111,7 +1112,7 @@ EOT
 
 resource "aws_iam_instance_profile" "opsworks_instance" {
   name  = "%s_opsworks_instance"
-  role  = "${aws_iam_role.opsworks_instance.name}"
+  roles = ["${aws_iam_role.opsworks_instance.name}"]
 }
 `, name, name, name, name, name, name, name)
 }
@@ -1219,7 +1220,7 @@ EOT
 
 resource "aws_iam_instance_profile" "opsworks_instance" {
   name  = "%s_opsworks_instance"
-  role  = "${aws_iam_role.opsworks_instance.name}"
+  roles = ["${aws_iam_role.opsworks_instance.name}"]
 }
 `, name, name, name, name, name)
 }
@@ -1331,7 +1332,7 @@ EOT
 
 resource "aws_iam_instance_profile" "opsworks_instance" {
   name  = "%s_opsworks_instance"
-  role  = "${aws_iam_role.opsworks_instance.name}"
+  roles = ["${aws_iam_role.opsworks_instance.name}"]
 }
 `, name, name, name, name, name)
 }
@@ -1450,7 +1451,7 @@ EOT
 
 resource "aws_iam_instance_profile" "opsworks_instance" {
   name  = "%s_opsworks_instance"
-  role  = "${aws_iam_role.opsworks_instance.name}"
+  roles = ["${aws_iam_role.opsworks_instance.name}"]
 }
 `, name, sshKey, name, name, name, name)
 }

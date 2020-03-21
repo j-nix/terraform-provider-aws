@@ -37,6 +37,7 @@ func dataSourceAwsMqBroker() *schema.Resource {
 			"configuration": {
 				Type:     schema.TypeList,
 				Computed: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
@@ -129,6 +130,7 @@ func dataSourceAwsMqBroker() *schema.Resource {
 			},
 			"maintenance_window_start_time": {
 				Type:     schema.TypeList,
+				MaxItems: 1,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{

@@ -1,25 +1,19 @@
 package aws
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
-	// "github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/inspector"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAWSInspectorAssessmentTemplate() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceAwsInspectorAssessmentTemplateCreate,
 		Read:   resourceAwsInspectorAssessmentTemplateRead,
-		Update: resourceAwsInspectorAssessmentTemplateUpdate,
 		Delete: resourceAwsInspectorAssessmentTemplateDelete,
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
-		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -49,7 +43,6 @@ func resourceAWSInspectorAssessmentTemplate() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
-			"tags": tagsSchema(),
 		},
 	}
 }
@@ -57,26 +50,29 @@ func resourceAWSInspectorAssessmentTemplate() *schema.Resource {
 func resourceAwsInspectorAssessmentTemplateCreate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).inspectorconn
 
-	req := &inspector.CreateAssessmentTemplateInput{
-		AssessmentTargetArn:    aws.String(d.Get("target_arn").(string)),
-		AssessmentTemplateName: aws.String(d.Get("name").(string)),
-		DurationInSeconds:      aws.Int64(int64(d.Get("duration").(int))),
-		RulesPackageArns:       expandStringSet(d.Get("rules_package_arns").(*schema.Set)),
+	rules := []*string{}
+	if attr := d.Get("rules_package_arns").(*schema.Set); attr.Len() > 0 {
+		rules = expandStringList(attr.List())
 	}
 
-	log.Printf("[DEBUG] Creating Inspector assessment template: %s", req)
-	resp, err := conn.CreateAssessmentTemplate(req)
+	targetArn := d.Get("target_arn").(string)
+	templateName := d.Get("name").(string)
+	duration := int64(d.Get("duration").(int))
+
+	resp, err := conn.CreateAssessmentTemplate(&inspector.CreateAssessmentTemplateInput{
+		AssessmentTargetArn:    aws.String(targetArn),
+		AssessmentTemplateName: aws.String(templateName),
+		DurationInSeconds:      aws.Int64(duration),
+		RulesPackageArns:       rules,
+	})
 	if err != nil {
-		return fmt.Errorf("error creating Inspector assessment template: %s", err)
+		return err
 	}
+	log.Printf("[DEBUG] Inspector Assessment Template %s created", *resp.AssessmentTemplateArn)
 
-	d.SetId(aws.StringValue(resp.AssessmentTemplateArn))
+	d.Set("arn", resp.AssessmentTemplateArn)
 
-	if v := d.Get("tags").(map[string]interface{}); len(v) > 0 {
-		if err := keyvaluetags.InspectorUpdateTags(conn, d.Id(), nil, v); err != nil {
-			return fmt.Errorf("error adding Inspector assessment template (%s) tags: %s", d.Id(), err)
-		}
-	}
+	d.SetId(*resp.AssessmentTemplateArn)
 
 	return resourceAwsInspectorAssessmentTemplateRead(d, meta)
 }
@@ -85,55 +81,24 @@ func resourceAwsInspectorAssessmentTemplateRead(d *schema.ResourceData, meta int
 	conn := meta.(*AWSClient).inspectorconn
 
 	resp, err := conn.DescribeAssessmentTemplates(&inspector.DescribeAssessmentTemplatesInput{
-		AssessmentTemplateArns: aws.StringSlice([]string{d.Id()}),
-	})
+		AssessmentTemplateArns: []*string{
+			aws.String(d.Id()),
+		},
+	},
+	)
 	if err != nil {
-		return fmt.Errorf("error reading Inspector assessment template (%s): %s", d.Id(), err)
-	}
-
-	if resp.AssessmentTemplates == nil || len(resp.AssessmentTemplates) == 0 {
-		log.Printf("[WARN] Inspector assessment template (%s) not found, removing from state", d.Id())
-		d.SetId("")
-		return nil
-	}
-
-	template := resp.AssessmentTemplates[0]
-
-	arn := aws.StringValue(template.Arn)
-	d.Set("arn", arn)
-	d.Set("duration", template.DurationInSeconds)
-	d.Set("name", template.Name)
-	d.Set("target_arn", template.AssessmentTargetArn)
-
-	if err := d.Set("rules_package_arns", flattenStringSet(template.RulesPackageArns)); err != nil {
-		return fmt.Errorf("error setting rules_package_arns: %s", err)
-	}
-
-	tags, err := keyvaluetags.InspectorListTags(conn, arn)
-
-	if err != nil {
-		return fmt.Errorf("error listing tags for Inspector assessment template (%s): %s", arn, err)
-	}
-
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
-	}
-
-	return nil
-}
-
-func resourceAwsInspectorAssessmentTemplateUpdate(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).inspectorconn
-
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.InspectorUpdateTags(conn, d.Id(), o, n); err != nil {
-			return fmt.Errorf("error updating Inspector assessment template (%s) tags: %s", d.Id(), err)
+		if inspectorerr, ok := err.(awserr.Error); ok && inspectorerr.Code() == "InvalidInputException" {
+			return nil
+		} else {
+			log.Printf("[ERROR] Error finding Inspector Assessment Template: %s", err)
+			return err
 		}
 	}
 
-	return resourceAwsInspectorAssessmentTemplateRead(d, meta)
+	if resp.AssessmentTemplates != nil && len(resp.AssessmentTemplates) > 0 {
+		d.Set("name", resp.AssessmentTemplates[0].Name)
+	}
+	return nil
 }
 
 func resourceAwsInspectorAssessmentTemplateDelete(d *schema.ResourceData, meta interface{}) error {
@@ -143,7 +108,13 @@ func resourceAwsInspectorAssessmentTemplateDelete(d *schema.ResourceData, meta i
 		AssessmentTemplateArn: aws.String(d.Id()),
 	})
 	if err != nil {
-		return fmt.Errorf("error deleting Inspector assessment template (%s): %s", d.Id(), err)
+		if inspectorerr, ok := err.(awserr.Error); ok && inspectorerr.Code() == "AssessmentRunInProgressException" {
+			log.Printf("[ERROR] Assement Run in progress: %s", err)
+			return err
+		} else {
+			log.Printf("[ERROR] Error deleting Assement Template: %s", err)
+			return err
+		}
 	}
 
 	return nil

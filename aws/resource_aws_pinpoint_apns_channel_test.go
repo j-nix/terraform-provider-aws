@@ -89,13 +89,17 @@ func testAccAwsPinpointAPNSChannelTokenConfigurationFromEnv(t *testing.T) *testA
 }
 
 func TestAccAWSPinpointAPNSChannel_basicCertificate(t *testing.T) {
+	oldDefaultRegion := os.Getenv("AWS_DEFAULT_REGION")
+	os.Setenv("AWS_DEFAULT_REGION", "us-east-1")
+	defer os.Setenv("AWS_DEFAULT_REGION", oldDefaultRegion)
+
 	var channel pinpoint.APNSChannelResponse
 	resourceName := "aws_pinpoint_apns_channel.test_apns_channel"
 
 	configuration := testAccAwsPinpointAPNSChannelCertConfigurationFromEnv(t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t); testAccPreCheckAWSPinpointApp(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		IDRefreshName: resourceName,
 		Providers:     testAccProviders,
 		CheckDestroy:  testAccCheckAWSPinpointAPNSChannelDestroy,
@@ -123,13 +127,17 @@ func TestAccAWSPinpointAPNSChannel_basicCertificate(t *testing.T) {
 }
 
 func TestAccAWSPinpointAPNSChannel_basicToken(t *testing.T) {
+	oldDefaultRegion := os.Getenv("AWS_DEFAULT_REGION")
+	os.Setenv("AWS_DEFAULT_REGION", "us-east-1")
+	defer os.Setenv("AWS_DEFAULT_REGION", oldDefaultRegion)
+
 	var channel pinpoint.APNSChannelResponse
 	resourceName := "aws_pinpoint_apns_channel.test_apns_channel"
 
 	configuration := testAccAwsPinpointAPNSChannelTokenConfigurationFromEnv(t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t); testAccPreCheckAWSPinpointApp(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		IDRefreshName: resourceName,
 		Providers:     testAccProviders,
 		CheckDestroy:  testAccCheckAWSPinpointAPNSChannelDestroy,
@@ -187,6 +195,10 @@ func testAccCheckAWSPinpointAPNSChannelExists(n string, channel *pinpoint.APNSCh
 
 func testAccAWSPinpointAPNSChannelConfig_basicCertificate(conf *testAccAwsPinpointAPNSChannelCertConfiguration) string {
 	return fmt.Sprintf(`
+provider "aws" {
+  region = "us-east-1"
+}
+
 resource "aws_pinpoint_app" "test_app" {}
 
 resource "aws_pinpoint_apns_channel" "test_apns_channel" {
@@ -201,6 +213,10 @@ resource "aws_pinpoint_apns_channel" "test_apns_channel" {
 
 func testAccAWSPinpointAPNSChannelConfig_basicToken(conf *testAccAwsPinpointAPNSChannelTokenConfiguration) string {
 	return fmt.Sprintf(`
+provider "aws" {
+  region = "us-east-1"
+}
+
 resource "aws_pinpoint_app" "test_app" {}
 
 resource "aws_pinpoint_apns_channel" "test_apns_channel" {

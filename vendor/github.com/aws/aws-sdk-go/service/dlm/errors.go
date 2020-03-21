@@ -2,10 +2,6 @@
 
 package dlm
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeInternalServerException for service response error code
@@ -32,10 +28,3 @@ const (
 	// A requested resource was not found.
 	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"InternalServerException":   newErrorInternalServerException,
-	"InvalidRequestException":   newErrorInvalidRequestException,
-	"LimitExceededException":    newErrorLimitExceededException,
-	"ResourceNotFoundException": newErrorResourceNotFoundException,
-}

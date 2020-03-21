@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ssm"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
@@ -325,41 +326,6 @@ func TestAccAWSSSMAssociation_withOutputLocation(t *testing.T) {
 	})
 }
 
-func TestAccAWSSSMAssociation_withAutomationTargetParamName(t *testing.T) {
-	name := acctest.RandString(10)
-	resourceName := "aws_ssm_association.test"
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckAWSSSMAssociationDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAWSSSMAssociationBasicConfigWithAutomationTargetParamName(name),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSSSMAssociationExists(resourceName),
-					resource.TestCheckResourceAttr(
-						resourceName, "parameters.Directory", "myWorkSpace"),
-				),
-			},
-			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"parameters"},
-			},
-			{
-				Config: testAccAWSSSMAssociationBasicConfigWithParametersUpdated(name),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSSSMAssociationExists(resourceName),
-					resource.TestCheckResourceAttr(
-						resourceName, "parameters.Directory", "myWorkSpaceUpdated"),
-				),
-			},
-		},
-	})
-}
-
 func TestAccAWSSSMAssociation_withScheduleExpression(t *testing.T) {
 	name := acctest.RandString(10)
 	resourceName := "aws_ssm_association.test"
@@ -491,7 +457,7 @@ func testAccCheckAWSSSMAssociationExists(n string) resource.TestCheckFunc {
 		})
 
 		if err != nil {
-			if isAWSErr(err, ssm.ErrCodeAssociationDoesNotExist, "") {
+			if wserr, ok := err.(awserr.Error); ok && wserr.Code() == "AssociationDoesNotExist" {
 				return nil
 			}
 			return err
@@ -514,7 +480,7 @@ func testAccCheckAWSSSMAssociationDestroy(s *terraform.State) error {
 		})
 
 		if err != nil {
-			if isAWSErr(err, ssm.ErrCodeAssociationDoesNotExist, "") {
+			if wserr, ok := err.(awserr.Error); ok && wserr.Code() == "AssociationDoesNotExist" {
 				return nil
 			}
 			return err
@@ -528,120 +494,49 @@ func testAccCheckAWSSSMAssociationDestroy(s *terraform.State) error {
 	return fmt.Errorf("Default error in SSM Association Test")
 }
 
-func testAccAWSSSMAssociationBasicConfigWithAutomationTargetParamName(rName string) string {
+func testAccAWSSSMAssociationBasicConfigWithParameters(rName string) string {
 	return fmt.Sprintf(`
-data "aws_ami" "ssm_ami" {
-  most_recent = true
-  owners      = ["099720109477"] # Canonical
+resource "aws_ssm_document" "test" {
+  name          = "test_document_association-%s"
+  document_type = "Command"
 
-  filter {
-    name   = "name"
-    values = ["*hvm-ssd/ubuntu-trusty-14.04*"]
+  content = <<-DOC
+  {
+    "schemaVersion": "1.2",
+    "description": "Check ip configuration of a Linux instance.",
+    "parameters": {
+	  "Directory": {
+		"description":"(Optional) The path to the working directory on your instance.",
+		"default":"",
+		"type": "String",
+		"maxChars": 4096
+	  }
+	},
+    "runtimeConfig": {
+      "aws:runShellScript": {
+        "properties": [
+          {
+            "id": "0.aws:runShellScript",
+            "runCommand": ["ifconfig"]
+          }
+        ]
+      }
+    }
   }
-}
-
-resource "aws_iam_instance_profile" "ssm_profile" {
-  name = "ssm_profile-%[1]s"
-  role = "${aws_iam_role.ssm_role.name}"
-}
-
-resource "aws_iam_role" "ssm_role" {
-  name = "ssm_role-%[1]s"
-  path = "/"
-
-  assume_role_policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": "sts:AssumeRole",
-            "Principal": {
-               "Service": "ec2.amazonaws.com"
-            },
-            "Effect": "Allow",
-            "Sid": ""
-        }
-    ]
-}
-EOF
-}
-
-resource "aws_ssm_document" "foo" {
-  name          = "test_document-%[1]s"
-  document_type = "Automation"
-
-  content = <<DOC
-	{
-	   "description": "Systems Manager Automation Demo",
-	   "schemaVersion": "0.3",
-	   "assumeRole": "${aws_iam_role.ssm_role.arn}",
-       "parameters":{
-	     "Directory": {
-		    "description":"(Optional) The path to the working directory on your instance.",
-		    "default":"",
-		    "type": "String",
-		    "maxChars": 4096
-	     }
-       },
-	   "mainSteps": [
-	      {
-	         "name": "startInstances",
-	         "action": "aws:runInstances",
-	         "timeoutSeconds": 1200,
-	         "maxAttempts": 1,
-	         "onFailure": "Abort",
-	         "inputs": {
-	            "ImageId": "${data.aws_ami.ssm_ami.id}",
-	            "InstanceType": "t2.small",
-	            "MinInstanceCount": 1,
-	            "MaxInstanceCount": 1,
-	            "IamInstanceProfileName": "${aws_iam_instance_profile.ssm_profile.name}"
-	         }
-	      },
-	      {
-	         "name": "stopInstance",
-	         "action": "aws:changeInstanceState",
-	         "maxAttempts": 1,
-	         "onFailure": "Continue",
-	         "inputs": {
-	            "InstanceIds": [
-	               "{{ startInstances.InstanceIds }}"
-	            ],
-	            "DesiredState": "stopped"
-	         }
-	      },
-	      {
-	         "name": "terminateInstance",
-	         "action": "aws:changeInstanceState",
-	         "maxAttempts": 1,
-	         "onFailure": "Continue",
-	         "inputs": {
-	            "InstanceIds": [
-	               "{{ startInstances.InstanceIds }}"
-	            ],
-	            "DesiredState": "terminated"
-	         }
-	      }
-	   ]
-	}
-DOC
+  DOC
 }
 
 resource "aws_ssm_association" "test" {
-  name = "${aws_ssm_document.foo.name}"
-  automation_target_parameter_name = "Directory"
+  name = "${aws_ssm_document.test.name}"
 
   parameters = {
-    AutomationAssumeRole = "${aws_iam_role.ssm_role.id}"
-    Directory            = "myWorkSpace"
+    Directory = "myWorkSpace"
   }
 
   targets {
-    key      = "tag:myTagName"
-    values   = ["myTagValue"]
+    key    = "tag:Name"
+    values = ["acceptanceTest"]
   }
-
-  schedule_expression = "rate(60 minutes)"
 }
 `, rName)
 }
@@ -683,53 +578,6 @@ resource "aws_ssm_association" "test" {
 
   parameters = {
     Directory = "myWorkSpaceUpdated"
-  }
-
-  targets {
-    key    = "tag:Name"
-    values = ["acceptanceTest"]
-  }
-}
-`, rName)
-}
-
-func testAccAWSSSMAssociationBasicConfigWithParameters(rName string) string {
-	return fmt.Sprintf(`
-resource "aws_ssm_document" "test" {
-  name          = "test_document_association-%s"
-  document_type = "Command"
-
-  content = <<-DOC
-  {
-    "schemaVersion": "1.2",
-    "description": "Check ip configuration of a Linux instance.",
-    "parameters": {
-	  "Directory": {
-		"description":"(Optional) The path to the working directory on your instance.",
-		"default":"",
-		"type": "String",
-		"maxChars": 4096
-	  }
-	},
-    "runtimeConfig": {
-      "aws:runShellScript": {
-        "properties": [
-          {
-            "id": "0.aws:runShellScript",
-            "runCommand": ["ifconfig"]
-          }
-        ]
-      }
-    }
-  }
-  DOC
-}
-
-resource "aws_ssm_association" "test" {
-  name = "${aws_ssm_document.test.name}"
-
-  parameters = {
-    Directory = "myWorkSpace"
   }
 
   targets {

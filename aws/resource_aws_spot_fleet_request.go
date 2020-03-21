@@ -14,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsSpotFleetRequest() *schema.Resource {
@@ -341,13 +340,13 @@ func resourceAwsSpotFleetRequest() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validation.IsRFC3339Time,
+				ValidateFunc: validation.ValidateRFC3339TimeString,
 			},
 			"valid_until": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: validation.IsRFC3339Time,
+				ValidateFunc: validation.ValidateRFC3339TimeString,
 			},
 			"fleet_type": {
 				Type:     schema.TypeString,
@@ -465,7 +464,7 @@ func buildSpotFleetLaunchSpecification(d map[string]interface{}, meta interface{
 	if m, ok := d["tags"].(map[string]interface{}); ok && len(m) > 0 {
 		tagsSpec := make([]*ec2.SpotFleetTagSpecification, 0)
 
-		tags := keyvaluetags.New(m).IgnoreAws().Ec2Tags()
+		tags := tagsFromMap(m)
 
 		spec := &ec2.SpotFleetTagSpecification{
 			ResourceType: aws.String("instance"),
@@ -1071,8 +1070,8 @@ func launchSpecToMap(l *ec2.SpotFleetLaunchSpecification, rootDevName *string) m
 	if l.TagSpecifications != nil {
 		for _, tagSpecs := range l.TagSpecifications {
 			// only "instance" tags are currently supported: http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_SpotFleetTagSpecification.html
-			if aws.StringValue(tagSpecs.ResourceType) == ec2.ResourceTypeInstance {
-				m["tags"] = keyvaluetags.Ec2KeyValueTags(tagSpecs.Tags).IgnoreAws().Map()
+			if *(tagSpecs.ResourceType) == "instance" {
+				m["tags"] = tagsToMap(tagSpecs.Tags)
 			}
 		}
 	}

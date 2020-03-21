@@ -46,11 +46,6 @@ data "aws_pricing_product" "example" {
     field = "tenancy"
     value = "Shared"
   }
-
-  filters {
-    field = "capacitystatus"
-    value = "Used"
-  }
 }
 ```
 

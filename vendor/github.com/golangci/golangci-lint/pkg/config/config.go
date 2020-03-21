@@ -158,9 +158,6 @@ type LintersSettings struct {
 		MinStringLen        int `mapstructure:"min-len"`
 		MinOccurrencesCount int `mapstructure:"min-occurrences"`
 	}
-	Gomnd struct {
-		Settings map[string]map[string]interface{}
-	}
 	Depguard struct {
 		ListType                 string `mapstructure:"list-type"`
 		Packages                 []string
@@ -182,9 +179,6 @@ type LintersSettings struct {
 		MultiIf   bool `mapstructure:"multi-if"`
 		MultiFunc bool `mapstructure:"multi-func"`
 	}
-	RowsErrCheck struct {
-		Packages []string
-	}
 
 	WSL      WSLSettings
 	Lll      LllSettings
@@ -196,8 +190,6 @@ type LintersSettings struct {
 	Godox    GodoxSettings
 	Dogsled  DogsledSettings
 	Gocognit GocognitSettings
-
-	Custom map[string]CustomLinterSettings
 }
 
 type GovetSettings struct {
@@ -263,15 +255,13 @@ type GocognitSettings struct {
 }
 
 type WSLSettings struct {
-	StrictAppend                     bool `mapstructure:"strict-append"`
-	AllowAssignAndCallCuddle         bool `mapstructure:"allow-assign-and-call"`
-	AllowMultiLineAssignCuddle       bool `mapstructure:"allow-multiline-assign"`
-	AllowCuddleDeclaration           bool `mapstructure:"allow-cuddle-declarations"`
-	AllowTrailingComment             bool `mapstructure:"allow-trailing-comment"`
-	CaseForceTrailingWhitespaceLimit int  `mapstructure:"force-case-trailing-whitespace:"`
+	StrictAppend                bool `mapstructure:"strict-append"`
+	AllowAssignAndCallCuddle    bool `mapstructure:"allow-assign-and-call"`
+	AllowMultiLineAssignCuddle  bool `mapstructure:"allow-multiline-assign"`
+	AllowCaseTrailingWhitespace bool `mapstructure:"allow-case-trailing-whitespace"`
+	AllowCuddleDeclaration      bool `mapstructure:"allow-cuddle-declarations"`
 }
 
-//nolint:gomnd
 var defaultLintersSettings = LintersSettings{
 	Lll: LllSettings{
 		LineLength: 120,
@@ -301,19 +291,12 @@ var defaultLintersSettings = LintersSettings{
 		MinComplexity: 30,
 	},
 	WSL: WSLSettings{
-		StrictAppend:                     true,
-		AllowAssignAndCallCuddle:         true,
-		AllowMultiLineAssignCuddle:       true,
-		AllowCuddleDeclaration:           false,
-		AllowTrailingComment:             false,
-		CaseForceTrailingWhitespaceLimit: 0,
+		StrictAppend:                true,
+		AllowAssignAndCallCuddle:    true,
+		AllowMultiLineAssignCuddle:  true,
+		AllowCaseTrailingWhitespace: true,
+		AllowCuddleDeclaration:      false,
 	},
-}
-
-type CustomLinterSettings struct {
-	Path        string
-	Description string
-	OriginalURL string `mapstructure:"original-url"`
 }
 
 type Linters struct {
@@ -364,8 +347,7 @@ func (e ExcludeRule) Validate() error {
 	if e.Source != "" {
 		nonBlank++
 	}
-	const minConditionsCount = 2
-	if nonBlank < minConditionsCount {
+	if nonBlank < 2 {
 		return errors.New("at least 2 of (text, source, path, linters) should be set")
 	}
 	return nil
@@ -394,7 +376,6 @@ type Config struct {
 		Color               string
 		PrintIssuedLine     bool `mapstructure:"print-issued-lines"`
 		PrintLinterName     bool `mapstructure:"print-linter-name"`
-		UniqByLine          bool `mapstructure:"uniq-by-line"`
 		PrintWelcomeMessage bool `mapstructure:"print-welcome"`
 	}
 

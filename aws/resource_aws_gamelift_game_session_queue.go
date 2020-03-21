@@ -2,13 +2,11 @@ package aws
 
 import (
 	"fmt"
-	"log"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/gamelift"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
+	"log"
 )
 
 func resourceAwsGameliftGameSessionQueue() *schema.Resource {
@@ -60,7 +58,6 @@ func resourceAwsGameliftGameSessionQueue() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"tags": tagsSchema(),
 		},
 	}
 }
@@ -73,7 +70,6 @@ func resourceAwsGameliftGameSessionQueueCreate(d *schema.ResourceData, meta inte
 		Destinations:          expandGameliftGameSessionQueueDestinations(d.Get("destinations").([]interface{})),
 		PlayerLatencyPolicies: expandGameliftGameSessionPlayerLatencyPolicies(d.Get("player_latency_policy").([]interface{})),
 		TimeoutInSeconds:      aws.Int64(int64(d.Get("timeout_in_seconds").(int))),
-		Tags:                  keyvaluetags.New(d.Get("tags").(map[string]interface{})).IgnoreAws().GameliftTags(),
 	}
 	log.Printf("[INFO] Creating Gamelift Session Queue: %s", input)
 	out, err := conn.CreateGameSessionQueue(&input)
@@ -115,8 +111,7 @@ func resourceAwsGameliftGameSessionQueueRead(d *schema.ResourceData, meta interf
 	}
 	sessionQueue := sessionQueues[0]
 
-	arn := aws.StringValue(sessionQueue.GameSessionQueueArn)
-	d.Set("arn", arn)
+	d.Set("arn", sessionQueue.GameSessionQueueArn)
 	d.Set("name", sessionQueue.Name)
 	d.Set("timeout_in_seconds", sessionQueue.TimeoutInSeconds)
 	if err := d.Set("destinations", flattenGameliftGameSessionQueueDestinations(sessionQueue.Destinations)); err != nil {
@@ -124,16 +119,6 @@ func resourceAwsGameliftGameSessionQueueRead(d *schema.ResourceData, meta interf
 	}
 	if err := d.Set("player_latency_policy", flattenGameliftPlayerLatencyPolicies(sessionQueue.PlayerLatencyPolicies)); err != nil {
 		return fmt.Errorf("error setting player_latency_policy: %s", err)
-	}
-
-	tags, err := keyvaluetags.GameliftListTags(conn, arn)
-
-	if err != nil {
-		return fmt.Errorf("error listing tags for Game Lift Session Queue (%s): %s", arn, err)
-	}
-
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
 	}
 
 	return nil
@@ -179,15 +164,6 @@ func resourceAwsGameliftGameSessionQueueUpdate(d *schema.ResourceData, meta inte
 	_, err := conn.UpdateGameSessionQueue(&input)
 	if err != nil {
 		return fmt.Errorf("error updating Gamelift Game Session Queue (%s): %s", d.Id(), err)
-	}
-
-	arn := d.Get("arn").(string)
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.GameliftUpdateTags(conn, arn, o, n); err != nil {
-			return fmt.Errorf("error updating Game Lift Session Queue (%s) tags: %s", arn, err)
-		}
 	}
 
 	return resourceAwsGameliftGameSessionQueueRead(d, meta)

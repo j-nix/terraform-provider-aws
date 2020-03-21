@@ -15,11 +15,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
-const (
-	emrInstanceGroupCreateTimeout = 10 * time.Minute
-	emrInstanceGroupUpdateTimeout = 10 * time.Minute
-)
-
 func resourceAwsEMRInstanceGroup() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceAwsEMRInstanceGroupCreate,
@@ -187,10 +182,6 @@ func resourceAwsEMRInstanceGroupCreate(d *schema.ResourceData, meta interface{})
 	}
 	d.SetId(*resp.InstanceGroupIds[0])
 
-	if err := waitForEmrInstanceGroupStateRunning(conn, d.Get("cluster_id").(string), d.Id(), emrInstanceGroupCreateTimeout); err != nil {
-		return fmt.Errorf("error waiting for EMR Instance Group (%s) creation: %s", d.Id(), err)
-	}
-
 	return resourceAwsEMRInstanceGroupRead(d, meta)
 }
 
@@ -318,7 +309,20 @@ func resourceAwsEMRInstanceGroupUpdate(d *schema.ResourceData, meta interface{})
 			return fmt.Errorf("error modifying EMR Instance Group (%s): %s", d.Id(), err)
 		}
 
-		if err := waitForEmrInstanceGroupStateRunning(conn, d.Get("cluster_id").(string), d.Id(), emrInstanceGroupUpdateTimeout); err != nil {
+		stateConf := &resource.StateChangeConf{
+			Pending: []string{
+				emr.InstanceGroupStateBootstrapping,
+				emr.InstanceGroupStateProvisioning,
+				emr.InstanceGroupStateResizing,
+			},
+			Target:     []string{emr.InstanceGroupStateRunning},
+			Refresh:    instanceGroupStateRefresh(conn, d.Get("cluster_id").(string), d.Id()),
+			Timeout:    10 * time.Minute,
+			Delay:      10 * time.Second,
+			MinTimeout: 3 * time.Second,
+		}
+
+		if _, err := stateConf.WaitForState(); err != nil {
 			return fmt.Errorf("error waiting for EMR Instance Group (%s) modification: %s", d.Id(), err)
 		}
 	}
@@ -481,24 +485,4 @@ func marshalWithoutNil(v interface{}) ([]byte, error) {
 	}
 
 	return json.Marshal(cleanRules)
-}
-
-func waitForEmrInstanceGroupStateRunning(conn *emr.EMR, clusterID string, instanceGroupID string, timeout time.Duration) error {
-	stateConf := &resource.StateChangeConf{
-		Pending: []string{
-			emr.InstanceGroupStateBootstrapping,
-			emr.InstanceGroupStateProvisioning,
-			emr.InstanceGroupStateReconfiguring,
-			emr.InstanceGroupStateResizing,
-		},
-		Target:     []string{emr.InstanceGroupStateRunning},
-		Refresh:    instanceGroupStateRefresh(conn, clusterID, instanceGroupID),
-		Timeout:    timeout,
-		Delay:      10 * time.Second,
-		MinTimeout: 3 * time.Second,
-	}
-
-	_, err := stateConf.WaitForState()
-
-	return err
 }

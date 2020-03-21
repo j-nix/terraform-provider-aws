@@ -99,28 +99,13 @@ func resourceAwsCloudwatchLogSubscriptionFilterUpdate(d *schema.ResourceData, me
 	params := getAwsCloudWatchLogsSubscriptionFilterInput(d)
 
 	log.Printf("[DEBUG] Update SubscriptionFilter %#v", params)
-
-	err := resource.Retry(5*time.Minute, func() *resource.RetryError {
-		_, err := conn.PutSubscriptionFilter(&params)
-
-		if isAWSErr(err, cloudwatchlogs.ErrCodeInvalidParameterException, "Could not deliver test message to specified") {
-			return resource.RetryableError(err)
-		}
-		if isAWSErr(err, cloudwatchlogs.ErrCodeInvalidParameterException, "Could not execute the lambda function") {
-			return resource.RetryableError(err)
-		}
-		if err != nil {
-			return resource.NonRetryableError(err)
-		}
-		return nil
-	})
-
-	if isResourceTimeoutError(err) {
-		_, err = conn.PutSubscriptionFilter(&params)
-	}
-
+	_, err := conn.PutSubscriptionFilter(&params)
 	if err != nil {
-		return fmt.Errorf("error updating CloudWatch Log Subscription Filter (%s): %w", d.Get("log_group_name").(string), err)
+		if awsErr, ok := err.(awserr.Error); ok {
+			return fmt.Errorf("Error updating SubscriptionFilter (%s) for LogGroup (%s), message: \"%s\", code: \"%s\"",
+				d.Get("name").(string), d.Get("log_group_name").(string), awsErr.Message(), awsErr.Code())
+		}
+		return err
 	}
 
 	d.SetId(cloudwatchLogsSubscriptionFilterId(d.Get("log_group_name").(string)))

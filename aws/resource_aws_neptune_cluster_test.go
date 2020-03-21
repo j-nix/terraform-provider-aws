@@ -7,18 +7,19 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/neptune"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/neptune"
 )
 
 func TestAccAWSNeptuneCluster_basic(t *testing.T) {
 	var dbCluster neptune.DBCluster
-	rName := acctest.RandomWithPrefix("tf-acc")
-	resourceName := "aws_neptune_cluster.test"
+	rInt := acctest.RandInt()
+	resourceName := "aws_neptune_cluster.default"
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -26,10 +27,9 @@ func TestAccAWSNeptuneCluster_basic(t *testing.T) {
 		CheckDestroy: testAccCheckAWSNeptuneClusterDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSNeptuneClusterConfig(rName),
+				Config: testAccAWSNeptuneClusterConfig(rInt),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckAWSNeptuneClusterExists(resourceName, &dbCluster),
-					testAccMatchResourceAttrRegionalARN(resourceName, "arn", "rds", regexp.MustCompile(`cluster:.+`)),
 					resource.TestCheckResourceAttr(resourceName, "storage_encrypted", "false"),
 					resource.TestCheckResourceAttr(resourceName, "neptune_cluster_parameter_group_name", "default.neptune1"),
 					resource.TestCheckResourceAttrSet(resourceName, "reader_endpoint"),
@@ -37,8 +37,6 @@ func TestAccAWSNeptuneCluster_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "engine", "neptune"),
 					resource.TestCheckResourceAttrSet(resourceName, "engine_version"),
 					resource.TestCheckResourceAttrSet(resourceName, "hosted_zone_id"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "deletion_protection", "false"),
 				),
 			},
 			{
@@ -58,8 +56,6 @@ func TestAccAWSNeptuneCluster_basic(t *testing.T) {
 
 func TestAccAWSNeptuneCluster_namePrefix(t *testing.T) {
 	var v neptune.DBCluster
-	rName := "tf-test-"
-	resourceName := "aws_neptune_cluster.test"
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -67,14 +63,15 @@ func TestAccAWSNeptuneCluster_namePrefix(t *testing.T) {
 		CheckDestroy: testAccCheckAWSNeptuneClusterDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSNeptuneClusterConfig_namePrefix(rName),
+				Config: testAccAWSNeptuneClusterConfig_namePrefix(),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &v),
-					resource.TestMatchResourceAttr(resourceName, "cluster_identifier", regexp.MustCompile("^tf-test-")),
+					testAccCheckAWSNeptuneClusterExists("aws_neptune_cluster.test", &v),
+					resource.TestMatchResourceAttr(
+						"aws_neptune_cluster.test", "cluster_identifier", regexp.MustCompile("^tf-test-")),
 				),
 			},
 			{
-				ResourceName:      resourceName,
+				ResourceName:      "aws_neptune_cluster.test",
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
@@ -90,22 +87,21 @@ func TestAccAWSNeptuneCluster_namePrefix(t *testing.T) {
 
 func TestAccAWSNeptuneCluster_takeFinalSnapshot(t *testing.T) {
 	var v neptune.DBCluster
-	rName := acctest.RandomWithPrefix("tf-acc")
-	resourceName := "aws_neptune_cluster.test"
+	rInt := acctest.RandInt()
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckAWSNeptuneClusterSnapshot(rName),
+		CheckDestroy: testAccCheckAWSNeptuneClusterSnapshot(rInt),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSNeptuneClusterConfigWithFinalSnapshot(rName),
+				Config: testAccAWSNeptuneClusterConfigWithFinalSnapshot(rInt),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &v),
+					testAccCheckAWSNeptuneClusterExists("aws_neptune_cluster.default", &v),
 				),
 			},
 			{
-				ResourceName:      resourceName,
+				ResourceName:      "aws_neptune_cluster.default",
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
@@ -119,10 +115,9 @@ func TestAccAWSNeptuneCluster_takeFinalSnapshot(t *testing.T) {
 	})
 }
 
-func TestAccAWSNeptuneCluster_tags(t *testing.T) {
+func TestAccAWSNeptuneCluster_updateTags(t *testing.T) {
 	var v neptune.DBCluster
-	rName := acctest.RandomWithPrefix("tf-acc")
-	resourceName := "aws_neptune_cluster.test"
+	ri := acctest.RandInt()
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -130,15 +125,23 @@ func TestAccAWSNeptuneCluster_tags(t *testing.T) {
 		CheckDestroy: testAccCheckAWSNeptuneClusterDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSNeptuneClusterConfigTags1(rName, "key1", "value1"),
+				Config: testAccAWSNeptuneClusterConfig(ri),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &v),
-					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags.key1", "value1"),
+					testAccCheckAWSNeptuneClusterExists("aws_neptune_cluster.default", &v),
+					resource.TestCheckResourceAttr(
+						"aws_neptune_cluster.default", "tags.%", "1"),
 				),
 			},
 			{
-				ResourceName:      resourceName,
+				Config: testAccAWSNeptuneClusterConfigUpdatedTags(ri),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckAWSNeptuneClusterExists("aws_neptune_cluster.default", &v),
+					resource.TestCheckResourceAttr(
+						"aws_neptune_cluster.default", "tags.%", "2"),
+				),
+			},
+			{
+				ResourceName:      "aws_neptune_cluster.default",
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
@@ -147,23 +150,6 @@ func TestAccAWSNeptuneCluster_tags(t *testing.T) {
 					"final_snapshot_identifier",
 					"skip_final_snapshot",
 				},
-			},
-			{
-				Config: testAccAWSNeptuneClusterConfigTags2(rName, "key1", "value1updated", "key2", "value2"),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &v),
-					resource.TestCheckResourceAttr(resourceName, "tags.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "tags.key1", "value1updated"),
-					resource.TestCheckResourceAttr(resourceName, "tags.key2", "value2"),
-				),
-			},
-			{
-				Config: testAccAWSNeptuneClusterConfigTags1(rName, "key2", "value2"),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &v),
-					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags.key2", "value2"),
-				),
 			},
 		},
 	})
@@ -171,8 +157,7 @@ func TestAccAWSNeptuneCluster_tags(t *testing.T) {
 
 func TestAccAWSNeptuneCluster_updateIamRoles(t *testing.T) {
 	var v neptune.DBCluster
-	rName := acctest.RandomWithPrefix("tf-acc")
-	resourceName := "aws_neptune_cluster.test"
+	ri := acctest.RandInt()
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -180,27 +165,29 @@ func TestAccAWSNeptuneCluster_updateIamRoles(t *testing.T) {
 		CheckDestroy: testAccCheckAWSNeptuneClusterDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSNeptuneClusterConfigIncludingIamRoles(rName),
+				Config: testAccAWSNeptuneClusterConfigIncludingIamRoles(ri),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &v),
+					testAccCheckAWSNeptuneClusterExists("aws_neptune_cluster.default", &v),
 				),
 			},
 			{
-				Config: testAccAWSNeptuneClusterConfigAddIamRoles(rName),
+				Config: testAccAWSNeptuneClusterConfigAddIamRoles(ri),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &v),
-					resource.TestCheckResourceAttr(resourceName, "iam_roles.#", "2"),
+					testAccCheckAWSNeptuneClusterExists("aws_neptune_cluster.default", &v),
+					resource.TestCheckResourceAttr(
+						"aws_neptune_cluster.default", "iam_roles.#", "2"),
 				),
 			},
 			{
-				Config: testAccAWSNeptuneClusterConfigRemoveIamRoles(rName),
+				Config: testAccAWSNeptuneClusterConfigRemoveIamRoles(ri),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &v),
-					resource.TestCheckResourceAttr(resourceName, "iam_roles.#", "1"),
+					testAccCheckAWSNeptuneClusterExists("aws_neptune_cluster.default", &v),
+					resource.TestCheckResourceAttr(
+						"aws_neptune_cluster.default", "iam_roles.#", "1"),
 				),
 			},
 			{
-				ResourceName:      resourceName,
+				ResourceName:      "aws_neptune_cluster.default",
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
@@ -216,9 +203,7 @@ func TestAccAWSNeptuneCluster_updateIamRoles(t *testing.T) {
 
 func TestAccAWSNeptuneCluster_kmsKey(t *testing.T) {
 	var v neptune.DBCluster
-	resourceName := "aws_neptune_cluster.test"
-	keyResourceName := "aws_kms_key.test"
-	rName := acctest.RandomWithPrefix("tf-acc")
+	keyRegex := regexp.MustCompile("^arn:aws:kms:")
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -226,14 +211,15 @@ func TestAccAWSNeptuneCluster_kmsKey(t *testing.T) {
 		CheckDestroy: testAccCheckAWSNeptuneClusterDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSNeptuneClusterConfig_kmsKey(rName),
+				Config: testAccAWSNeptuneClusterConfig_kmsKey(acctest.RandInt()),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &v),
-					resource.TestCheckResourceAttrPair(resourceName, "kms_key_arn", keyResourceName, "arn"),
+					testAccCheckAWSNeptuneClusterExists("aws_neptune_cluster.default", &v),
+					resource.TestMatchResourceAttr(
+						"aws_neptune_cluster.default", "kms_key_arn", keyRegex),
 				),
 			},
 			{
-				ResourceName:      resourceName,
+				ResourceName:      "aws_neptune_cluster.default",
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
@@ -249,8 +235,6 @@ func TestAccAWSNeptuneCluster_kmsKey(t *testing.T) {
 
 func TestAccAWSNeptuneCluster_encrypted(t *testing.T) {
 	var v neptune.DBCluster
-	resourceName := "aws_neptune_cluster.test"
-	rName := acctest.RandomWithPrefix("tf-acc")
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -258,14 +242,15 @@ func TestAccAWSNeptuneCluster_encrypted(t *testing.T) {
 		CheckDestroy: testAccCheckAWSNeptuneClusterDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSNeptuneClusterConfig_encrypted(rName),
+				Config: testAccAWSNeptuneClusterConfig_encrypted(acctest.RandInt()),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &v),
-					resource.TestCheckResourceAttr(resourceName, "storage_encrypted", "true"),
+					testAccCheckAWSNeptuneClusterExists("aws_neptune_cluster.default", &v),
+					resource.TestCheckResourceAttr(
+						"aws_neptune_cluster.default", "storage_encrypted", "true"),
 				),
 			},
 			{
-				ResourceName:      resourceName,
+				ResourceName:      "aws_neptune_cluster.default",
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
@@ -281,34 +266,39 @@ func TestAccAWSNeptuneCluster_encrypted(t *testing.T) {
 
 func TestAccAWSNeptuneCluster_backupsUpdate(t *testing.T) {
 	var v neptune.DBCluster
-	resourceName := "aws_neptune_cluster.test"
-	rName := acctest.RandomWithPrefix("tf-acc")
 
+	ri := acctest.RandInt()
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckAWSNeptuneClusterDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSNeptuneClusterConfig_backups(rName),
+				Config: testAccAWSNeptuneClusterConfig_backups(ri),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &v),
-					resource.TestCheckResourceAttr(resourceName, "preferred_backup_window", "07:00-09:00"),
-					resource.TestCheckResourceAttr(resourceName, "backup_retention_period", "5"),
-					resource.TestCheckResourceAttr(resourceName, "preferred_maintenance_window", "tue:04:00-tue:04:30"),
+					testAccCheckAWSNeptuneClusterExists("aws_neptune_cluster.default", &v),
+					resource.TestCheckResourceAttr(
+						"aws_neptune_cluster.default", "preferred_backup_window", "07:00-09:00"),
+					resource.TestCheckResourceAttr(
+						"aws_neptune_cluster.default", "backup_retention_period", "5"),
+					resource.TestCheckResourceAttr(
+						"aws_neptune_cluster.default", "preferred_maintenance_window", "tue:04:00-tue:04:30"),
 				),
 			},
 			{
-				Config: testAccAWSNeptuneClusterConfig_backupsUpdate(rName),
+				Config: testAccAWSNeptuneClusterConfig_backupsUpdate(ri),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &v),
-					resource.TestCheckResourceAttr(resourceName, "preferred_backup_window", "03:00-09:00"),
-					resource.TestCheckResourceAttr(resourceName, "backup_retention_period", "10"),
-					resource.TestCheckResourceAttr(resourceName, "preferred_maintenance_window", "wed:01:00-wed:01:30"),
+					testAccCheckAWSNeptuneClusterExists("aws_neptune_cluster.default", &v),
+					resource.TestCheckResourceAttr(
+						"aws_neptune_cluster.default", "preferred_backup_window", "03:00-09:00"),
+					resource.TestCheckResourceAttr(
+						"aws_neptune_cluster.default", "backup_retention_period", "10"),
+					resource.TestCheckResourceAttr(
+						"aws_neptune_cluster.default", "preferred_maintenance_window", "wed:01:00-wed:01:30"),
 				),
 			},
 			{
-				ResourceName:      resourceName,
+				ResourceName:      "aws_neptune_cluster.default",
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
@@ -324,8 +314,6 @@ func TestAccAWSNeptuneCluster_backupsUpdate(t *testing.T) {
 
 func TestAccAWSNeptuneCluster_iamAuth(t *testing.T) {
 	var v neptune.DBCluster
-	resourceName := "aws_neptune_cluster.test"
-	rName := acctest.RandomWithPrefix("tf-acc")
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -333,14 +321,15 @@ func TestAccAWSNeptuneCluster_iamAuth(t *testing.T) {
 		CheckDestroy: testAccCheckAWSNeptuneClusterDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSNeptuneClusterConfig_iamAuth(rName),
+				Config: testAccAWSNeptuneClusterConfig_iamAuth(acctest.RandInt()),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &v),
-					resource.TestCheckResourceAttr(resourceName, "iam_database_authentication_enabled", "true"),
+					testAccCheckAWSNeptuneClusterExists("aws_neptune_cluster.default", &v),
+					resource.TestCheckResourceAttr(
+						"aws_neptune_cluster.default", "iam_database_authentication_enabled", "true"),
 				),
 			},
 			{
-				ResourceName:      resourceName,
+				ResourceName:      "aws_neptune_cluster.default",
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
@@ -349,99 +338,6 @@ func TestAccAWSNeptuneCluster_iamAuth(t *testing.T) {
 					"final_snapshot_identifier",
 					"skip_final_snapshot",
 				},
-			},
-		},
-	})
-}
-
-func TestAccAWSNeptuneCluster_updateCloudwatchLogsExports(t *testing.T) {
-	var dbCluster neptune.DBCluster
-	rName := acctest.RandomWithPrefix("tf-acc")
-	resourceName := "aws_neptune_cluster.test"
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckAWSNeptuneClusterDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAWSNeptuneClusterConfig(rName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &dbCluster),
-					resource.TestCheckNoResourceAttr(resourceName, "enable_cloudwatch_logs_exports.#"),
-				),
-			},
-			{
-				Config: testAccAWSNeptuneClusterConfig_cloudwatchLogsExports(rName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &dbCluster),
-					resource.TestCheckResourceAttr(resourceName, "enable_cloudwatch_logs_exports.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "enable_cloudwatch_logs_exports.2451111801", "audit"),
-				),
-			},
-			{
-				Config: testAccAWSNeptuneClusterConfig(rName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &dbCluster),
-					resource.TestCheckResourceAttr(resourceName, "enable_cloudwatch_logs_exports.#", "0"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"apply_immediately",
-					"cluster_identifier_prefix",
-					"final_snapshot_identifier",
-					"skip_final_snapshot",
-				},
-			},
-		},
-	})
-}
-
-func TestAccAWSNeptuneCluster_deleteProtection(t *testing.T) {
-	var dbCluster neptune.DBCluster
-	rName := acctest.RandomWithPrefix("tf-acc")
-	resourceName := "aws_neptune_cluster.test"
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckAWSNeptuneClusterDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAWSNeptuneClusterConfig(rName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &dbCluster),
-					resource.TestCheckResourceAttr(resourceName, "deletion_protection", "false"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"apply_immediately",
-					"cluster_identifier_prefix",
-					"final_snapshot_identifier",
-					"skip_final_snapshot",
-				},
-			},
-			{
-				Config: testAccAWSNeptuneClusterConfigDeleteProtection(rName, true),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &dbCluster),
-					resource.TestCheckResourceAttr(resourceName, "deletion_protection", "true"),
-				),
-			},
-			{
-				Config: testAccAWSNeptuneClusterConfigDeleteProtection(rName, false),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSNeptuneClusterExists(resourceName, &dbCluster),
-					resource.TestCheckResourceAttr(resourceName, "deletion_protection", "false"),
-				),
 			},
 		},
 	})
@@ -522,20 +418,23 @@ func testAccCheckAWSNeptuneClusterExistsWithProvider(n string, v *neptune.DBClus
 	}
 }
 
-func testAccCheckAWSNeptuneClusterSnapshot(rName string) resource.TestCheckFunc {
+func testAccCheckAWSNeptuneClusterSnapshot(rInt int) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != "aws_neptune_cluster" {
 				continue
 			}
 
+			// Try and delete the snapshot before we check for the cluster not found
+			snapshot_identifier := fmt.Sprintf("tf-acctest-neptunecluster-snapshot-%d", rInt)
+
 			awsClient := testAccProvider.Meta().(*AWSClient)
 			conn := awsClient.neptuneconn
 
-			log.Printf("[INFO] Deleting the Snapshot %s", rName)
+			log.Printf("[INFO] Deleting the Snapshot %s", snapshot_identifier)
 			_, snapDeleteErr := conn.DeleteDBClusterSnapshot(
 				&neptune.DeleteDBClusterSnapshotInput{
-					DBClusterSnapshotIdentifier: aws.String(rName),
+					DBClusterSnapshotIdentifier: aws.String(snapshot_identifier),
 				})
 			if snapDeleteErr != nil {
 				return snapDeleteErr
@@ -569,96 +468,159 @@ func testAccCheckAWSNeptuneClusterSnapshot(rName string) resource.TestCheckFunc 
 	}
 }
 
-var testAccAWSNeptuneClusterConfigBase = `
-data "aws_availability_zones" "test" {
-  state = "available"
-}
-`
-
-func testAccAWSNeptuneClusterConfig(rName string) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
-resource "aws_neptune_cluster" "test" {
-  cluster_identifier                   = %q
-  availability_zones                   = "${slice(data.aws_availability_zones.test.names,0,3)}"
+func testAccAWSNeptuneClusterConfig(n int) string {
+	return fmt.Sprintf(`
+resource "aws_neptune_cluster" "default" {
+  cluster_identifier                   = "tf-neptune-cluster-%d"
+  availability_zones                   = ["us-west-2a", "us-west-2b", "us-west-2c"]
   engine                               = "neptune"
   neptune_cluster_parameter_group_name = "default.neptune1"
   skip_final_snapshot                  = true
+
+  tags = {
+    Environment = "production"
+  }
 }
-`, rName)
+`, n)
 }
 
-func testAccAWSNeptuneClusterConfigDeleteProtection(rName string, isProtected bool) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
-resource "aws_neptune_cluster" "test" {
-  cluster_identifier                   = %q
-  availability_zones                   = "${slice(data.aws_availability_zones.test.names,0,3)}"
-  engine                               = "neptune"
-  neptune_cluster_parameter_group_name = "default.neptune1"
-  skip_final_snapshot                  = true
-  deletion_protection                    = %t
-}
-`, rName, isProtected)
-}
-
-func testAccAWSNeptuneClusterConfig_namePrefix(rName string) string {
+func testAccAWSNeptuneClusterConfig_namePrefix() string {
 	return fmt.Sprintf(`
 resource "aws_neptune_cluster" "test" {
-  cluster_identifier_prefix            = %q
+  cluster_identifier_prefix            = "tf-test-"
   engine                               = "neptune"
   neptune_cluster_parameter_group_name = "default.neptune1"
   skip_final_snapshot                  = true
 }
-`, rName)
+`)
 }
 
-func testAccAWSNeptuneClusterConfigWithFinalSnapshot(rName string) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
-resource "aws_neptune_cluster" "test" {
-  cluster_identifier                   = %[1]q
-  availability_zones                   = "${slice(data.aws_availability_zones.test.names,0,3)}"
+func testAccAWSNeptuneClusterConfigWithFinalSnapshot(n int) string {
+	return fmt.Sprintf(`
+resource "aws_neptune_cluster" "default" {
+  cluster_identifier                   = "tf-neptune-cluster-%d"
+  availability_zones                   = ["us-west-2a", "us-west-2b", "us-west-2c"]
   neptune_cluster_parameter_group_name = "default.neptune1"
-  final_snapshot_identifier            = %[1]q
+  final_snapshot_identifier            = "tf-acctest-neptunecluster-snapshot-%d"
+
+  tags = {
+    Environment = "production"
+  }
 }
-`, rName)
+`, n, n)
 }
 
-func testAccAWSNeptuneClusterConfigTags1(rName, tagKey1, tagValue1 string) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
-resource "aws_neptune_cluster" "test" {
-  cluster_identifier                   = %[1]q
-  availability_zones                   = "${slice(data.aws_availability_zones.test.names,0,3)}"
-  engine                               = "neptune"
+func testAccAWSNeptuneClusterConfigUpdatedTags(n int) string {
+	return fmt.Sprintf(`
+resource "aws_neptune_cluster" "default" {
+  cluster_identifier                   = "tf-neptune-cluster-%d"
+  availability_zones                   = ["us-west-2a", "us-west-2b", "us-west-2c"]
   neptune_cluster_parameter_group_name = "default.neptune1"
   skip_final_snapshot                  = true
 
   tags = {
-    %[2]q = %[3]q
+    Environment = "production"
+    AnotherTag  = "test"
   }
 }
-`, rName, tagKey1, tagValue1)
+`, n)
 }
 
-func testAccAWSNeptuneClusterConfigTags2(rName, tagKey1, tagValue1, tagKey2, tagValue2 string) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
-resource "aws_neptune_cluster" "test" {
-  cluster_identifier                   = %[1]q
-  availability_zones                   = "${slice(data.aws_availability_zones.test.names,0,3)}"
-  engine                               = "neptune"
+func testAccAWSNeptuneClusterConfigIncludingIamRoles(n int) string {
+	return fmt.Sprintf(`
+resource "aws_iam_role" "neptune_sample_role" {
+  name = "neptune_sample_role_%d"
+  path = "/"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "rds.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "neptune_policy" {
+  name = "neptune_sample_role_policy_%d"
+  role = "${aws_iam_role.neptune_sample_role.name}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": {
+    "Effect": "Allow",
+    "Action": "*",
+    "Resource": "*"
+  }
+}
+EOF
+}
+
+resource "aws_iam_role" "another_neptune_sample_role" {
+  name = "another_neptune_sample_role_%d"
+  path = "/"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "rds.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "another_neptune_policy" {
+  name = "another_neptune_sample_role_policy_%d"
+  role = "${aws_iam_role.another_neptune_sample_role.name}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": {
+    "Effect": "Allow",
+    "Action": "*",
+    "Resource": "*"
+  }
+}
+EOF
+}
+
+resource "aws_neptune_cluster" "default" {
+  cluster_identifier                   = "tf-neptune-cluster-%d"
+  availability_zones                   = ["us-west-2a", "us-west-2b", "us-west-2c"]
   neptune_cluster_parameter_group_name = "default.neptune1"
   skip_final_snapshot                  = true
 
   tags = {
-    %[2]q = %[3]q
-    %[4]q = %[5]q
+    Environment = "production"
   }
+
+  depends_on = ["aws_iam_role.another_neptune_sample_role", "aws_iam_role.neptune_sample_role"]
 }
-`, rName, tagKey1, tagValue1, tagKey2, tagValue2)
+`, n, n, n, n, n)
 }
 
-func testAccAWSNeptuneClusterConfigIncludingIamRoles(rName string) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
-resource "aws_iam_role" "test" {
-  name = %[1]q
+func testAccAWSNeptuneClusterConfigAddIamRoles(n int) string {
+	return fmt.Sprintf(`
+resource "aws_iam_role" "neptune_sample_role" {
+  name = "neptune_sample_role_%d"
   path = "/"
 
   assume_role_policy = <<EOF
@@ -678,9 +640,9 @@ resource "aws_iam_role" "test" {
 EOF
 }
 
-resource "aws_iam_role_policy" "test" {
-  name = %[1]q
-  role = "${aws_iam_role.test.name}"
+resource "aws_iam_role_policy" "neptune_policy" {
+  name = "neptune_sample_role_policy_%d"
+  role = "${aws_iam_role.neptune_sample_role.name}"
 
   policy = <<EOF
 {
@@ -694,8 +656,8 @@ resource "aws_iam_role_policy" "test" {
 EOF
 }
 
-resource "aws_iam_role" "test-2" {
-  name = "%[1]s-2"
+resource "aws_iam_role" "another_neptune_sample_role" {
+  name = "another_neptune_sample_role_%d"
   path = "/"
 
   assume_role_policy = <<EOF
@@ -715,9 +677,9 @@ resource "aws_iam_role" "test-2" {
 EOF
 }
 
-resource "aws_iam_role_policy" "test-2" {
-  name = "%[1]s-2"
-  role = "${aws_iam_role.test-2.name}"
+resource "aws_iam_role_policy" "another_neptune_policy" {
+  name = "another_neptune_sample_role_policy_%d"
+  role = "${aws_iam_role.another_neptune_sample_role.name}"
 
   policy = <<EOF
 {
@@ -731,108 +693,25 @@ resource "aws_iam_role_policy" "test-2" {
 EOF
 }
 
-resource "aws_neptune_cluster" "test" {
-  cluster_identifier                   = %[1]q
-  availability_zones                   = "${slice(data.aws_availability_zones.test.names,0,3)}"
-  neptune_cluster_parameter_group_name = "default.neptune1"
-  skip_final_snapshot                  = true
-
-  depends_on = ["aws_iam_role.test", "aws_iam_role.test-2"]
-}
-`, rName)
-}
-
-func testAccAWSNeptuneClusterConfigAddIamRoles(rName string) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
-resource "aws_iam_role" "test" {
-  name = %[1]q
-  path = "/"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "rds.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-}
-EOF
-}
-
-resource "aws_iam_role_policy" "test" {
-  name = %[1]q
-  role = "${aws_iam_role.test.name}"
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": {
-    "Effect": "Allow",
-    "Action": "*",
-    "Resource": "*"
-  }
-}
-EOF
-}
-
-resource "aws_iam_role" "test-2" {
-  name = "%[1]s-2"
-  path = "/"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "rds.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-}
-EOF
-}
-
-resource "aws_iam_role_policy" "test-2" {
-  name = "%[1]s-2"
-  role = "${aws_iam_role.test-2.name}"
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": {
-    "Effect": "Allow",
-    "Action": "*",
-    "Resource": "*"
-  }
-}
-EOF
-}
-
-resource "aws_neptune_cluster" "test" {
-  cluster_identifier  = %[1]q
-  availability_zones  = "${slice(data.aws_availability_zones.test.names,0,3)}"
+resource "aws_neptune_cluster" "default" {
+  cluster_identifier  = "tf-neptune-cluster-%d"
+  availability_zones  = ["us-west-2a", "us-west-2b", "us-west-2c"]
   skip_final_snapshot = true
-  iam_roles           = ["${aws_iam_role.test.arn}", "${aws_iam_role.test-2.arn}"]
+  iam_roles           = ["${aws_iam_role.neptune_sample_role.arn}", "${aws_iam_role.another_neptune_sample_role.arn}"]
 
-  depends_on = ["aws_iam_role.test", "aws_iam_role.test-2"]
+  tags = {
+    Environment = "production"
+  }
+
+  depends_on = ["aws_iam_role.another_neptune_sample_role", "aws_iam_role.neptune_sample_role"]
 }
-`, rName)
+`, n, n, n, n, n)
 }
 
-func testAccAWSNeptuneClusterConfigRemoveIamRoles(rName string) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
-resource "aws_iam_role" "test" {
-  name = %[1]q
+func testAccAWSNeptuneClusterConfigRemoveIamRoles(n int) string {
+	return fmt.Sprintf(`
+resource "aws_iam_role" "another_neptune_sample_role" {
+  name = "another_neptune_sample_role_%d"
   path = "/"
 
   assume_role_policy = <<EOF
@@ -852,9 +731,9 @@ resource "aws_iam_role" "test" {
 EOF
 }
 
-resource "aws_iam_role_policy" "test" {
-  name = %[1]q
-  role = "${aws_iam_role.test.name}"
+resource "aws_iam_role_policy" "another_neptune_policy" {
+  name = "another_neptune_sample_role_policy_%d"
+  role = "${aws_iam_role.another_neptune_sample_role.name}"
 
   policy = <<EOF
 {
@@ -868,22 +747,26 @@ resource "aws_iam_role_policy" "test" {
 EOF
 }
 
-resource "aws_neptune_cluster" "test" {
-  cluster_identifier  = %[1]q
-  availability_zones  = "${slice(data.aws_availability_zones.test.names,0,3)}"
+resource "aws_neptune_cluster" "default" {
+  cluster_identifier  = "tf-neptune-cluster-%d"
+  availability_zones  = ["us-west-2a", "us-west-2b", "us-west-2c"]
   skip_final_snapshot = true
-  iam_roles           = ["${aws_iam_role.test.arn}"]
+  iam_roles           = ["${aws_iam_role.another_neptune_sample_role.arn}"]
 
-  depends_on = ["aws_iam_role.test"]
+  tags = {
+    Environment = "production"
+  }
+
+  depends_on = ["aws_iam_role.another_neptune_sample_role"]
 }
-`, rName)
+`, n, n, n)
 }
 
-func testAccAWSNeptuneClusterConfig_kmsKey(rName string) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
+func testAccAWSNeptuneClusterConfig_kmsKey(n int) string {
+	return fmt.Sprintf(`
 
- resource "aws_kms_key" "test" {
-     description = "Terraform acc test"
+ resource "aws_kms_key" "foo" {
+     description = "Terraform acc test %d"
      policy = <<POLICY
  {
    "Version": "2012-10-17",
@@ -903,72 +786,61 @@ func testAccAWSNeptuneClusterConfig_kmsKey(rName string) string {
  POLICY
  }
 
- resource "aws_neptune_cluster" "test" {
-   cluster_identifier                   = %q
-   availability_zones                   = "${slice(data.aws_availability_zones.test.names,0,3)}"
+ resource "aws_neptune_cluster" "default" {
+   cluster_identifier = "tf-neptune-cluster-%d"
+   availability_zones = ["us-west-2a","us-west-2b","us-west-2c"]
    neptune_cluster_parameter_group_name = "default.neptune1"
-   storage_encrypted                    = true
-   kms_key_arn                          = "${aws_kms_key.test.arn}"
-   skip_final_snapshot                  = true
- }`, rName)
+   storage_encrypted = true
+   kms_key_arn = "${aws_kms_key.foo.arn}"
+   skip_final_snapshot = true
+ }`, n, n)
 }
 
-func testAccAWSNeptuneClusterConfig_encrypted(rName string) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
-resource "aws_neptune_cluster" "test" {
-  cluster_identifier = %q
-  availability_zones = "${slice(data.aws_availability_zones.test.names,0,3)}"
+func testAccAWSNeptuneClusterConfig_encrypted(n int) string {
+	return fmt.Sprintf(`
+resource "aws_neptune_cluster" "default" {
+  cluster_identifier = "tf-neptune-cluster-%d"
+  availability_zones = ["us-west-2a","us-west-2b","us-west-2c"]
   storage_encrypted = true
   skip_final_snapshot = true
 }
-`, rName)
+`, n)
 }
 
-func testAccAWSNeptuneClusterConfig_backups(rName string) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
-resource "aws_neptune_cluster" "test" {
-  cluster_identifier           = %q
-  availability_zones           = "${slice(data.aws_availability_zones.test.names,0,3)}"
+func testAccAWSNeptuneClusterConfig_backups(n int) string {
+	return fmt.Sprintf(`
+resource "aws_neptune_cluster" "default" {
+  cluster_identifier           = "tf-neptune-cluster-%d"
+  availability_zones           = ["us-west-2a", "us-west-2b", "us-west-2c"]
   backup_retention_period      = 5
   preferred_backup_window      = "07:00-09:00"
   preferred_maintenance_window = "tue:04:00-tue:04:30"
   skip_final_snapshot          = true
 }
-`, rName)
+`, n)
 }
 
-func testAccAWSNeptuneClusterConfig_backupsUpdate(rName string) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
-resource "aws_neptune_cluster" "test" {
-  cluster_identifier           = %q
-  availability_zones           = "${slice(data.aws_availability_zones.test.names,0,3)}"
+func testAccAWSNeptuneClusterConfig_backupsUpdate(n int) string {
+	return fmt.Sprintf(`
+resource "aws_neptune_cluster" "default" {
+  cluster_identifier           = "tf-neptune-cluster-%d"
+  availability_zones           = ["us-west-2a", "us-west-2b", "us-west-2c"]
   backup_retention_period      = 10
   preferred_backup_window      = "03:00-09:00"
   preferred_maintenance_window = "wed:01:00-wed:01:30"
   apply_immediately            = true
   skip_final_snapshot          = true
 }
-`, rName)
+`, n)
 }
 
-func testAccAWSNeptuneClusterConfig_iamAuth(rName string) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
-resource "aws_neptune_cluster" "test" {
-  cluster_identifier                  = %q
-  availability_zones                  = "${slice(data.aws_availability_zones.test.names,0,3)}"
+func testAccAWSNeptuneClusterConfig_iamAuth(n int) string {
+	return fmt.Sprintf(`
+resource "aws_neptune_cluster" "default" {
+  cluster_identifier                  = "tf-neptune-cluster-%d"
+  availability_zones                  = ["us-west-2a", "us-west-2b", "us-west-2c"]
   iam_database_authentication_enabled = true
   skip_final_snapshot                 = true
 }
-`, rName)
-}
-
-func testAccAWSNeptuneClusterConfig_cloudwatchLogsExports(rName string) string {
-	return testAccAWSNeptuneClusterConfigBase + fmt.Sprintf(`
-resource "aws_neptune_cluster" "test" {
-  cluster_identifier                   = %q
-  availability_zones                  = "${slice(data.aws_availability_zones.test.names,0,3)}"
-  skip_final_snapshot                  = true
-  enable_cloudwatch_logs_exports       = ["audit"]
-}
-`, rName)
+`, n)
 }

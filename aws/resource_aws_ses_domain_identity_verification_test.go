@@ -90,7 +90,8 @@ func testAccCheckAwsSesDomainIdentityVerificationPassed(n string) resource.TestC
 		}
 
 		domain := rs.Primary.ID
-		conn := testAccProvider.Meta().(*AWSClient).sesconn
+		awsClient := testAccProvider.Meta().(*AWSClient)
+		conn := awsClient.sesConn
 
 		params := &ses.GetIdentityVerificationAttributesInput{
 			Identities: []*string{
@@ -112,9 +113,9 @@ func testAccCheckAwsSesDomainIdentityVerificationPassed(n string) resource.TestC
 		}
 
 		expected := arn.ARN{
-			AccountID: testAccProvider.Meta().(*AWSClient).accountid,
-			Partition: testAccProvider.Meta().(*AWSClient).partition,
-			Region:    testAccProvider.Meta().(*AWSClient).region,
+			AccountID: awsClient.accountid,
+			Partition: awsClient.partition,
+			Region:    awsClient.region,
 			Resource:  fmt.Sprintf("identity/%s", domain),
 			Service:   "ses",
 		}

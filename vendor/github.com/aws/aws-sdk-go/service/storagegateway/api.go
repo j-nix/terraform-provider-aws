@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awsutil"
 	"github.com/aws/aws-sdk-go/aws/request"
-	"github.com/aws/aws-sdk-go/private/protocol"
 )
 
 const opActivateGateway = "ActivateGateway"
@@ -72,12 +71,12 @@ func (c *StorageGateway) ActivateGatewayRequest(input *ActivateGatewayInput) (re
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation ActivateGateway for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -162,12 +161,12 @@ func (c *StorageGateway) AddCacheRequest(input *AddCacheInput) (req *request.Req
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation AddCache for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -261,12 +260,12 @@ func (c *StorageGateway) AddTagsToResourceRequest(input *AddTagsToResourceInput)
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation AddTagsToResource for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -351,12 +350,12 @@ func (c *StorageGateway) AddUploadBufferRequest(input *AddUploadBufferInput) (re
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation AddUploadBuffer for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -445,12 +444,12 @@ func (c *StorageGateway) AddWorkingStorageRequest(input *AddWorkingStorageInput)
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation AddWorkingStorage for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -535,12 +534,12 @@ func (c *StorageGateway) AssignTapePoolRequest(input *AssignTapePoolInput) (req 
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation AssignTapePool for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -623,12 +622,12 @@ func (c *StorageGateway) AttachVolumeRequest(input *AttachVolumeInput) (req *req
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation AttachVolume for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -709,12 +708,12 @@ func (c *StorageGateway) CancelArchivalRequest(input *CancelArchivalInput) (req 
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation CancelArchival for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -795,12 +794,12 @@ func (c *StorageGateway) CancelRetrievalRequest(input *CancelRetrievalInput) (re
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation CancelRetrieval for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -895,12 +894,12 @@ func (c *StorageGateway) CreateCachediSCSIVolumeRequest(input *CreateCachediSCSI
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation CreateCachediSCSIVolume for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -991,12 +990,12 @@ func (c *StorageGateway) CreateNFSFileShareRequest(input *CreateNFSFileShareInpu
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation CreateNFSFileShare for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -1087,12 +1086,12 @@ func (c *StorageGateway) CreateSMBFileShareRequest(input *CreateSMBFileShareInpu
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation CreateSMBFileShare for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -1194,16 +1193,16 @@ func (c *StorageGateway) CreateSnapshotRequest(input *CreateSnapshotInput) (req 
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation CreateSnapshot for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
-//   * ServiceUnavailableError
+//   * ErrCodeServiceUnavailableError "ServiceUnavailableError"
 //   An internal server error has occurred because the service is unavailable.
 //   For more information, see the error and message fields.
 //
@@ -1298,16 +1297,16 @@ func (c *StorageGateway) CreateSnapshotFromVolumeRecoveryPointRequest(input *Cre
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation CreateSnapshotFromVolumeRecoveryPoint for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
-//   * ServiceUnavailableError
+//   * ErrCodeServiceUnavailableError "ServiceUnavailableError"
 //   An internal server error has occurred because the service is unavailable.
 //   For more information, see the error and message fields.
 //
@@ -1398,12 +1397,12 @@ func (c *StorageGateway) CreateStorediSCSIVolumeRequest(input *CreateStorediSCSI
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation CreateStorediSCSIVolume for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -1488,12 +1487,12 @@ func (c *StorageGateway) CreateTapeWithBarcodeRequest(input *CreateTapeWithBarco
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation CreateTapeWithBarcode for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -1577,12 +1576,12 @@ func (c *StorageGateway) CreateTapesRequest(input *CreateTapesInput) (req *reque
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation CreateTapes for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -1666,12 +1665,12 @@ func (c *StorageGateway) DeleteBandwidthRateLimitRequest(input *DeleteBandwidthR
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DeleteBandwidthRateLimit for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -1752,12 +1751,12 @@ func (c *StorageGateway) DeleteChapCredentialsRequest(input *DeleteChapCredentia
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DeleteChapCredentials for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -1837,12 +1836,12 @@ func (c *StorageGateway) DeleteFileShareRequest(input *DeleteFileShareInput) (re
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DeleteFileShare for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -1936,12 +1935,12 @@ func (c *StorageGateway) DeleteGatewayRequest(input *DeleteGatewayInput) (req *r
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DeleteGateway for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -2030,12 +2029,12 @@ func (c *StorageGateway) DeleteSnapshotScheduleRequest(input *DeleteSnapshotSche
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DeleteSnapshotSchedule for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -2115,12 +2114,12 @@ func (c *StorageGateway) DeleteTapeRequest(input *DeleteTapeInput) (req *request
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DeleteTape for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -2200,12 +2199,12 @@ func (c *StorageGateway) DeleteTapeArchiveRequest(input *DeleteTapeArchiveInput)
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DeleteTapeArchive for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -2298,12 +2297,12 @@ func (c *StorageGateway) DeleteVolumeRequest(input *DeleteVolumeInput) (req *req
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DeleteVolume for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -2384,12 +2383,12 @@ func (c *StorageGateway) DescribeAvailabilityMonitorTestRequest(input *DescribeA
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeAvailabilityMonitorTest for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -2475,12 +2474,12 @@ func (c *StorageGateway) DescribeBandwidthRateLimitRequest(input *DescribeBandwi
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeBandwidthRateLimit for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -2563,12 +2562,12 @@ func (c *StorageGateway) DescribeCacheRequest(input *DescribeCacheInput) (req *r
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeCache for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -2652,12 +2651,12 @@ func (c *StorageGateway) DescribeCachediSCSIVolumesRequest(input *DescribeCached
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeCachediSCSIVolumes for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -2738,12 +2737,12 @@ func (c *StorageGateway) DescribeChapCredentialsRequest(input *DescribeChapCrede
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeChapCredentials for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -2825,12 +2824,12 @@ func (c *StorageGateway) DescribeGatewayInformationRequest(input *DescribeGatewa
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeGatewayInformation for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -2910,12 +2909,12 @@ func (c *StorageGateway) DescribeMaintenanceStartTimeRequest(input *DescribeMain
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeMaintenanceStartTime for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -2995,12 +2994,12 @@ func (c *StorageGateway) DescribeNFSFileSharesRequest(input *DescribeNFSFileShar
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeNFSFileShares for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -3080,12 +3079,12 @@ func (c *StorageGateway) DescribeSMBFileSharesRequest(input *DescribeSMBFileShar
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeSMBFileShares for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -3165,12 +3164,12 @@ func (c *StorageGateway) DescribeSMBSettingsRequest(input *DescribeSMBSettingsIn
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeSMBSettings for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -3252,12 +3251,12 @@ func (c *StorageGateway) DescribeSnapshotScheduleRequest(input *DescribeSnapshot
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeSnapshotSchedule for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -3339,12 +3338,12 @@ func (c *StorageGateway) DescribeStorediSCSIVolumesRequest(input *DescribeStored
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeStorediSCSIVolumes for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -3433,12 +3432,12 @@ func (c *StorageGateway) DescribeTapeArchivesRequest(input *DescribeTapeArchives
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeTapeArchives for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -3581,12 +3580,12 @@ func (c *StorageGateway) DescribeTapeRecoveryPointsRequest(input *DescribeTapeRe
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeTapeRecoveryPoints for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -3726,12 +3725,12 @@ func (c *StorageGateway) DescribeTapesRequest(input *DescribeTapesInput) (req *r
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeTapes for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -3866,12 +3865,12 @@ func (c *StorageGateway) DescribeUploadBufferRequest(input *DescribeUploadBuffer
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeUploadBuffer for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -3959,12 +3958,12 @@ func (c *StorageGateway) DescribeVTLDevicesRequest(input *DescribeVTLDevicesInpu
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeVTLDevices for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -4103,12 +4102,12 @@ func (c *StorageGateway) DescribeWorkingStorageRequest(input *DescribeWorkingSto
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DescribeWorkingStorage for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -4192,12 +4191,12 @@ func (c *StorageGateway) DetachVolumeRequest(input *DetachVolumeInput) (req *req
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DetachVolume for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -4283,12 +4282,12 @@ func (c *StorageGateway) DisableGatewayRequest(input *DisableGatewayInput) (req 
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation DisableGateway for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -4368,12 +4367,12 @@ func (c *StorageGateway) JoinDomainRequest(input *JoinDomainInput) (req *request
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation JoinDomain for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -4460,12 +4459,12 @@ func (c *StorageGateway) ListFileSharesRequest(input *ListFileSharesInput) (req 
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation ListFileShares for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -4612,12 +4611,12 @@ func (c *StorageGateway) ListGatewaysRequest(input *ListGatewaysInput) (req *req
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation ListGateways for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -4757,12 +4756,12 @@ func (c *StorageGateway) ListLocalDisksRequest(input *ListLocalDisksInput) (req 
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation ListLocalDisks for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -4848,12 +4847,12 @@ func (c *StorageGateway) ListTagsForResourceRequest(input *ListTagsForResourceIn
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation ListTagsForResource for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -5000,12 +4999,12 @@ func (c *StorageGateway) ListTapesRequest(input *ListTapesInput) (req *request.R
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation ListTapes for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -5138,12 +5137,12 @@ func (c *StorageGateway) ListVolumeInitiatorsRequest(input *ListVolumeInitiators
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation ListVolumeInitiators for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -5229,12 +5228,12 @@ func (c *StorageGateway) ListVolumeRecoveryPointsRequest(input *ListVolumeRecove
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation ListVolumeRecoveryPoints for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -5330,12 +5329,12 @@ func (c *StorageGateway) ListVolumesRequest(input *ListVolumesInput) (req *reque
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation ListVolumes for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -5479,12 +5478,12 @@ func (c *StorageGateway) NotifyWhenUploadedRequest(input *NotifyWhenUploadedInpu
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation NotifyWhenUploaded for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -5586,12 +5585,12 @@ func (c *StorageGateway) RefreshCacheRequest(input *RefreshCacheInput) (req *req
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation RefreshCache for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -5671,12 +5670,12 @@ func (c *StorageGateway) RemoveTagsFromResourceRequest(input *RemoveTagsFromReso
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation RemoveTagsFromResource for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -5766,12 +5765,12 @@ func (c *StorageGateway) ResetCacheRequest(input *ResetCacheInput) (req *request
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation ResetCache for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -5859,12 +5858,12 @@ func (c *StorageGateway) RetrieveTapeArchiveRequest(input *RetrieveTapeArchiveIn
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation RetrieveTapeArchive for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -5952,12 +5951,12 @@ func (c *StorageGateway) RetrieveTapeRecoveryPointRequest(input *RetrieveTapeRec
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation RetrieveTapeRecoveryPoint for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -6039,12 +6038,12 @@ func (c *StorageGateway) SetLocalConsolePasswordRequest(input *SetLocalConsolePa
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation SetLocalConsolePassword for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -6124,12 +6123,12 @@ func (c *StorageGateway) SetSMBGuestPasswordRequest(input *SetSMBGuestPasswordIn
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation SetSMBGuestPassword for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -6228,12 +6227,12 @@ func (c *StorageGateway) ShutdownGatewayRequest(input *ShutdownGatewayInput) (re
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation ShutdownGateway for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -6318,12 +6317,12 @@ func (c *StorageGateway) StartAvailabilityMonitorTestRequest(input *StartAvailab
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation StartAvailabilityMonitorTest for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -6413,12 +6412,12 @@ func (c *StorageGateway) StartGatewayRequest(input *StartGatewayInput) (req *req
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation StartGateway for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -6507,12 +6506,12 @@ func (c *StorageGateway) UpdateBandwidthRateLimitRequest(input *UpdateBandwidthR
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation UpdateBandwidthRateLimit for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -6597,12 +6596,12 @@ func (c *StorageGateway) UpdateChapCredentialsRequest(input *UpdateChapCredentia
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation UpdateChapCredentials for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -6687,12 +6686,12 @@ func (c *StorageGateway) UpdateGatewayInformationRequest(input *UpdateGatewayInf
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation UpdateGatewayInformation for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -6785,12 +6784,12 @@ func (c *StorageGateway) UpdateGatewaySoftwareNowRequest(input *UpdateGatewaySof
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation UpdateGatewaySoftwareNow for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -6871,12 +6870,12 @@ func (c *StorageGateway) UpdateMaintenanceStartTimeRequest(input *UpdateMaintena
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation UpdateMaintenanceStartTime for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -6974,12 +6973,12 @@ func (c *StorageGateway) UpdateNFSFileShareRequest(input *UpdateNFSFileShareInpu
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation UpdateNFSFileShare for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -7070,12 +7069,12 @@ func (c *StorageGateway) UpdateSMBFileShareRequest(input *UpdateSMBFileShareInpu
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation UpdateSMBFileShare for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -7159,12 +7158,12 @@ func (c *StorageGateway) UpdateSMBSecurityStrategyRequest(input *UpdateSMBSecuri
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation UpdateSMBSecurityStrategy for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -7252,12 +7251,12 @@ func (c *StorageGateway) UpdateSnapshotScheduleRequest(input *UpdateSnapshotSche
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation UpdateSnapshotSchedule for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -7340,12 +7339,12 @@ func (c *StorageGateway) UpdateVTLDeviceTypeRequest(input *UpdateVTLDeviceTypeIn
 // See the AWS API reference guide for AWS Storage Gateway's
 // API operation UpdateVTLDeviceType for usage and error information.
 //
-// Returned Error Types:
-//   * InvalidGatewayRequestException
+// Returned Error Codes:
+//   * ErrCodeInvalidGatewayRequestException "InvalidGatewayRequestException"
 //   An exception occurred because an invalid gateway request was issued to the
 //   service. For more information, see the error and message fields.
 //
-//   * InternalServerError
+//   * ErrCodeInternalServerError "InternalServerError"
 //   An internal server error has occurred during the request. For more information,
 //   see the error and message fields.
 //
@@ -13259,129 +13258,6 @@ func (s *GatewayInfo) SetGatewayType(v string) *GatewayInfo {
 	return s
 }
 
-// An internal server error has occurred during the request. For more information,
-// see the error and message fields.
-type InternalServerError struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	// A StorageGatewayError that provides more information about the cause of the
-	// error.
-	Error_ *Error `locationName:"error" type:"structure"`
-
-	// A human-readable message describing the error that occurred.
-	Message_ *string `locationName:"message" type:"string"`
-}
-
-// String returns the string representation
-func (s InternalServerError) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s InternalServerError) GoString() string {
-	return s.String()
-}
-
-func newErrorInternalServerError(v protocol.ResponseMetadata) error {
-	return &InternalServerError{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s InternalServerError) Code() string {
-	return "InternalServerError"
-}
-
-// Message returns the exception's message.
-func (s InternalServerError) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s InternalServerError) OrigErr() error {
-	return nil
-}
-
-func (s InternalServerError) Error() string {
-	return fmt.Sprintf("%s: %s\n%s", s.Code(), s.Message(), s.String())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s InternalServerError) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s InternalServerError) RequestID() string {
-	return s.respMetadata.RequestID
-}
-
-// An exception occurred because an invalid gateway request was issued to the
-// service. For more information, see the error and message fields.
-type InvalidGatewayRequestException struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	// A StorageGatewayError that provides more detail about the cause of the error.
-	Error_ *Error `locationName:"error" type:"structure"`
-
-	// A human-readable message describing the error that occurred.
-	Message_ *string `locationName:"message" type:"string"`
-}
-
-// String returns the string representation
-func (s InvalidGatewayRequestException) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s InvalidGatewayRequestException) GoString() string {
-	return s.String()
-}
-
-func newErrorInvalidGatewayRequestException(v protocol.ResponseMetadata) error {
-	return &InvalidGatewayRequestException{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s InvalidGatewayRequestException) Code() string {
-	return "InvalidGatewayRequestException"
-}
-
-// Message returns the exception's message.
-func (s InvalidGatewayRequestException) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s InvalidGatewayRequestException) OrigErr() error {
-	return nil
-}
-
-func (s InvalidGatewayRequestException) Error() string {
-	return fmt.Sprintf("%s: %s\n%s", s.Code(), s.Message(), s.String())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s InvalidGatewayRequestException) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s InvalidGatewayRequestException) RequestID() string {
-	return s.respMetadata.RequestID
-}
-
 // JoinDomainInput
 type JoinDomainInput struct {
 	_ struct{} `type:"structure"`
@@ -15393,68 +15269,6 @@ func (s *SMBFileShareInfo) SetTags(v []*Tag) *SMBFileShareInfo {
 func (s *SMBFileShareInfo) SetValidUserList(v []*string) *SMBFileShareInfo {
 	s.ValidUserList = v
 	return s
-}
-
-// An internal server error has occurred because the service is unavailable.
-// For more information, see the error and message fields.
-type ServiceUnavailableError struct {
-	_            struct{} `type:"structure"`
-	respMetadata protocol.ResponseMetadata
-
-	// A StorageGatewayError that provides more information about the cause of the
-	// error.
-	Error_ *Error `locationName:"error" type:"structure"`
-
-	// A human-readable message describing the error that occurred.
-	Message_ *string `locationName:"message" type:"string"`
-}
-
-// String returns the string representation
-func (s ServiceUnavailableError) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s ServiceUnavailableError) GoString() string {
-	return s.String()
-}
-
-func newErrorServiceUnavailableError(v protocol.ResponseMetadata) error {
-	return &ServiceUnavailableError{
-		respMetadata: v,
-	}
-}
-
-// Code returns the exception type name.
-func (s ServiceUnavailableError) Code() string {
-	return "ServiceUnavailableError"
-}
-
-// Message returns the exception's message.
-func (s ServiceUnavailableError) Message() string {
-	if s.Message_ != nil {
-		return *s.Message_
-	}
-	return ""
-}
-
-// OrigErr always returns nil, satisfies awserr.Error interface.
-func (s ServiceUnavailableError) OrigErr() error {
-	return nil
-}
-
-func (s ServiceUnavailableError) Error() string {
-	return fmt.Sprintf("%s: %s\n%s", s.Code(), s.Message(), s.String())
-}
-
-// Status code returns the HTTP status code for the request's response error.
-func (s ServiceUnavailableError) StatusCode() int {
-	return s.respMetadata.StatusCode
-}
-
-// RequestID returns the service's response RequestID for request.
-func (s ServiceUnavailableError) RequestID() string {
-	return s.respMetadata.RequestID
 }
 
 // SetLocalConsolePasswordInput
@@ -18206,9 +18020,6 @@ const (
 
 	// HostEnvironmentEc2 is a HostEnvironment enum value
 	HostEnvironmentEc2 = "EC2"
-
-	// HostEnvironmentKvm is a HostEnvironment enum value
-	HostEnvironmentKvm = "KVM"
 
 	// HostEnvironmentOther is a HostEnvironment enum value
 	HostEnvironmentOther = "OTHER"

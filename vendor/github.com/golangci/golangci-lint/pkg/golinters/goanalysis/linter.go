@@ -11,16 +11,19 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/pkg/errors"
-	"golang.org/x/tools/go/analysis"
-	"golang.org/x/tools/go/packages"
+	"github.com/golangci/golangci-lint/pkg/timeutils"
 
 	"github.com/golangci/golangci-lint/internal/pkgcache"
-	"github.com/golangci/golangci-lint/pkg/lint/linter"
 	"github.com/golangci/golangci-lint/pkg/logutils"
+
+	"golang.org/x/tools/go/packages"
+
+	"github.com/pkg/errors"
+	"golang.org/x/tools/go/analysis"
+
+	"github.com/golangci/golangci-lint/pkg/lint/linter"
 	libpackages "github.com/golangci/golangci-lint/pkg/packages"
 	"github.com/golangci/golangci-lint/pkg/result"
-	"github.com/golangci/golangci-lint/pkg/timeutils"
 )
 
 const (
@@ -432,9 +435,7 @@ func loadIssuesFromCache(pkgs []*packages.Package, lintCtx *linter.Context,
 func runAnalyzers(cfg runAnalyzersConfig, lintCtx *linter.Context) ([]result.Issue, error) {
 	log := lintCtx.Log.Child("goanalysis")
 	sw := timeutils.NewStopwatch("analyzers", log)
-
-	const stagesToPrint = 10
-	defer sw.PrintTopStages(stagesToPrint)
+	defer sw.PrintTopStages(10)
 
 	runner := newRunner(cfg.getName(), log, lintCtx.PkgCache, lintCtx.LoadGuard, cfg.getLoadMode(), sw)
 

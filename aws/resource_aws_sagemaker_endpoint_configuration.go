@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/sagemaker"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
@@ -71,7 +72,7 @@ func resourceAwsSagemakerEndpointConfiguration() *schema.Resource {
 							Type:         schema.TypeFloat,
 							Optional:     true,
 							ForceNew:     true,
-							ValidateFunc: validation.FloatAtLeast(0),
+							ValidateFunc: FloatAtLeast(0),
 							Default:      1,
 						},
 

@@ -2,10 +2,6 @@
 
 package macie
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeAccessDeniedException for service response error code
@@ -34,10 +30,3 @@ const (
 	// the current AWS account limits. The error code describes the limit exceeded.
 	ErrCodeLimitExceededException = "LimitExceededException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"AccessDeniedException":  newErrorAccessDeniedException,
-	"InternalException":      newErrorInternalException,
-	"InvalidInputException":  newErrorInvalidInputException,
-	"LimitExceededException": newErrorLimitExceededException,
-}

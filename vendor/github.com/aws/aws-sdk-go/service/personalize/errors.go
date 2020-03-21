@@ -2,10 +2,6 @@
 
 package personalize
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeInvalidInputException for service response error code
@@ -44,12 +40,3 @@ const (
 	// Could not find the specified resource.
 	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"InvalidInputException":          newErrorInvalidInputException,
-	"InvalidNextTokenException":      newErrorInvalidNextTokenException,
-	"LimitExceededException":         newErrorLimitExceededException,
-	"ResourceAlreadyExistsException": newErrorResourceAlreadyExistsException,
-	"ResourceInUseException":         newErrorResourceInUseException,
-	"ResourceNotFoundException":      newErrorResourceNotFoundException,
-}

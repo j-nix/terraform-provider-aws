@@ -8,10 +8,10 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/docdb"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsDocDBClusterInstance() *schema.Resource {
@@ -177,7 +177,7 @@ func resourceAwsDocDBClusterInstance() *schema.Resource {
 
 func resourceAwsDocDBClusterInstanceCreate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).docdbconn
-	tags := keyvaluetags.New(d.Get("tags").(map[string]interface{})).IgnoreAws().DocdbTags()
+	tags := tagsFromMapDocDB(d.Get("tags").(map[string]interface{}))
 
 	createOpts := &docdb.CreateDBInstanceInput{
 		DBInstanceClass:         aws.String(d.Get("instance_class").(string)),
@@ -314,13 +314,7 @@ func resourceAwsDocDBClusterInstanceRead(d *schema.ResourceData, meta interface{
 	d.Set("storage_encrypted", db.StorageEncrypted)
 	d.Set("ca_cert_identifier", db.CACertificateIdentifier)
 
-	tags, err := keyvaluetags.DocdbListTags(conn, d.Get("arn").(string))
-
-	if err != nil {
-		return fmt.Errorf("error listing tags for DocumentDB Cluster Instance (%s): %s", d.Get("arn").(string), err)
-	}
-
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
+	if err := saveTagsDocDB(conn, d, aws.StringValue(db.DBInstanceArn)); err != nil {
 		return fmt.Errorf("error setting tags: %s", err)
 	}
 
@@ -403,14 +397,8 @@ func resourceAwsDocDBClusterInstanceUpdate(d *schema.ResourceData, meta interfac
 
 	}
 
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.DocdbUpdateTags(conn, d.Get("arn").(string), o, n); err != nil {
-			return fmt.Errorf("error updating DocumentDB Cluster Instance (%s) tags: %s", d.Get("arn").(string), err)
-		}
-
-		d.SetPartial("tags")
+	if err := setTagsDocDB(conn, d); err != nil {
+		return err
 	}
 
 	return resourceAwsDocDBClusterInstanceRead(d, meta)

@@ -11,18 +11,14 @@ description: |-
 Creates and manages an AWS IoT certificate.
 
 ## Example Usage
-
 ### With CSR
-
 ```hcl
 resource "aws_iot_certificate" "cert" {
   csr    = "${file("/my/csr.pem")}"
   active = true
 }
 ```
-
 ### Without CSR
-
 ```hcl
 resource "aws_iot_certificate" "cert" {
   active = true

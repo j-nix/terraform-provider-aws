@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/ec2"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
@@ -202,7 +203,7 @@ func testAccCheckVpcEndpointServiceDestroy(s *terraform.State) error {
 		})
 		if err != nil {
 			// Verify the error is what we want
-			if isAWSErr(err, "InvalidVpcEndpointServiceId.NotFound", "") {
+			if ae, ok := err.(awserr.Error); ok && ae.Code() == "InvalidVpcEndpointServiceId.NotFound" {
 				continue
 			}
 			return err

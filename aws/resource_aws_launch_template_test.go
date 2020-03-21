@@ -8,70 +8,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/autoscaling"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
-
-func init() {
-	resource.AddTestSweepers("aws_launch_template", &resource.Sweeper{
-		Name: "aws_launch_template",
-		Dependencies: []string{
-			"aws_autoscaling_group",
-			"aws_batch_compute_environment",
-		},
-		F: testSweepLaunchTemplates,
-	})
-}
-
-func testSweepLaunchTemplates(region string) error {
-	client, err := sharedClientForRegion(region)
-
-	if err != nil {
-		return fmt.Errorf("error getting client: %s", err)
-	}
-
-	conn := client.(*AWSClient).ec2conn
-	input := &ec2.DescribeLaunchTemplatesInput{}
-	var sweeperErrs *multierror.Error
-
-	err = conn.DescribeLaunchTemplatesPages(input, func(page *ec2.DescribeLaunchTemplatesOutput, lastPage bool) bool {
-		for _, launchTemplate := range page.LaunchTemplates {
-			id := aws.StringValue(launchTemplate.LaunchTemplateId)
-			input := &ec2.DeleteLaunchTemplateInput{
-				LaunchTemplateId: launchTemplate.LaunchTemplateId,
-			}
-
-			log.Printf("[INFO] Deleting EC2 Launch Template: %s", id)
-			_, err := conn.DeleteLaunchTemplate(input)
-
-			if isAWSErr(err, "InvalidLaunchTemplateId.NotFound", "") {
-				continue
-			}
-
-			if err != nil {
-				sweeperErr := fmt.Errorf("error deleting EC2 Launch Template (%s): %w", id, err)
-				log.Printf("[ERROR] %s", sweeperErr)
-				sweeperErrs = multierror.Append(sweeperErrs, sweeperErr)
-				continue
-			}
-		}
-
-		return !lastPage
-	})
-
-	if testSweepSkipSweepError(err) {
-		log.Printf("[WARN] Skipping EC2 Launch Template sweep for %s: %s", region, err)
-		return nil
-	}
-
-	if err != nil {
-		return fmt.Errorf("Error describing EC2 Launch Templates: %w", err)
-	}
-
-	return sweeperErrs.ErrorOrNil()
-}
 
 func TestAccAWSLaunchTemplate_basic(t *testing.T) {
 	var template ec2.LaunchTemplate
@@ -414,8 +354,7 @@ func TestAccAWSLaunchTemplate_tags(t *testing.T) {
 				Config: testAccAWSLaunchTemplateConfig_basic(rInt),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckAWSLaunchTemplateExists(resourceName, &template),
-					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags.test", "bar"),
+					testAccCheckTags(&template.Tags, "test", "bar"),
 				),
 			},
 			{
@@ -427,8 +366,8 @@ func TestAccAWSLaunchTemplate_tags(t *testing.T) {
 				Config: testAccAWSLaunchTemplateConfig_tagsUpdate(rInt),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckAWSLaunchTemplateExists(resourceName, &template),
-					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags.bar", "baz"),
+					testAccCheckTags(&template.Tags, "test", ""),
+					testAccCheckTags(&template.Tags, "bar", "baz"),
 				),
 			},
 		},
@@ -480,26 +419,6 @@ func TestAccAWSLaunchTemplate_capacityReservation_target(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
-func TestAccAWSLaunchTemplate_cpuOptions(t *testing.T) {
-	var template ec2.LaunchTemplate
-	resName := "aws_launch_template.foo"
-	rName := acctest.RandomWithPrefix("tf-acc-test")
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckAWSLaunchTemplateDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAWSLaunchTemplateConfig_cpuOptions(rName, 4, 2),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSLaunchTemplateExists(resName, &template),
-				),
 			},
 		},
 	})
@@ -609,7 +528,6 @@ func TestAccAWSLaunchTemplate_IamInstanceProfile_EmptyConfigurationBlock(t *test
 
 func TestAccAWSLaunchTemplate_networkInterface(t *testing.T) {
 	var template ec2.LaunchTemplate
-	rName := acctest.RandomWithPrefix("tf-acc-test")
 	resourceName := "aws_launch_template.test"
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -618,41 +536,13 @@ func TestAccAWSLaunchTemplate_networkInterface(t *testing.T) {
 		CheckDestroy: testAccCheckAWSLaunchTemplateDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSLaunchTemplateConfig_networkInterface(rName),
+				Config: testAccAWSLaunchTemplateConfig_networkInterface,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckAWSLaunchTemplateExists(resourceName, &template),
 					resource.TestCheckResourceAttr(resourceName, "network_interfaces.#", "1"),
 					resource.TestCheckResourceAttrSet(resourceName, "network_interfaces.0.network_interface_id"),
 					resource.TestCheckResourceAttr(resourceName, "network_interfaces.0.associate_public_ip_address", ""),
 					resource.TestCheckResourceAttr(resourceName, "network_interfaces.0.ipv4_address_count", "2"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
-func TestAccAWSLaunchTemplate_networkInterfaceAddresses(t *testing.T) {
-	var template ec2.LaunchTemplate
-	resourceName := "aws_launch_template.test"
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckAWSLaunchTemplateDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAWSLaunchTemplateConfig_networkInterfaceAddresses,
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSLaunchTemplateExists(resourceName, &template),
-					resource.TestCheckResourceAttr(resourceName, "network_interfaces.#", "1"),
-					resource.TestCheckResourceAttrSet(resourceName, "network_interfaces.0.network_interface_id"),
-					resource.TestCheckResourceAttr(resourceName, "network_interfaces.0.associate_public_ip_address", ""),
-					resource.TestCheckResourceAttr(resourceName, "network_interfaces.0.ipv4_addresses.#", "2"),
 				),
 			},
 			{
@@ -715,7 +605,6 @@ func TestAccAWSLaunchTemplate_associatePublicIPAddress(t *testing.T) {
 
 func TestAccAWSLaunchTemplate_networkInterface_ipv6Addresses(t *testing.T) {
 	var template ec2.LaunchTemplate
-	rName := acctest.RandomWithPrefix("tf-acc-test")
 	resourceName := "aws_launch_template.test"
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -724,7 +613,7 @@ func TestAccAWSLaunchTemplate_networkInterface_ipv6Addresses(t *testing.T) {
 		CheckDestroy: testAccCheckAWSLaunchTemplateDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSLaunchTemplateConfig_networkInterface_ipv6Addresses(rName),
+				Config: testAccAWSLaunchTemplateConfig_networkInterface_ipv6Addresses,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckAWSLaunchTemplateExists(resourceName, &template),
 					resource.TestCheckResourceAttr(resourceName, "network_interfaces.#", "1"),
@@ -1164,19 +1053,6 @@ resource "aws_launch_template" "test" {
 `, rInt)
 }
 
-func testAccAWSLaunchTemplateConfig_cpuOptions(rName string, coreCount, threadsPerCore int) string {
-	return fmt.Sprintf(`
-resource "aws_launch_template" "foo" {
-	name = %q
-
-  cpu_options {
-		core_count = %d
-		threads_per_core = %d
-  }
-}
-`, rName, coreCount, threadsPerCore)
-}
-
 func testAccAWSLaunchTemplateConfig_creditSpecification(rName, instanceType, cpuCredits string) string {
 	return fmt.Sprintf(`
 resource "aws_launch_template" "test" {
@@ -1226,33 +1102,7 @@ resource "aws_launch_template" "test" {
 `, rName, description)
 }
 
-func testAccAWSLaunchTemplateConfig_networkInterface(rName string) string {
-	return fmt.Sprintf(`
-resource "aws_vpc" "test" {
-  cidr_block = "10.1.0.0/16"
-}
-
-resource "aws_subnet" "test" {
-  vpc_id = "${aws_vpc.test.id}"
-  cidr_block = "10.1.0.0/24"
-}
-
-resource "aws_network_interface" "test" {
-  subnet_id = "${aws_subnet.test.id}"
-}
-
-resource "aws_launch_template" "test" {
-  name = %[1]q
-
-  network_interfaces {
-    network_interface_id = "${aws_network_interface.test.id}"
-    ipv4_address_count = 2
-  }
-}
-`, rName)
-}
-
-const testAccAWSLaunchTemplateConfig_networkInterfaceAddresses = `
+const testAccAWSLaunchTemplateConfig_networkInterface = `
 resource "aws_vpc" "test" {
   cidr_block = "10.1.0.0/16"
 }
@@ -1271,7 +1121,7 @@ resource "aws_launch_template" "test" {
 
   network_interfaces {
     network_interface_id = "${aws_network_interface.test.id}"
-    ipv4_addresses = ["10.1.0.10", "10.1.0.11"]
+    ipv4_address_count = 2
   }
 }
 `
@@ -1303,10 +1153,9 @@ resource "aws_launch_template" "test" {
 `, rName, associatePublicIPAddress)
 }
 
-func testAccAWSLaunchTemplateConfig_networkInterface_ipv6Addresses(rName string) string {
-	return fmt.Sprintf(`
+const testAccAWSLaunchTemplateConfig_networkInterface_ipv6Addresses = `
 resource "aws_launch_template" "test" {
-  name = %[1]q
+  name = "network-interface-ipv6-addresses-launch-template"
 
   network_interfaces {
     ipv6_addresses = [
@@ -1315,8 +1164,7 @@ resource "aws_launch_template" "test" {
     ]
   }
 }
-`, rName)
-}
+`
 
 const testAccAWSLaunchTemplateConfig_asg_basic = `
 data "aws_ami" "test_ami" {

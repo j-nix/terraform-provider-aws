@@ -2,10 +2,6 @@
 
 package iotanalytics
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeInternalFailureException for service response error code
@@ -50,13 +46,3 @@ const (
 	// The request was denied due to request throttling.
 	ErrCodeThrottlingException = "ThrottlingException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"InternalFailureException":       newErrorInternalFailureException,
-	"InvalidRequestException":        newErrorInvalidRequestException,
-	"LimitExceededException":         newErrorLimitExceededException,
-	"ResourceAlreadyExistsException": newErrorResourceAlreadyExistsException,
-	"ResourceNotFoundException":      newErrorResourceNotFoundException,
-	"ServiceUnavailableException":    newErrorServiceUnavailableException,
-	"ThrottlingException":            newErrorThrottlingException,
-}

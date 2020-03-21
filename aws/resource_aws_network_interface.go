@@ -14,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsNetworkInterface() *schema.Resource {
@@ -33,11 +32,6 @@ func resourceAwsNetworkInterface() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-			},
-
-			"mac_address": {
-				Type:     schema.TypeString,
-				Computed: true,
 			},
 
 			"private_ip": {
@@ -184,7 +178,6 @@ func resourceAwsNetworkInterfaceRead(d *schema.ResourceData, meta interface{}) e
 
 	d.Set("description", eni.Description)
 	d.Set("private_dns_name", eni.PrivateDnsName)
-	d.Set("mac_address", eni.MacAddress)
 	d.Set("private_ip", eni.PrivateIpAddress)
 
 	if err := d.Set("private_ips", flattenNetworkInterfacesPrivateIPAddresses(eni.PrivateIpAddresses)); err != nil {
@@ -200,7 +193,7 @@ func resourceAwsNetworkInterfaceRead(d *schema.ResourceData, meta interface{}) e
 	d.Set("source_dest_check", eni.SourceDestCheck)
 	d.Set("subnet_id", eni.SubnetId)
 
-	if err := d.Set("tags", keyvaluetags.Ec2KeyValueTags(eni.TagSet).IgnoreAws().Map()); err != nil {
+	if err := d.Set("tags", tagsToMap(eni.TagSet)); err != nil {
 		return fmt.Errorf("error setting tags: %s", err)
 	}
 
@@ -330,21 +323,17 @@ func resourceAwsNetworkInterfaceUpdate(d *schema.ResourceData, meta interface{})
 		d.SetPartial("private_ips")
 	}
 
-	// ModifyNetworkInterfaceAttribute needs to be called after creating an ENI
-	// since CreateNetworkInterface doesn't take SourceDeskCheck parameter.
-	if d.HasChange("source_dest_check") || d.IsNewResource() {
-		request := &ec2.ModifyNetworkInterfaceAttributeInput{
-			NetworkInterfaceId: aws.String(d.Id()),
-			SourceDestCheck:    &ec2.AttributeBooleanValue{Value: aws.Bool(d.Get("source_dest_check").(bool))},
-		}
-
-		_, err := conn.ModifyNetworkInterfaceAttribute(request)
-		if err != nil {
-			return fmt.Errorf("Failure updating ENI: %s", err)
-		}
-
-		d.SetPartial("source_dest_check")
+	request := &ec2.ModifyNetworkInterfaceAttributeInput{
+		NetworkInterfaceId: aws.String(d.Id()),
+		SourceDestCheck:    &ec2.AttributeBooleanValue{Value: aws.Bool(d.Get("source_dest_check").(bool))},
 	}
+
+	_, err := conn.ModifyNetworkInterfaceAttribute(request)
+	if err != nil {
+		return fmt.Errorf("Failure updating ENI: %s", err)
+	}
+
+	d.SetPartial("source_dest_check")
 
 	if d.HasChange("private_ips_count") && !d.IsNewResource() {
 		o, n := d.GetChange("private_ips_count")
@@ -417,12 +406,10 @@ func resourceAwsNetworkInterfaceUpdate(d *schema.ResourceData, meta interface{})
 		d.SetPartial("description")
 	}
 
-	if d.HasChange("tags") {
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.Ec2UpdateTags(conn, d.Id(), o, n); err != nil {
-			return fmt.Errorf("error updating EC2 Network Interface (%s) tags: %s", d.Id(), err)
-		}
+	if err := setTags(conn, d); err != nil {
+		return err
+	} else {
+		d.SetPartial("tags")
 	}
 
 	d.Partial(false)

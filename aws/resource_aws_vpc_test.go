@@ -295,9 +295,7 @@ func TestAccAWSVpc_tags(t *testing.T) {
 					testAccCheckVpcExists(resourceName, &vpc),
 					testAccCheckVpcCidr(&vpc, "10.1.0.0/16"),
 					resource.TestCheckResourceAttr(resourceName, "cidr_block", "10.1.0.0/16"),
-					resource.TestCheckResourceAttr(resourceName, "tags.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "tags.Name", "terraform-testacc-vpc-tags"),
-					resource.TestCheckResourceAttr(resourceName, "tags.foo", "bar"),
+					testAccCheckTags(&vpc.Tags, "foo", "bar"),
 				),
 			},
 			{
@@ -309,9 +307,8 @@ func TestAccAWSVpc_tags(t *testing.T) {
 				Config: testAccVpcConfigTagsUpdate,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVpcExists(resourceName, &vpc),
-					resource.TestCheckResourceAttr(resourceName, "tags.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "tags.Name", "terraform-testacc-vpc-tags"),
-					resource.TestCheckResourceAttr(resourceName, "tags.bar", "baz"),
+					testAccCheckTags(&vpc.Tags, "foo", ""),
+					testAccCheckTags(&vpc.Tags, "bar", "baz"),
 				),
 			},
 		},

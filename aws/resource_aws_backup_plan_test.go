@@ -39,11 +39,6 @@ func TestAccAwsBackupPlan_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "version"),
 				),
 			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
@@ -70,11 +65,6 @@ func TestAccAwsBackupPlan_withTags(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.Key1", "Value1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.Key2", "Value2a"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 			{
 				Config: testAccAwsBackupPlanConfig_tagsUpdated(rName),
@@ -133,11 +123,6 @@ func TestAccAwsBackupPlan_withRules(t *testing.T) {
 					testAccCheckAwsBackupPlanRuleAttr(resourceName, &ruleNameMap, rule2Name, "recovery_point_tags.%", "0"),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "0"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 			{
 				Config: testAccAwsBackupPlanConfig_threeRules(rName),
@@ -204,11 +189,6 @@ func TestAccAwsBackupPlan_withLifecycle(t *testing.T) {
 					testAccCheckAwsBackupPlanRuleAttr(resourceName, &ruleNameMap, rName, "lifecycle.0.delete_after", "0"),
 					testAccCheckAwsBackupPlanRuleAttr(resourceName, &ruleNameMap, rName, "recovery_point_tags.%", "0"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 			{
 				Config: testAccAwsBackupPlanConfig_lifecycleDeleteAfterOnly(rName),
@@ -278,11 +258,6 @@ func TestAccAwsBackupPlan_withRecoveryPointTags(t *testing.T) {
 					testAccCheckAwsBackupPlanRuleAttr(resourceName, &ruleNameMap, rName, "recovery_point_tags.Key2", "Value2a"),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "0"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 			{
 				Config: testAccAwsBackupPlanConfig_recoveryPointTagsUpdated(rName),

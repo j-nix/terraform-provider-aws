@@ -2,10 +2,6 @@
 
 package iotevents
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeInternalFailureException for service response error code
@@ -62,15 +58,3 @@ const (
 	// The requested operation is not supported.
 	ErrCodeUnsupportedOperationException = "UnsupportedOperationException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"InternalFailureException":       newErrorInternalFailureException,
-	"InvalidRequestException":        newErrorInvalidRequestException,
-	"LimitExceededException":         newErrorLimitExceededException,
-	"ResourceAlreadyExistsException": newErrorResourceAlreadyExistsException,
-	"ResourceInUseException":         newErrorResourceInUseException,
-	"ResourceNotFoundException":      newErrorResourceNotFoundException,
-	"ServiceUnavailableException":    newErrorServiceUnavailableException,
-	"ThrottlingException":            newErrorThrottlingException,
-	"UnsupportedOperationException":  newErrorUnsupportedOperationException,
-}

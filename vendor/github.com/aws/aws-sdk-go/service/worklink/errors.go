@@ -2,10 +2,6 @@
 
 package worklink
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeInternalServerErrorException for service response error code
@@ -44,12 +40,3 @@ const (
 	// You are not authorized to perform this action.
 	ErrCodeUnauthorizedException = "UnauthorizedException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"InternalServerErrorException":   newErrorInternalServerErrorException,
-	"InvalidRequestException":        newErrorInvalidRequestException,
-	"ResourceAlreadyExistsException": newErrorResourceAlreadyExistsException,
-	"ResourceNotFoundException":      newErrorResourceNotFoundException,
-	"TooManyRequestsException":       newErrorTooManyRequestsException,
-	"UnauthorizedException":          newErrorUnauthorizedException,
-}

@@ -383,17 +383,17 @@ EOF
 }
 
 resource "aws_s3_bucket" "content_bucket" {
-  bucket = "tf-test-pipeline-content-%d"
+  bucket = "tf-pipeline-content-%d"
   acl    = "private"
 }
 
 resource "aws_s3_bucket" "input_bucket" {
-  bucket = "tf-test-pipeline-input-%d"
+  bucket = "tf-pipeline-input-%d"
   acl    = "private"
 }
 
 resource "aws_s3_bucket" "thumb_bucket" {
-  bucket = "tf-test-pipeline-thumb-%d"
+  bucket = "tf-pipeline-thumb-%d"
   acl    = "private"
 }
 `, rInt, rInt, rInt, rInt, rInt)
@@ -438,17 +438,17 @@ EOF
 }
 
 resource "aws_s3_bucket" "content_bucket" {
-  bucket = "tf-test-pipeline-content-%d"
+  bucket = "tf-pipeline-content-%d"
   acl    = "private"
 }
 
 resource "aws_s3_bucket" "input_bucket" {
-  bucket = "tf-test-pipeline-input-%d"
+  bucket = "tf-pipeline-input-%d"
   acl    = "private"
 }
 
 resource "aws_s3_bucket" "thumb_bucket" {
-  bucket = "tf-test-pipeline-thumb-%d"
+  bucket = "tf-pipeline-thumb-%d"
   acl    = "private"
 }
 `, rInt, rInt, rInt, rInt, rInt)
@@ -505,7 +505,7 @@ EOF
 }
 
 resource "aws_s3_bucket" "content_bucket" {
-  bucket = "tf-test-transcoding-pipe-%d"
+  bucket = "tf-transcoding-pipe-%d"
   acl    = "private"
 }
 `, rInt, rInt, rInt)
@@ -516,7 +516,7 @@ func awsElasticTranscoderNotifications(r int) string {
 resource "aws_elastictranscoder_pipeline" "bar" {
   input_bucket  = "${aws_s3_bucket.test_bucket.bucket}"
   output_bucket = "${aws_s3_bucket.test_bucket.bucket}"
-  name          = "tf-test-transcoder-%d"
+  name          = "tf-transcoder-%d"
   role          = "${aws_iam_role.test_role.arn}"
 
   notifications {
@@ -526,7 +526,7 @@ resource "aws_elastictranscoder_pipeline" "bar" {
 }
 
 resource "aws_iam_role" "test_role" {
-  name = "tf-test-transcoder-%d"
+  name = "tf-transcoder-%d"
 
   assume_role_policy = <<EOF
 {
@@ -546,12 +546,12 @@ EOF
 }
 
 resource "aws_s3_bucket" "test_bucket" {
-  bucket = "tf-test-transcoder-%d"
+  bucket = "tf-transcoder-%d"
   acl    = "private"
 }
 
 resource "aws_sns_topic" "topic_example" {
-  name = "tf-test-transcoder-%d"
+  name = "tf-transcoder-%d"
 
   policy = <<EOF
 {
@@ -577,7 +577,7 @@ func awsElasticTranscoderNotifications_update(r int) string {
 resource "aws_elastictranscoder_pipeline" "bar" {
   input_bucket  = "${aws_s3_bucket.test_bucket.bucket}"
   output_bucket = "${aws_s3_bucket.test_bucket.bucket}"
-  name          = "tf-test-transcoder-%d"
+  name          = "tf-transcoder-%d"
   role          = "${aws_iam_role.test_role.arn}"
 
   notifications {
@@ -586,7 +586,7 @@ resource "aws_elastictranscoder_pipeline" "bar" {
 }
 
 resource "aws_iam_role" "test_role" {
-  name = "tf-test-transcoder-%d"
+  name = "tf-transcoder-%d"
 
   assume_role_policy = <<EOF
 {
@@ -606,12 +606,12 @@ EOF
 }
 
 resource "aws_s3_bucket" "test_bucket" {
-  bucket = "tf-test-transcoder-%d"
+  bucket = "tf-transcoder-%d"
   acl    = "private"
 }
 
 resource "aws_sns_topic" "topic_example" {
-  name = "tf-test-transcoder-%d"
+  name = "tf-transcoder-%d"
 
   policy = <<EOF
 {

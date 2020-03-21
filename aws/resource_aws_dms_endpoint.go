@@ -12,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func resourceAwsDmsEndpoint() *schema.Resource {
@@ -116,7 +115,10 @@ func resourceAwsDmsEndpoint() *schema.Resource {
 					dms.DmsSslModeValueVerifyFull,
 				}, false),
 			},
-			"tags": tagsSchema(),
+			"tags": {
+				Type:     schema.TypeMap,
+				Optional: true,
+			},
 			"username": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -228,7 +230,7 @@ func resourceAwsDmsEndpointCreate(d *schema.ResourceData, meta interface{}) erro
 		EndpointIdentifier: aws.String(d.Get("endpoint_id").(string)),
 		EndpointType:       aws.String(d.Get("endpoint_type").(string)),
 		EngineName:         aws.String(d.Get("engine_name").(string)),
-		Tags:               keyvaluetags.New(d.Get("tags").(map[string]interface{})).IgnoreAws().DatabasemigrationserviceTags(),
+		Tags:               dmsTagsFromMap(d.Get("tags").(map[string]interface{})),
 	}
 
 	switch d.Get("engine_name").(string) {
@@ -344,17 +346,13 @@ func resourceAwsDmsEndpointRead(d *schema.ResourceData, meta interface{}) error 
 		return err
 	}
 
-	tags, err := keyvaluetags.DatabasemigrationserviceListTags(conn, d.Get("endpoint_arn").(string))
-
+	tagsResp, err := conn.ListTagsForResource(&dms.ListTagsForResourceInput{
+		ResourceArn: aws.String(d.Get("endpoint_arn").(string)),
+	})
 	if err != nil {
-		return fmt.Errorf("error listing tags for DMS Endpoint (%s): %s", d.Get("endpoint_arn").(string), err)
+		return err
 	}
-
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
-	}
-
-	return nil
+	return d.Set("tags", dmsTagsToMap(tagsResp.TagList))
 }
 
 func resourceAwsDmsEndpointUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -403,11 +401,9 @@ func resourceAwsDmsEndpointUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if d.HasChange("tags") {
-		arn := d.Get("endpoint_arn").(string)
-		o, n := d.GetChange("tags")
-
-		if err := keyvaluetags.DatabasemigrationserviceUpdateTags(conn, arn, o, n); err != nil {
-			return fmt.Errorf("error updating DMS Endpoint (%s) tags: %s", arn, err)
+		err := dmsSetTags(d.Get("endpoint_arn").(string), d, meta)
+		if err != nil {
+			return err
 		}
 	}
 

@@ -1,10 +1,9 @@
 package aws
 
 import (
-	"fmt"
-
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func dataSourceAwsKinesisStream() *schema.Resource {
@@ -58,7 +57,10 @@ func dataSourceAwsKinesisStream() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"tags": tagsSchemaComputed(),
+			"tags": {
+				Type:     schema.TypeMap,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -81,15 +83,13 @@ func dataSourceAwsKinesisStreamRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("retention_period", state.retentionPeriod)
 	d.Set("shard_level_metrics", state.shardLevelMetrics)
 
-	tags, err := keyvaluetags.KinesisListTags(conn, sn)
-
+	tags, err := conn.ListTagsForStream(&kinesis.ListTagsForStreamInput{
+		StreamName: aws.String(sn),
+	})
 	if err != nil {
-		return fmt.Errorf("error listing tags for Kinesis Stream (%s): %s", sn, err)
+		return err
 	}
-
-	if err := d.Set("tags", tags.IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
-	}
+	d.Set("tags", tagsToMapKinesis(tags.Tags))
 
 	return nil
 }

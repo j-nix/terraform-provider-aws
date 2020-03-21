@@ -35,7 +35,7 @@ func TestAccAWSSESConfigurationSet_basic(t *testing.T) {
 }
 
 func testAccCheckSESConfigurationSetDestroy(s *terraform.State) error {
-	conn := testAccProvider.Meta().(*AWSClient).sesconn
+	conn := testAccProvider.Meta().(*AWSClient).sesConn
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "aws_ses_configuration_set" {
@@ -75,7 +75,7 @@ func testAccCheckAwsSESConfigurationSetExists(n string) resource.TestCheckFunc {
 			return fmt.Errorf("SES configuration set ID not set")
 		}
 
-		conn := testAccProvider.Meta().(*AWSClient).sesconn
+		conn := testAccProvider.Meta().(*AWSClient).sesConn
 
 		response, err := conn.ListConfigurationSets(&ses.ListConfigurationSetsInput{})
 		if err != nil {

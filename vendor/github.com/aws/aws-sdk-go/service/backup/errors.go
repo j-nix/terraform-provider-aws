@@ -2,10 +2,6 @@
 
 package backup
 
-import (
-	"github.com/aws/aws-sdk-go/private/protocol"
-)
-
 const (
 
 	// ErrCodeAlreadyExistsException for service response error code
@@ -60,14 +56,3 @@ const (
 	// The request failed due to a temporary failure of the server.
 	ErrCodeServiceUnavailableException = "ServiceUnavailableException"
 )
-
-var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
-	"AlreadyExistsException":         newErrorAlreadyExistsException,
-	"DependencyFailureException":     newErrorDependencyFailureException,
-	"InvalidParameterValueException": newErrorInvalidParameterValueException,
-	"InvalidRequestException":        newErrorInvalidRequestException,
-	"LimitExceededException":         newErrorLimitExceededException,
-	"MissingParameterValueException": newErrorMissingParameterValueException,
-	"ResourceNotFoundException":      newErrorResourceNotFoundException,
-	"ServiceUnavailableException":    newErrorServiceUnavailableException,
-}

@@ -7,7 +7,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
 func dataSourceAwsRouteTable() *schema.Resource {
@@ -151,7 +150,7 @@ func dataSourceAwsRouteTableRead(d *schema.ResourceData, meta interface{}) error
 		},
 	)
 	req.Filters = append(req.Filters, buildEC2TagFilterList(
-		keyvaluetags.New(tags.(map[string]interface{})).Ec2Tags(),
+		tagsFromMap(tags.(map[string]interface{})),
 	)...)
 	req.Filters = append(req.Filters, buildEC2CustomFilterList(
 		filter.(*schema.Set),
@@ -174,11 +173,7 @@ func dataSourceAwsRouteTableRead(d *schema.ResourceData, meta interface{}) error
 	d.SetId(aws.StringValue(rt.RouteTableId))
 	d.Set("route_table_id", rt.RouteTableId)
 	d.Set("vpc_id", rt.VpcId)
-
-	if err := d.Set("tags", keyvaluetags.Ec2KeyValueTags(rt.Tags).IgnoreAws().Map()); err != nil {
-		return fmt.Errorf("error setting tags: %s", err)
-	}
-
+	d.Set("tags", tagsToMap(rt.Tags))
 	d.Set("owner_id", rt.OwnerId)
 	if err := d.Set("routes", dataSourceRoutesRead(rt.Routes)); err != nil {
 		return err

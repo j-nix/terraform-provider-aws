@@ -47,12 +47,6 @@ func (c *unlambdaChecker) VisitExpr(x ast.Expr) {
 	if isBuiltin(callable) {
 		return // See #762
 	}
-	if id, ok := result.Fun.(*ast.Ident); ok {
-		obj := c.ctx.TypesInfo.ObjectOf(id)
-		if _, ok := obj.(*types.Var); ok {
-			return // See #888
-		}
-	}
 	fnType := c.ctx.TypesInfo.TypeOf(fn)
 	resultType := c.ctx.TypesInfo.TypeOf(result.Fun)
 	if !types.Identical(fnType, resultType) {

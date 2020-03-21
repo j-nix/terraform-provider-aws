@@ -1,18 +1,17 @@
 package aws
 
 import (
-	"github.com/aws/aws-sdk-go/service/opsworks"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceAwsOpsworksMemcachedLayer() *schema.Resource {
 	layerType := &opsworksLayerType{
-		TypeName:         opsworks.LayerTypeMemcached,
+		TypeName:         "memcached",
 		DefaultLayerName: "Memcached",
 
 		Attributes: map[string]*opsworksLayerTypeAttribute{
 			"allocated_memory": {
-				AttrName: opsworks.LayerAttributesKeysMemcachedMemory,
+				AttrName: "MemcachedMemory",
 				Type:     schema.TypeInt,
 				Default:  512,
 			},

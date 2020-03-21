@@ -34,7 +34,7 @@ func dataSourceAwsApiGatewayResource() *schema.Resource {
 }
 
 func dataSourceAwsApiGatewayResourceRead(d *schema.ResourceData, meta interface{}) error {
-	conn := meta.(*AWSClient).apigatewayconn
+	conn := meta.(*AWSClient).apigateway
 
 	restApiId := d.Get("rest_api_id").(string)
 	target := d.Get("path").(string)

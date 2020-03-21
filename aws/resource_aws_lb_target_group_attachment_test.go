@@ -17,12 +17,13 @@ func TestAccAWSLBTargetGroupAttachment_basic(t *testing.T) {
 	targetGroupName := fmt.Sprintf("test-target-group-%s", acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum))
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckAWSLBTargetGroupAttachmentDestroy,
+		PreCheck:      func() { testAccPreCheck(t) },
+		IDRefreshName: "aws_lb_target_group.test",
+		Providers:     testAccProviders,
+		CheckDestroy:  testAccCheckAWSLBTargetGroupAttachmentDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSLBTargetGroupAttachmentConfigTargetIdInstance(targetGroupName),
+				Config: testAccAWSLBTargetGroupAttachmentConfig_basic(targetGroupName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccCheckAWSLBTargetGroupAttachmentExists("aws_lb_target_group_attachment.test"),
 				),
@@ -34,12 +35,13 @@ func TestAccAWSLBTargetGroupAttachment_basic(t *testing.T) {
 func TestAccAWSLBTargetGroupAttachment_disappears(t *testing.T) {
 	targetGroupName := fmt.Sprintf("test-target-group-%s", acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum))
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckAWSLBTargetGroupAttachmentDestroy,
+		PreCheck:      func() { testAccPreCheck(t) },
+		IDRefreshName: "aws_lb_target_group.test",
+		Providers:     testAccProviders,
+		CheckDestroy:  testAccCheckAWSLBTargetGroupAttachmentDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSLBTargetGroupAttachmentConfigTargetIdInstance(targetGroupName),
+				Config: testAccAWSLBTargetGroupAttachmentConfig_basic(targetGroupName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckAWSLBTargetGroupAttachmentExists("aws_lb_target_group_attachment.test"),
 					testAccCheckAWSLBTargetGroupAttachmentDisappears("aws_lb_target_group_attachment.test"),
@@ -54,9 +56,10 @@ func TestAccAWSLBTargetGroupAttachment_BackwardsCompatibility(t *testing.T) {
 	targetGroupName := fmt.Sprintf("test-target-group-%s", acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum))
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckAWSLBTargetGroupAttachmentDestroy,
+		PreCheck:      func() { testAccPreCheck(t) },
+		IDRefreshName: "aws_alb_target_group.test",
+		Providers:     testAccProviders,
+		CheckDestroy:  testAccCheckAWSLBTargetGroupAttachmentDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccAWSLBTargetGroupAttachmentConfigBackwardsCompatibility(targetGroupName),
@@ -68,16 +71,17 @@ func TestAccAWSLBTargetGroupAttachment_BackwardsCompatibility(t *testing.T) {
 	})
 }
 
-func TestAccAWSLBTargetGroupAttachment_Port(t *testing.T) {
+func TestAccAWSLBTargetGroupAttachment_withoutPort(t *testing.T) {
 	targetGroupName := fmt.Sprintf("test-target-group-%s", acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum))
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckAWSLBTargetGroupAttachmentDestroy,
+		PreCheck:      func() { testAccPreCheck(t) },
+		IDRefreshName: "aws_lb_target_group.test",
+		Providers:     testAccProviders,
+		CheckDestroy:  testAccCheckAWSLBTargetGroupAttachmentDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSLBTargetGroupAttachmentConfigPort(targetGroupName),
+				Config: testAccAWSLBTargetGroupAttachmentConfigWithoutPort(targetGroupName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccCheckAWSLBTargetGroupAttachmentExists("aws_lb_target_group_attachment.test"),
 				),
@@ -90,12 +94,13 @@ func TestAccAWSLBTargetGroupAttachment_ipAddress(t *testing.T) {
 	targetGroupName := fmt.Sprintf("test-target-group-%s", acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum))
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckAWSLBTargetGroupAttachmentDestroy,
+		PreCheck:      func() { testAccPreCheck(t) },
+		IDRefreshName: "aws_lb_target_group.test",
+		Providers:     testAccProviders,
+		CheckDestroy:  testAccCheckAWSLBTargetGroupAttachmentDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSLBTargetGroupAttachmentConfigTargetIdIpAddress(targetGroupName),
+				Config: testAccAWSLBTargetGroupAttachmentConfigWithIpAddress(targetGroupName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccCheckAWSLBTargetGroupAttachmentExists("aws_lb_target_group_attachment.test"),
 				),
@@ -108,12 +113,13 @@ func TestAccAWSLBTargetGroupAttachment_lambda(t *testing.T) {
 	targetGroupName := fmt.Sprintf("test-target-group-%s", acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum))
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckAWSLBTargetGroupAttachmentDestroy,
+		PreCheck:      func() { testAccPreCheck(t) },
+		IDRefreshName: "aws_lb_target_group.test",
+		Providers:     testAccProviders,
+		CheckDestroy:  testAccCheckAWSLBTargetGroupAttachmentDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSLBTargetGroupAttachmentConfigTargetIdLambda(targetGroupName),
+				Config: testAccAWSLBTargetGroupAttachmentConfigWithLambda(targetGroupName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccCheckAWSLBTargetGroupAttachmentExists("aws_lb_target_group_attachment.test"),
 				),
@@ -237,42 +243,49 @@ func testAccCheckAWSLBTargetGroupAttachmentDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccAWSLBTargetGroupAttachmentConfigInstanceBase() string {
+func testAccAWSLBTargetGroupAttachmentConfigWithoutPort(targetGroupName string) string {
 	return fmt.Sprintf(`
-data "aws_availability_zones" "available" {
-  # t2.micro instance type is not available in these Availability Zones
-  blacklisted_zone_ids = ["usw2-az4"]
-  state                = "available"
-}
-
-data "aws_ami" "amzn-ami-minimal-hvm-ebs" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["amzn-ami-minimal-hvm-*"]
-  }
-  
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
+resource "aws_lb_target_group_attachment" "test" {
+  target_group_arn = "${aws_lb_target_group.test.arn}"
+  target_id        = "${aws_instance.test.id}"
 }
 
 resource "aws_instance" "test" {
-  ami           = data.aws_ami.amzn-ami-minimal-hvm-ebs.id
+  ami           = "ami-f701cb97"
   instance_type = "t2.micro"
-  subnet_id     = aws_subnet.test.id
+  subnet_id     = "${aws_subnet.subnet.id}"
 }
 
-resource "aws_subnet" "test" {
-  availability_zone = data.aws_availability_zones.available.names[0]
-  cidr_block        = "10.0.1.0/24"
-  vpc_id            = aws_vpc.test.id
+resource "aws_lb_target_group" "test" {
+  name                 = "%s"
+  port                 = 443
+  protocol             = "HTTPS"
+  vpc_id               = "${aws_vpc.test.id}"
+  deregistration_delay = 200
+
+  stickiness {
+    type            = "lb_cookie"
+    cookie_duration = 10000
+  }
+
+  health_check {
+    path                = "/health"
+    interval            = 60
+    port                = 8081
+    protocol            = "HTTP"
+    timeout             = 3
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    matcher             = "200-299"
+  }
+}
+
+resource "aws_subnet" "subnet" {
+  cidr_block = "10.0.1.0/24"
+  vpc_id     = "${aws_vpc.test.id}"
 
   tags = {
-    Name = "tf-acc-test-lb-target-group-attachment"
+    Name = "tf-acc-lb-target-group-attachment-without-port"
   }
 }
 
@@ -280,102 +293,206 @@ resource "aws_vpc" "test" {
   cidr_block = "10.0.0.0/16"
 
   tags = {
-    Name = "tf-acc-test-lb-target-group-attachment"
+    Name = "terraform-testacc-lb-target-group-attachment-without-port"
   }
 }
-`)
+`, targetGroupName)
 }
 
-func testAccAWSLBTargetGroupAttachmentConfigTargetIdInstance(rName string) string {
-	return testAccAWSLBTargetGroupAttachmentConfigInstanceBase() + fmt.Sprintf(`
-resource "aws_lb_target_group" "test" {
-  name     = %[1]q
-  port     = 443
-  protocol = "HTTPS"
-  vpc_id   = aws_vpc.test.id
-}
-
-resource "aws_lb_target_group_attachment" "test" {
-  target_group_arn = aws_lb_target_group.test.arn
-  target_id        = aws_instance.test.id
-}
-`, rName)
-}
-
-func testAccAWSLBTargetGroupAttachmentConfigPort(rName string) string {
-	return testAccAWSLBTargetGroupAttachmentConfigInstanceBase() + fmt.Sprintf(`
-resource "aws_lb_target_group" "test" {
-  name     = %[1]q
-  port     = 443
-  protocol = "HTTPS"
-  vpc_id   = aws_vpc.test.id
-}
-
-resource "aws_lb_target_group_attachment" "test" {
-  target_group_arn = aws_lb_target_group.test.arn
-  target_id        = aws_instance.test.id
-  port             = 80
-}
-`, rName)
-}
-
-func testAccAWSLBTargetGroupAttachmentConfigBackwardsCompatibility(rName string) string {
-	return testAccAWSLBTargetGroupAttachmentConfigInstanceBase() + fmt.Sprintf(`
-resource "aws_lb_target_group" "test" {
-  name     = %[1]q
-  port     = 443
-  protocol = "HTTPS"
-  vpc_id   = aws_vpc.test.id
-}
-
-resource "aws_alb_target_group_attachment" "test" {
-  target_group_arn = aws_lb_target_group.test.arn
-  target_id        = aws_instance.test.id
-  port             = 80
-}
-`, rName)
-}
-
-func testAccAWSLBTargetGroupAttachmentConfigTargetIdIpAddress(rName string) string {
-	return testAccAWSLBTargetGroupAttachmentConfigInstanceBase() + fmt.Sprintf(`
-resource "aws_lb_target_group" "test" {
-  name        = %[1]q
-  port        = 443
-  protocol    = "HTTPS"
-  target_type = "ip"
-  vpc_id      = aws_vpc.test.id
-}
-
-resource "aws_lb_target_group_attachment" "test" {
-  availability_zone = aws_instance.test.availability_zone
-  target_group_arn  = aws_lb_target_group.test.arn
-  target_id         = aws_instance.test.private_ip
-}
-`, rName)
-}
-
-func testAccAWSLBTargetGroupAttachmentConfigTargetIdLambda(rName string) string {
+func testAccAWSLBTargetGroupAttachmentConfig_basic(targetGroupName string) string {
 	return fmt.Sprintf(`
-data "aws_partition" "current" {}
+resource "aws_lb_target_group_attachment" "test" {
+  target_group_arn = "${aws_lb_target_group.test.arn}"
+  target_id        = "${aws_instance.test.id}"
+  port             = 80
+}
 
-resource "aws_lambda_permission" "test" {
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.test.arn
-  principal     = "elasticloadbalancing.${data.aws_partition.current.dns_suffix}"
-  qualifier     = aws_lambda_alias.test.name
-  source_arn    = aws_lb_target_group.test.arn
-  statement_id  = "AllowExecutionFromlb"
+resource "aws_instance" "test" {
+  ami           = "ami-f701cb97"
+  instance_type = "t2.micro"
+  subnet_id     = "${aws_subnet.subnet.id}"
 }
 
 resource "aws_lb_target_group" "test" {
-  name        = %[1]q
+  name                 = "%s"
+  port                 = 443
+  protocol             = "HTTPS"
+  vpc_id               = "${aws_vpc.test.id}"
+  deregistration_delay = 200
+
+  stickiness {
+    type            = "lb_cookie"
+    cookie_duration = 10000
+  }
+
+  health_check {
+    path                = "/health"
+    interval            = 60
+    port                = 8081
+    protocol            = "HTTP"
+    timeout             = 3
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    matcher             = "200-299"
+  }
+}
+
+resource "aws_subnet" "subnet" {
+  cidr_block = "10.0.1.0/24"
+  vpc_id     = "${aws_vpc.test.id}"
+
+  tags = {
+    Name = "tf-acc-lb-target-group-attachment-basic"
+  }
+}
+
+resource "aws_vpc" "test" {
+  cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = "terraform-testacc-lb-target-group-attachment-basic"
+  }
+}
+`, targetGroupName)
+}
+
+func testAccAWSLBTargetGroupAttachmentConfigBackwardsCompatibility(targetGroupName string) string {
+	return fmt.Sprintf(`
+resource "aws_alb_target_group_attachment" "test" {
+  target_group_arn = "${aws_alb_target_group.test.arn}"
+  target_id        = "${aws_instance.test.id}"
+  port             = 80
+}
+
+resource "aws_instance" "test" {
+  ami           = "ami-f701cb97"
+  instance_type = "t2.micro"
+  subnet_id     = "${aws_subnet.subnet.id}"
+}
+
+resource "aws_alb_target_group" "test" {
+  name                 = "%s"
+  port                 = 443
+  protocol             = "HTTPS"
+  vpc_id               = "${aws_vpc.test.id}"
+  deregistration_delay = 200
+
+  stickiness {
+    type            = "lb_cookie"
+    cookie_duration = 10000
+  }
+
+  health_check {
+    path                = "/health"
+    interval            = 60
+    port                = 8081
+    protocol            = "HTTP"
+    timeout             = 3
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    matcher             = "200-299"
+  }
+}
+
+resource "aws_subnet" "subnet" {
+  cidr_block = "10.0.1.0/24"
+  vpc_id     = "${aws_vpc.test.id}"
+
+  tags = {
+    Name = "tf-acc-lb-target-group-attachment-bc"
+  }
+}
+
+resource "aws_vpc" "test" {
+  cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = "terraform-testacc-lb-target-group-attachment-bc"
+  }
+}
+`, targetGroupName)
+}
+
+func testAccAWSLBTargetGroupAttachmentConfigWithIpAddress(targetGroupName string) string {
+	return fmt.Sprintf(`
+resource "aws_lb_target_group_attachment" "test" {
+  target_group_arn  = "${aws_lb_target_group.test.arn}"
+  target_id         = "${aws_instance.test.private_ip}"
+  availability_zone = "${aws_instance.test.availability_zone}"
+}
+
+resource "aws_instance" "test" {
+  ami           = "ami-f701cb97"
+  instance_type = "t2.micro"
+  subnet_id     = "${aws_subnet.subnet.id}"
+}
+
+resource "aws_lb_target_group" "test" {
+  name                 = "%s"
+  port                 = 443
+  protocol             = "HTTPS"
+  vpc_id               = "${aws_vpc.test.id}"
+  target_type          = "ip"
+  deregistration_delay = 200
+
+  stickiness {
+    type            = "lb_cookie"
+    cookie_duration = 10000
+  }
+
+  health_check {
+    path                = "/health"
+    interval            = 60
+    port                = 8081
+    protocol            = "HTTP"
+    timeout             = 3
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    matcher             = "200-299"
+  }
+}
+
+resource "aws_subnet" "subnet" {
+  cidr_block = "10.0.1.0/24"
+  vpc_id     = "${aws_vpc.test.id}"
+
+  tags = {
+    Name = "tf-acc-lb-target-group-attachment-with-ip-address"
+  }
+}
+
+resource "aws_vpc" "test" {
+  cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = "terraform-testacc-lb-target-group-attachment-with-ip-address"
+  }
+}
+`, targetGroupName)
+}
+
+func testAccAWSLBTargetGroupAttachmentConfigWithLambda(targetGroupName string) string {
+	funcName := fmt.Sprintf("tf_acc_lambda_func_%s", acctest.RandString(8))
+
+	return fmt.Sprintf(`
+resource "aws_lambda_permission" "with_lb" {
+  statement_id  = "AllowExecutionFromlb"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.test.arn}"
+  principal     = "elasticloadbalancing.amazonaws.com"
+  source_arn    = "${aws_lb_target_group.test.arn}"
+  qualifier     = "${aws_lambda_alias.test.name}"
+}
+
+resource "aws_lb_target_group" "test" {
+  name        = "%s"
   target_type = "lambda"
 }
 
 resource "aws_lambda_function" "test" {
   filename      = "test-fixtures/lambda_elb.zip"
-  function_name = %[1]q
-  role          = aws_iam_role.test.arn
+  function_name = "%s"
+  role          = "${aws_iam_role.iam_for_lambda.arn}"
   handler       = "lambda_elb.lambda_handler"
   runtime       = "python3.7"
 }
@@ -383,11 +500,11 @@ resource "aws_lambda_function" "test" {
 resource "aws_lambda_alias" "test" {
   name             = "test"
   description      = "a sample description"
-  function_name    = aws_lambda_function.test.function_name
+  function_name    = "${aws_lambda_function.test.function_name}"
   function_version = "$LATEST"
 }
 
-resource "aws_iam_role" "test" {
+resource "aws_iam_role" "iam_for_lambda" {
   assume_role_policy = <<EOF
 {
 		"Version": "2012-10-17",
@@ -395,7 +512,7 @@ resource "aws_iam_role" "test" {
 			{
 				"Action": "sts:AssumeRole",
 				"Principal": {
-					"Service": "lambda.${data.aws_partition.current.dns_suffix}"
+					"Service": "lambda.amazonaws.com"
 				},
 				"Effect": "Allow",
 				"Sid": ""
@@ -406,10 +523,9 @@ resource "aws_iam_role" "test" {
 }
 
 resource "aws_lb_target_group_attachment" "test" {
-  depends_on = [aws_lambda_permission.test]
-
-  target_group_arn = aws_lb_target_group.test.arn
-  target_id        = aws_lambda_alias.test.arn
+  target_group_arn = "${aws_lb_target_group.test.arn}"
+  target_id        = "${aws_lambda_alias.test.arn}"
+  depends_on       = ["aws_lambda_permission.with_lb"]
 }
-`, rName)
+`, targetGroupName, funcName)
 }

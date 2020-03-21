@@ -131,13 +131,9 @@ func dataSourceAwsSubnetRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	req.Filters = buildEC2AttributeFilterList(filters)
-
-	if tags, tagsOk := d.GetOk("tags"); tagsOk {
-		req.Filters = append(req.Filters, buildEC2TagFilterList(
-			keyvaluetags.New(tags.(map[string]interface{})).Ec2Tags(),
-		)...)
-	}
-
+	req.Filters = append(req.Filters, buildEC2TagFilterList(
+		tagsFromMap(d.Get("tags").(map[string]interface{})),
+	)...)
 	req.Filters = append(req.Filters, buildEC2CustomFilterList(
 		d.Get("filter").(*schema.Set),
 	)...)
