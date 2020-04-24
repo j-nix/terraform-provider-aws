@@ -203,11 +203,13 @@ func resourceAwsEMRCluster() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 							ForceNew: true,
+							Computed: true,
 						},
 						"emr_managed_slave_security_group": {
 							Type:     schema.TypeString,
 							Optional: true,
 							ForceNew: true,
+							Computed: true,
 						},
 						"instance_profile": {
 							Type:     schema.TypeString,
@@ -218,6 +220,7 @@ func resourceAwsEMRCluster() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 							ForceNew: true,
+							Computed: true,
 						},
 					},
 				},
@@ -489,7 +492,7 @@ func resourceAwsEMRCluster() *schema.Resource {
 				Set: resourceAwsEMRClusterInstanceGroupHash,
 			},
 			"bootstrap_action": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Optional: true,
 				ForceNew: true,
 				Elem: &schema.Resource{
@@ -629,6 +632,12 @@ func resourceAwsEMRCluster() *schema.Resource {
 				ForceNew:     true,
 				Optional:     true,
 				ValidateFunc: validateAwsEmrCustomAmiId,
+			},
+			"step_concurrency_level": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      1,
+				ValidateFunc: validation.IntBetween(1, 256),
 			},
 		},
 	}
@@ -842,12 +851,16 @@ func resourceAwsEMRClusterCreate(d *schema.ResourceData, meta interface{}) error
 		params.CustomAmiId = aws.String(v.(string))
 	}
 
+	if v, ok := d.GetOk("step_concurrency_level"); ok {
+		params.StepConcurrencyLevel = aws.Int64(int64(v.(int)))
+	}
+
 	if instanceProfile != "" {
 		params.JobFlowRole = aws.String(instanceProfile)
 	}
 
 	if v, ok := d.GetOk("bootstrap_action"); ok {
-		bootstrapActions := v.(*schema.Set).List()
+		bootstrapActions := v.([]interface{})
 		params.BootstrapActions = expandBootstrapActions(bootstrapActions)
 	}
 	if v, ok := d.GetOk("step"); ok {
@@ -1040,6 +1053,7 @@ func resourceAwsEMRClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("ebs_root_volume_size", cluster.EbsRootVolumeSize)
 	d.Set("scale_down_behavior", cluster.ScaleDownBehavior)
 	d.Set("termination_protection", cluster.TerminationProtected)
+	d.Set("step_concurrency_level", cluster.StepConcurrencyLevel)
 
 	if cluster.CustomAmiId != nil {
 		d.Set("custom_ami_id", cluster.CustomAmiId)
@@ -1339,6 +1353,18 @@ func resourceAwsEMRClusterUpdate(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 
+	if d.HasChange("step_concurrency_level") {
+		d.SetPartial("step_concurrency_level")
+		_, errModify := conn.ModifyCluster(&emr.ModifyClusterInput{
+			ClusterId:            aws.String(d.Id()),
+			StepConcurrencyLevel: aws.Int64(int64(d.Get("step_concurrency_level").(int))),
+		})
+		if errModify != nil {
+			log.Printf("[ERROR] %s", errModify)
+			return errModify
+		}
+	}
+
 	d.Partial(false)
 
 	return resourceAwsEMRClusterRead(d, meta)
@@ -1399,9 +1425,14 @@ func resourceAwsEMRClusterDelete(d *schema.ResourceData, meta interface{}) error
 }
 
 func countEMRRemainingInstances(resp *emr.ListInstancesOutput, emrClusterId string) int {
+	if resp == nil {
+		log.Printf("[ERROR] response is nil")
+		return 0
+	}
+
 	instanceCount := len(resp.Instances)
 
-	if resp == nil || instanceCount == 0 {
+	if instanceCount == 0 {
 		log.Printf("[DEBUG] No instances found for EMR Cluster (%s)", emrClusterId)
 		return 0
 	}

@@ -928,8 +928,6 @@ func resourceAwsLbListenerRuleRead(d *schema.ResourceData, meta interface{}) err
 func resourceAwsLbListenerRuleUpdate(d *schema.ResourceData, meta interface{}) error {
 	elbconn := meta.(*AWSClient).elbv2conn
 
-	d.Partial(true)
-
 	if d.HasChange("priority") {
 		params := &elbv2.SetRulePrioritiesInput{
 			RulePriorities: []*elbv2.RulePriorityPair{
@@ -944,8 +942,6 @@ func resourceAwsLbListenerRuleUpdate(d *schema.ResourceData, meta interface{}) e
 		if err != nil {
 			return err
 		}
-
-		d.SetPartial("priority")
 	}
 
 	requestUpdate := false
@@ -1080,7 +1076,6 @@ func resourceAwsLbListenerRuleUpdate(d *schema.ResourceData, meta interface{}) e
 			params.Actions[i] = action
 		}
 		requestUpdate = true
-		d.SetPartial("action")
 	}
 
 	if d.HasChange("condition") {
@@ -1090,7 +1085,6 @@ func resourceAwsLbListenerRuleUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 		requestUpdate = true
-		d.SetPartial("condition")
 	}
 
 	if requestUpdate {
@@ -1103,8 +1097,6 @@ func resourceAwsLbListenerRuleUpdate(d *schema.ResourceData, meta interface{}) e
 			return errors.New("Error modifying creating LB Listener Rule: no rules returned in response")
 		}
 	}
-
-	d.Partial(false)
 
 	return resourceAwsLbListenerRuleRead(d, meta)
 }
@@ -1264,14 +1256,30 @@ func lbListenerRuleConditions(conditions []interface{}) ([]*elbv2.RuleCondition,
 		}
 
 		// Deprecated backwards compatibility
-		if cmField, ok := conditionMap["field"].(string); ok && cmField != "" {
-			field = cmField
-			attrs += 1
-			values := conditionMap["values"].([]interface{})
-			if len(values) == 0 {
-				return nil, errors.New("Both field and values must be set in a condition block")
+		// This code is also hit during an update when the condition has not been modified. Issues: GH-11232 and GH-11362
+		if cmField, ok := conditionMap["field"].(string); ok && (cmField == "host-header" || cmField == "path-pattern") {
+			// When the condition is not being updated Terraform feeds in the existing state which has host header and
+			// path pattern set in both locations with identical values.
+			if field == cmField {
+				values := schema.NewSet(schema.HashString, conditionMap["values"].([]interface{}))
+				var values2 *schema.Set
+				if cmField == "host-header" {
+					values2 = conditionMap["host_header"].([]interface{})[0].(map[string]interface{})["values"].(*schema.Set)
+				} else {
+					values2 = conditionMap["path_pattern"].([]interface{})[0].(map[string]interface{})["values"].(*schema.Set)
+				}
+				if !values2.Equal(values) {
+					attrs += 1
+				}
+			} else {
+				field = cmField
+				attrs += 1
+				values := conditionMap["values"].([]interface{})
+				if len(values) == 0 {
+					return nil, errors.New("Both field and values must be set in a condition block")
+				}
+				elbConditions[i].Values = expandStringList(values)
 			}
-			elbConditions[i].Values = expandStringList(values)
 		}
 
 		// FIXME Rework this and use ConflictsWith when it finally works with collections:
