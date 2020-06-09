@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/route53resolver"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceAwsRoute53ResolverEndpoint() *schema.Resource {
