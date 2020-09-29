@@ -160,13 +160,23 @@ func resourceAwsDxGatewayAssociationProposalRead(d *schema.ResourceData, meta in
 func resourceAwsDxGatewayAssociationProposalDelete(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).dxconn
 
+	proposal, err := describeDirectConnectGatewayAssociationProposal(conn, d.Id())
+	if err != nil {
+		return fmt.Errorf("error reading Direct Connect Gateway Association Proposal (%s): %s", d.Id(), err)
+	}
+
+	if proposal == nil {
+		log.Printf("[DEBUG] Direct Connect Gateway Association Proposal (%s) not found, removing from state", d.Id())
+		return nil
+	}
+
 	input := &directconnect.DeleteDirectConnectGatewayAssociationProposalInput{
 		ProposalId: aws.String(d.Id()),
 	}
 
 	log.Printf("[DEBUG] Deleting Direct Connect Gateway Association Proposal: %s", d.Id())
 
-	_, err := conn.DeleteDirectConnectGatewayAssociationProposal(input)
+	_, err = conn.DeleteDirectConnectGatewayAssociationProposal(input)
 
 	if err != nil {
 		return fmt.Errorf("error deleting Direct Connect Gateway Association Proposal (%s): %s", d.Id(), err)
